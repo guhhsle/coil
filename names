@@ -1,0 +1,17 @@
+Imena 
+	Coil
+	Coild
+	Wire
+	Wired
+	Conduit
+	Connector
+
+Icons
+	Cable
+	Commit
+	Conversion Path
+
+Audio
+forceLoad.then(
+	if( url == '' ) skipTo( current + 1 );
+);

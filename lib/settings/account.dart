@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+
+import '../data.dart';
+import '../functions.dart';
+import '../other/countries.dart';
+import '../pages/page_log.dart';
+import '../services/export.dart';
+
+List<Setting> accountSet() => [
+      Setting(
+        'Configure',
+        Icons.person_rounded,
+        '',
+        (c) => Navigator.of(c).push(
+          MaterialPageRoute(
+            builder: (context) => const PageLog(),
+          ),
+        ),
+      ),
+      Setting(
+        'Export',
+        Icons.settings_backup_restore_rounded,
+        '',
+        (c) => showSheet(
+          hidePrev: c,
+          list: (context) => [
+            Setting(
+              'Export type',
+              Icons.settings_backup_restore_rounded,
+              '',
+              (c) {},
+            ),
+            Setting(
+              'File per list',
+              Icons.folder_outlined,
+              '',
+              (c) async {
+                Navigator.of(c).pop();
+                await exportUser(false);
+              },
+            ),
+            Setting(
+              'One file',
+              Icons.description_rounded,
+              '',
+              (c) async {
+                Navigator.of(c).pop();
+                await exportUser(true);
+              },
+            ),
+          ],
+        ),
+      ),
+      Setting(
+        'Country',
+        Icons.outlined_flag_rounded,
+        'pf//location',
+        (c) => showSheet(
+          hidePrev: c,
+          scroll: true,
+          list: (context) => [
+            Setting(
+              'Country',
+              Icons.outlined_flag_rounded,
+              '',
+              (c) {},
+            ),
+            ...countries.entries
+                .map(
+                  (e) => Setting(
+                    e.value,
+                    Icons.language_rounded,
+                    '',
+                    (c) {
+                      Navigator.of(c).pop();
+                      setPref('location', e.value);
+                    },
+                  ),
+                )
+                .toList(),
+          ],
+        ),
+      ),
+    ];
