@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -200,12 +198,20 @@ Future<void> preload({int range = 5}) async {
   await Future.wait(futures);
 }
 
-Future<void> forceAddBackup(MediaItem item, String url) async {
+Future<void> forceAddBackup(
+  MediaItem item,
+  String url, {
+  bool top = false,
+}) async {
   Playlist local = await Playlist.fromStorage(url).onError(
     (err, stackTrace) => Playlist.fromString(url),
   );
   local.name = t(url);
-  local.raw['relatedStreams'].add(mediaToMap(item));
+  if (top) {
+    local.raw['relatedStreams'].insert(0, mediaToMap(item));
+  } else {
+    local.raw['relatedStreams'].add(mediaToMap(item));
+  }
   await local.backup();
 }
 
@@ -231,7 +237,7 @@ Future<void> forceRemoveBackup(
 }
 
 Future<void> addTo100(MediaItem item) async {
-  await forceAddBackup(item, '100raw');
+  await forceAddBackup(item, '100raw', top: true);
   Playlist hundred = await Playlist.fromStorage('100raw');
   Map<String, int> map = {};
   List list = hundred.raw['relatedStreams'];
