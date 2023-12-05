@@ -241,6 +241,7 @@ Future<void> addTo100(MediaItem item) async {
   Playlist hundred = await Playlist.fromStorage('100raw');
   Map<String, int> map = {};
   List list = hundred.raw['relatedStreams'];
+  if (list.length > 100) list.removeLast();
   for (Map item in list) {
     if (map.containsKey(item['url'])) {
       map[item['url']] = map[item['url']]! + 1;
@@ -251,7 +252,6 @@ Future<void> addTo100(MediaItem item) async {
   list.sort(
     (a, b) => map[b['url']]!.compareTo(map[a['url']]!),
   );
-  if (list.length > 100) list.removeLast();
   await hundred.backup();
   for (int i = 0; i < list.length; i++) {
     if (map[list[i]['url']]! > 1) {
