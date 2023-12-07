@@ -1,5 +1,9 @@
 String versions = """
 
+0.9.10						07.12.23
+
+	Fixed '100' playlist bugs
+
 0.9.9						30.11.23
 
 	Fixed mediaNext button bug

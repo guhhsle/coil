@@ -53,10 +53,7 @@ Future<Playlist> loadPlaylist(
         return list;
       } else {
         Uri u = Uri.https(pf[i == 0 ? 'instance' : 'authInstance'], 'playlists/$url');
-        list = Playlist.fromJson(
-          jsonDecode(utf8.decode((await get(u)).bodyBytes)),
-          url,
-        )..backup();
+        list = Playlist.fromJson(jsonDecode(utf8.decode((await get(u)).bodyBytes)), url)..backup();
         break;
       }
     } catch (e) {
@@ -208,7 +205,7 @@ Future<void> forceAddBackup(
   );
   local.name = t(url);
   if (top) {
-    local.raw['relatedStreams'].insert(0, mediaToMap(item));
+    (local.raw['relatedStreams'] as List).insert(0, mediaToMap(item));
   } else {
     local.raw['relatedStreams'].add(mediaToMap(item));
   }
@@ -240,8 +237,15 @@ Future<void> addTo100(MediaItem item) async {
   await forceAddBackup(item, '100raw', top: true);
   Playlist hundred = await Playlist.fromStorage('100raw');
   Map<String, int> map = {};
-  List list = hundred.raw['relatedStreams'];
-  if (list.length > 100) list.removeLast();
+  List listRaw = hundred.raw['relatedStreams'];
+  if (listRaw.length > 100) listRaw.removeLast();
+  await hundred.backup();
+
+  Playlist formatted = await Playlist.fromStorage('100').onError(
+    (err, stackTrace) => Playlist.fromString('100'),
+  );
+  List list = formatted.raw['relatedStreams'] = hundred.raw['relatedStreams'].toList();
+
   for (Map item in list) {
     if (map.containsKey(item['url'])) {
       map[item['url']] = map[item['url']]! + 1;
@@ -252,7 +256,6 @@ Future<void> addTo100(MediaItem item) async {
   list.sort(
     (a, b) => map[b['url']]!.compareTo(map[a['url']]!),
   );
-  await hundred.backup();
   for (int i = 0; i < list.length; i++) {
     if (map[list[i]['url']]! > 1) {
       map[list[i]['url']] = map[list[i]['url']]! - 1;
@@ -260,9 +263,5 @@ Future<void> addTo100(MediaItem item) async {
       i--;
     }
   }
-  Playlist formatted = await Playlist.fromStorage('100').onError(
-    (err, stackTrace) => Playlist.fromString('100'),
-  );
-  formatted.raw['relatedStreams'] = list;
   await formatted.backup();
 }

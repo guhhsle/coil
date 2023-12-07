@@ -20,6 +20,7 @@ Future<void> search(String query, String filter) async {
 
 Map mediaToMap(MediaItem item) {
   return {
+    'name': item.title,
     'url': item.id.replaceAll('/watch?v=', ''),
     'title': item.title,
     'thumbnail': item.artUri.toString(),

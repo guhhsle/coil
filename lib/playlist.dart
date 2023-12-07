@@ -83,6 +83,7 @@ class Playlist {
       'relatedStreams': <Map>[],
     };
     for (Map song in raw['relatedStreams']) {
+      print(song['title']);
       formatted['relatedStreams'].add({
         'url': song['url'].replaceAll('/watch?v=', ''),
         'title': song['title'],
