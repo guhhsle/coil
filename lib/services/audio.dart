@@ -432,13 +432,14 @@ class TopIcon extends StatelessWidget {
               builder: (context, snapshot) {
                 if (top && queuePlaying.isNotEmpty && pf['player'] == 'Top dock') {
                   return ValueListenableBuilder(
-                      valueListenable: showTopDock,
-                      builder: (context, data, ch) {
-                        return IconButton(
-                          icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
-                          onPressed: () => showTopDock.value = !showTopDock.value,
-                        );
-                      });
+                    valueListenable: showTopDock,
+                    builder: (context, data, ch) {
+                      return IconButton(
+                        icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
+                        onPressed: () => showTopDock.value = !showTopDock.value,
+                      );
+                    },
+                  );
                 } else if (!top || (pf['player'] == 'Top' && queuePlaying.isNotEmpty)) {
                   ProcessingState? state = snapshot.data?.processingState;
                   return InkWell(
@@ -447,9 +448,7 @@ class TopIcon extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        builder: (context) {
-                          return const SheetQueue();
-                        },
+                        builder: (context) => const SheetQueue(),
                       );
                     },
                     onTap: () {
