@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+import '../functions.dart';
 import '../services/account.dart';
 import '../services/audio.dart';
 import '../widgets/animated_text.dart';
@@ -29,7 +30,7 @@ class Home extends StatefulWidget {
 Map<String, Widget> homeMap = {};
 
 String selectedHome = 'Playlists';
-ValueNotifier<String> barText = ValueNotifier(l['Coil']);
+ValueNotifier<String> barText = ValueNotifier(pf['instance']);
 PageController pageController = PageController();
 ScrollController scrollController = ScrollController();
 GlobalKey key = GlobalKey(debugLabel: 'Tags');
@@ -72,13 +73,47 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
         title: Padding(
           padding: const EdgeInsets.only(left: 8),
-          child: ValueListenableBuilder(
-            valueListenable: barText,
-            builder: (context, value, child) => AnimatedText(
-              text: value,
-              speed: const Duration(milliseconds: 48),
-              style: Theme.of(context).appBarTheme.titleTextStyle!,
-              key: ValueKey(value),
+          child: InkWell(
+            onTap: () {
+              List<String> history = pf['instanceHistory'];
+              showSheet(
+                scroll: true,
+                list: (context) => [
+                  Setting(
+                    'Delete',
+                    Icons.clear_all_rounded,
+                    '',
+                    (c) {
+                      setPref('instanceHistory', <String>[]);
+                      Navigator.of(c).pop();
+                    },
+                  ),
+                  for (int i = 0; i < history.length; i++)
+                    Setting(
+                      history[i],
+                      Icons.remove_rounded,
+                      '',
+                      (c) async {
+                        setPref('instance', history[i]);
+                        barText.value = history[i];
+                        Navigator.of(context).pop();
+                      },
+                      onHold: (c) {
+                        pf['instanceHistory'].removeAt(i);
+                        setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                      },
+                    ),
+                ],
+              );
+            },
+            child: ValueListenableBuilder(
+              valueListenable: barText,
+              builder: (context, value, child) => AnimatedText(
+                text: value,
+                speed: const Duration(milliseconds: 48),
+                style: Theme.of(context).appBarTheme.titleTextStyle!,
+                key: ValueKey(value),
+              ),
             ),
           ),
         ),

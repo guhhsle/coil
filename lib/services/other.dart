@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data.dart';
 import '../other/other.dart';
 import '../pages/page_artist.dart';
+import '../playlist.dart';
 import 'audio.dart';
 import 'generate.dart';
 import 'playlist.dart';
@@ -18,17 +19,27 @@ import 'playlist.dart';
 //																	USER PLAYLIST TO MAP
 
 Future<List<Setting>> userPlaylistsToMap(MediaItem item) async {
+  Playlist bookmarks = await Playlist.fromStorage('Bookmarks');
+  bool bookmarked = bookmarks.list.indexWhere((e) => e.id == item.id) != -1;
   if (userPlaylists.value.isEmpty) await fetchUserPlaylists(true);
   return [
-    Setting('Add to playlist', Icons.playlist_add_rounded, '', (c) {}),
-    Setting(
-      'Bookmark',
-      Icons.bookmark_outline_rounded,
-      '',
-      (c) => forceAddBackup(item, 'Bookmarks').then(
-        (v) => Navigator.of(c).pop(),
-      ),
-    ),
+    bookmarked
+        ? Setting(
+            'Bookmarked',
+            Icons.bookmark_rounded,
+            '',
+            (c) => forceRemoveBackup(item, 'Bookmarks').then(
+              (v) => Navigator.of(c).pop(),
+            ),
+          )
+        : Setting(
+            'Bookmark',
+            Icons.bookmark_outline_rounded,
+            '',
+            (c) => forceAddBackup(item, 'Bookmarks').then(
+              (v) => Navigator.of(c).pop(),
+            ),
+          ),
     for (int i = 0; i < userPlaylists.value.length; i++)
       Setting(
         userPlaylists.value[i]['name'],
