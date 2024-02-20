@@ -111,6 +111,19 @@ class PlaylistPageState extends State<PlaylistPage> {
                         showSheet(
                           list: (context) => [
                             Setting(
+                              'Refresh',
+                              Icons.refresh_rounded,
+                              '',
+                              (c) async {
+                                List<int> path = widget.path.toList();
+                                list = await loadPlaylist(
+                                    widget.url,
+                                    !path.remove(2) ? path : path
+                                      ..add(2));
+                                setState(() {});
+                              },
+                            ),
+                            Setting(
                               'Shuffle',
                               Icons.low_priority_rounded,
                               '',
