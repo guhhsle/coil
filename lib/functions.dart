@@ -100,13 +100,13 @@ void setPref(
   } else if (value is List<String>) {
     prefs.setStringList(pString, value);
   }
-  if (refresh) refresh;
+  if (refresh) refreshInterface();
   if (pString == 'instance' || pString == 'authInstance') {
     rememberInstance(value);
   }
 }
 
-void refresh() {
+void refreshInterface() {
   themeNotifier.value = theme(color(true), color(false));
   refreshPlaylist.value = !refreshPlaylist.value;
 }
