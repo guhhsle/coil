@@ -121,6 +121,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                                     !path.remove(2) ? path : path
                                       ..add(2));
                                 setState(() {});
+                                Navigator.of(context).pop();
                               },
                             ),
                             Setting(

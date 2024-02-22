@@ -29,8 +29,16 @@ class Home extends StatefulWidget {
 
 Map<String, Widget> homeMap = {};
 
+String getInstanceName(String str) {
+  int i = 0;
+  while (str[i] != '.') {
+    i++;
+  }
+  return str.substring(i + 1);
+}
+
 String selectedHome = 'Playlists';
-ValueNotifier<String> barText = ValueNotifier(pf['instance']);
+ValueNotifier<String> barText = ValueNotifier(getInstanceName(pf['instance']));
 PageController pageController = PageController();
 ScrollController scrollController = ScrollController();
 GlobalKey key = GlobalKey(debugLabel: 'Tags');
@@ -95,7 +103,7 @@ class _HomeState extends State<Home> {
                       '',
                       (c) async {
                         setPref('instance', history[i]);
-                        barText.value = history[i];
+                        barText.value = getInstanceName(history[i]);
                         Navigator.of(context).pop();
                       },
                       onHold: (c) {
