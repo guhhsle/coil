@@ -19,7 +19,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final bool account;
   const MyApp({super.key, required this.account});
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeData>(

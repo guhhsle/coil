@@ -54,7 +54,12 @@ Future<bool> generate(List<MediaItem> list) async {
 
 Future<void> generateFromId(String id) async {
   Response result = await get(Uri.https(pf['instance'], 'streams/$id'));
-  await generateFrom(Playlist.fromJson(jsonDecode(utf8.decode(result.bodyBytes)), id), false);
+  await generateFrom(
+      Playlist.fromJson(
+        jsonDecode(utf8.decode(result.bodyBytes)),
+        id,
+      ),
+      false);
 }
 
 Future<void> generateFrom(Playlist m, bool r) async {

@@ -63,7 +63,15 @@ Future<Playlist> loadPlaylist(
       debugPrint('$e');
     }
   }
-  return timeTried == 0 && list == null ? await loadPlaylist(url, path) : list!;
+  if (timeTried < 4 && list == null) {
+    return loadPlaylist(
+      url,
+      path,
+      timeTried: timeTried++,
+    );
+  } else {
+    return list!;
+  }
 }
 
 Future<void> fetchBookmarks() async {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../data.dart';
 import '../functions.dart';
 import '../services/audio.dart';
-import '../services/other.dart';
+import '../services/sheets.dart';
 import 'sheet_queue.dart';
 
 class BottomPlayer extends StatefulWidget {
