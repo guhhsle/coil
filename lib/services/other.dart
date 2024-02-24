@@ -28,17 +28,13 @@ Future<List<Setting>> userPlaylistsToMap(MediaItem item) async {
             'Bookmarked',
             Icons.bookmark_rounded,
             '',
-            (c) => forceRemoveBackup(item, 'Bookmarks').then(
-              (v) => Navigator.of(c).pop(),
-            ),
+            (c) => forceRemoveBackup(item, 'Bookmarks'),
           )
         : Setting(
             'Bookmark',
             Icons.bookmark_outline_rounded,
             '',
-            (c) => forceAddBackup(item, 'Bookmarks').then(
-              (v) => Navigator.of(c).pop(),
-            ),
+            (c) => forceAddBackup(item, 'Bookmarks'),
           ),
     for (int i = 0; i < userPlaylists.value.length; i++)
       Setting(
