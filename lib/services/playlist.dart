@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -42,10 +44,11 @@ Future<void> deletePlaylist(String playlistId) async {
 
 Future<Playlist> loadPlaylist(
   String url,
-  List<int> path,
-) async {
+  List<int> path, {
+  int timeTried = 0,
+}) async {
   url = formatUrl(url);
-  late Playlist list;
+  Playlist? list;
   for (int i in path) {
     try {
       if (i == 2) {
@@ -54,13 +57,13 @@ Future<Playlist> loadPlaylist(
       } else {
         Uri u = Uri.https(pf[i == 0 ? 'instance' : 'authInstance'], 'playlists/$url');
         list = Playlist.fromJson(jsonDecode(utf8.decode((await get(u)).bodyBytes)), url)..backup();
-        break;
+        return list;
       }
     } catch (e) {
       debugPrint('$e');
     }
   }
-  return list;
+  return timeTried == 0 && list == null ? await loadPlaylist(url, path) : list!;
 }
 
 Future<void> fetchBookmarks() async {
@@ -121,6 +124,26 @@ Future<void> trending() async {
 }
 
 Future<void> addToPlaylist({
+  required String playlistId,
+  required MediaItem item,
+  required BuildContext c,
+}) async {
+  if (pf['token'] == '') return;
+  try {
+    Playlist playlist = await Playlist.fromStorage(playlistId);
+    if (playlist.list.indexWhere((e) => e.id == item.id) != -1) {
+      showSnack('Already saved, tap to add again', false, onTap: () async {
+        await forceAddToPlaylist(playlistId: playlistId, item: item, c: c);
+      });
+      return;
+    } else {}
+  } catch (e) {
+    //Playlist not offline
+  }
+  forceAddToPlaylist(playlistId: playlistId, item: item, c: c);
+}
+
+Future<void> forceAddToPlaylist({
   required String playlistId,
   required MediaItem item,
   required BuildContext c,

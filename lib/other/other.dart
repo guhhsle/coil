@@ -47,14 +47,20 @@ void fetchColor(bool p) {
   });
 }
 
-void showSnack(String text, bool good) {
+void showSnack(String text, bool good, {Function()? onTap}) {
   ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
     SnackBar(
       backgroundColor: good ? Colors.green.shade200 : Colors.red.shade200,
       content: Center(
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.black),
+        child: TextButton(
+          onPressed: onTap ?? () {},
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     ),
