@@ -11,10 +11,10 @@ import '../data.dart';
 import '../functions/audio.dart';
 import '../functions/cache.dart';
 import '../functions/single_child.dart';
+import '../http/generate.dart';
+import '../http/playlist.dart';
 import '../layer.dart';
 import '../pages/page_artist.dart';
-import 'generate.dart';
-import 'playlist.dart';
 
 //																	USER PLAYLIST TO MAP
 
@@ -152,7 +152,7 @@ void showLinks(MediaItem item, BuildContext context) {
 
 //																	MEDIA MAP
 
-Layer mediaToMap(dynamic item) {
+Layer mediaToLayer(dynamic item) {
   item as MediaItem;
   ValueNotifier<bool> loaded = ValueNotifier(false);
   unawaited(forceLoad(item).then((v) => loaded.value = true));

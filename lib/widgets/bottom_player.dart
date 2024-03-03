@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data.dart';
 import '../functions/audio.dart';
-import '../http/sheets.dart';
+import '../functions/sheets.dart';
 import '../layer.dart';
 import 'sheet_queue.dart';
 
@@ -46,7 +46,7 @@ class BottomPlayerState extends State<BottomPlayer> {
                           ),
                           onLongPress: () => showSheet(
                             scroll: true,
-                            func: mediaToMap,
+                            func: mediaToLayer,
                             param: queuePlaying[current.value],
                           ),
                           borderRadius: BorderRadius.circular(6),

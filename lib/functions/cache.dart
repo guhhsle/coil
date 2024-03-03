@@ -5,8 +5,8 @@ import 'package:coil/functions/other.dart';
 
 import '../data.dart';
 import '../http/playlist.dart';
-import '../http/sheets.dart';
 import '../playlist.dart';
+import 'song.dart';
 
 Future<void> refreshBookmarks() async {
   try {
@@ -18,7 +18,7 @@ Future<void> refreshBookmarks() async {
         "thumbnailUrl": "",
         "uploader": "Local",
         "videos": 0,
-        "relatedStreams": [],
+        "relatedStreams": <Map>[],
       },
       'Bookmarks',
     )..backup();

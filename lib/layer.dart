@@ -25,12 +25,12 @@ class Setting {
   });
 
   ListTile toTile(BuildContext context) {
-    Widget? leading, trailing;
+    Widget? lead, trail;
     if (secondary == null) {
-      leading = Icon(icon, color: iconColor);
-      trailing = Text(t(trailing));
+      lead = Icon(icon, color: iconColor);
+      trail = Text(t(trailing));
     } else {
-      trailing = InkWell(
+      trail = InkWell(
         borderRadius: BorderRadius.circular(10),
         child: Icon(icon, color: iconColor),
         onTap: () {
@@ -41,9 +41,9 @@ class Setting {
     }
 
     return ListTile(
-      leading: leading,
+      leading: lead,
       title: Text(t(title)),
-      trailing: trailing,
+      trailing: trail,
       onTap: () {
         onTap(context);
         refreshLayer();

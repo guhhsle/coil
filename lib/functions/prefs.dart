@@ -1,3 +1,4 @@
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data.dart';
@@ -42,15 +43,9 @@ Future<void> initPrefs() async {
     }
   }
   if (pf['appDirectory'] == '') {
-    try {
-      pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
-    } catch (e) {
-      showSnack('$e', false);
-    }
+    pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
   }
 }
-
-getApplicationCacheDirectory() {}
 
 void revPref(
   String pref, {
