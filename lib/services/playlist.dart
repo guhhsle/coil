@@ -74,10 +74,7 @@ Future<Playlist> loadPlaylist(
   }
 }
 
-Future<void> fetchBookmarks() async {
-  List<Playlist> tempBookmarks = [];
-  List<Future> futures = [];
-
+Future<void> refreshBookmarks() async {
   try {
     bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
   } catch (e) {
@@ -92,6 +89,14 @@ Future<void> fetchBookmarks() async {
       'Bookmarks',
     )..backup();
   }
+  refreshPlaylist.value = !refreshPlaylist.value;
+}
+
+Future<void> fetchBookmarks() async {
+  List<Playlist> tempBookmarks = [];
+  List<Future> futures = [];
+
+  refreshBookmarks();
 
   for (int i = 0; i < pf['bookmarks'].length; i++) {
     futures.add(loadPlaylist(pf['bookmarks'][i], [2, 0, 1]).then(
@@ -256,8 +261,7 @@ Future<void> forceAddBackup(
     local.raw['relatedStreams'].add(mediaToMap(item));
   }
   await local.backup();
-  bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
-  refreshPlaylist.value = !refreshPlaylist.value;
+  await refreshBookmarks();
 }
 
 Future<void> forceRemoveBackup(
@@ -277,10 +281,9 @@ Future<void> forceRemoveBackup(
     await File('${pf['appDirectory']}/$url.json').delete();
   } else {
     local.name = t(url);
-    await local.backup();
-    bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
-    refreshPlaylist.value = !refreshPlaylist.value;
   }
+  await local.backup();
+  await refreshBookmarks();
 }
 
 Future<void> addTo100(MediaItem item) async {
