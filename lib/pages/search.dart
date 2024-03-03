@@ -59,7 +59,7 @@ class Delegate extends SearchDelegate {
                       Icons.remove_rounded,
                       '',
                       (c) => query = history[i],
-                      onHold: (c) {
+                      secondary: (c) {
                         List<String> l = pf['searchHistory'];
                         setPref('searchHistory', l..removeAt(i), refresh: true);
                         //searchPress(true, context);

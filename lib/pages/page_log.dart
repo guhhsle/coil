@@ -69,7 +69,7 @@ class _PageLogState extends State<PageLog> {
                                 showSnack('Clipboard', true);
                                 Navigator.of(context).pop();
                               },
-                              onHold: (c) {
+                              secondary: (c) {
                                 pf['instanceHistory'].removeAt(i);
                                 setPref('instanceHistory', pf['instanceHistory'], refresh: true);
                               },
@@ -94,9 +94,7 @@ class _PageLogState extends State<PageLog> {
                   );
                 }
               },
-              icon: const Icon(
-                Icons.domain_rounded,
-              ),
+              icon: const Icon(Icons.domain_rounded),
             ),
           ),
         ],

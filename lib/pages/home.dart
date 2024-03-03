@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../functions.dart';
 import '../layer.dart';
@@ -90,12 +91,18 @@ class _HomeState extends State<Home> {
                 param: 0,
                 func: (non) => Layer(
                   action: Setting(
-                    'Delete',
-                    Icons.clear_all_rounded,
+                    pf['instance'],
+                    Icons.domain_rounded,
                     '',
-                    (c) {
-                      setPref('instanceHistory', <String>[]);
-                      Navigator.of(c).pop();
+                    (c) async {
+                      if (await canLaunchUrl(
+                        Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
+                      )) {
+                        await launchUrl(
+                          Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
                     },
                   ),
                   list: [
