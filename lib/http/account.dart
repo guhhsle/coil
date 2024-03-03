@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:coil/other/other.dart';
-import 'package:coil/services/playlist.dart';
-
 import '../data.dart';
-import '../functions.dart';
 import 'package:http/http.dart';
+
+import '../functions/other.dart';
+import '../functions/prefs.dart';
+import 'playlist.dart';
 
 Future<bool> login(
   String username,
@@ -37,9 +37,7 @@ Future<bool> subscribed(String channelId) async {
     Uri.https(pf['authInstance'], 'subscribed', {
       'channelId': channelId,
     }),
-    headers: {
-      'Authorization': pf['token'],
-    },
+    headers: {'Authorization': pf['token']},
   );
   return jsonDecode(result.body)['subscribed'];
 }
@@ -58,11 +56,7 @@ Future<void> unSubscribe(String channelId, bool s) async {
 Future<void> feed() async {
   if (pf['token'] == '') return;
   Response response = await get(
-    Uri.https(
-      pf['authInstance'],
-      'feed',
-      {'authToken': pf['token']},
-    ),
+    Uri.https(pf['authInstance'], 'feed', {'authToken': pf['token']}),
   );
   userSubscriptions.value = jsonDecode(utf8.decode(response.bodyBytes));
 }

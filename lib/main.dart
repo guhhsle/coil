@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
-import 'services/audio.dart';
-import 'functions.dart';
+import 'functions/audio.dart';
+import 'functions/other.dart';
+import 'functions/prefs.dart';
 import 'pages/home.dart';
 import 'pages/page_log.dart';
 

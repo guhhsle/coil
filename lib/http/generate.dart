@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:coil/services/playlist.dart';
-import 'package:coil/services/song.dart';
 import 'package:http/http.dart';
 
 import '../data.dart';
+import '../functions/song.dart';
 import '../playlist.dart';
+import 'playlist.dart';
 
 Map<int, List<MediaItem>> generated = {};
 Future<bool> generate(List<MediaItem> list) async {
@@ -28,7 +28,8 @@ Future<bool> generate(List<MediaItem> list) async {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
         MediaItem item = generated[key]!.removeAt(j);
-        int n = item.extras!['verified'] + 2 * item.extras!['reps'] + item.extras!['index'] ~/ 2;
+        int n = item.extras!['verified'] + 2 * item.extras!['reps'];
+        n += item.extras!['index'] ~/ 2 as int;
         if (!generated.containsKey(n)) {
           generated.addAll({
             n: [item]

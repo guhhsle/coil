@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../data.dart';
-import '../functions.dart';
+import '../functions/other.dart';
+import '../functions/prefs.dart';
 import '../layer.dart';
 
 Layer interfaceSet(dynamic non) => Layer(
@@ -23,7 +25,7 @@ Layer interfaceSet(dynamic non) => Layer(
           'Reverse',
           Icons.low_priority_rounded,
           '${pf['reverse']}',
-          (c) => revPref('reverse', refresh: true),
+          (c) => revPref('reverse'),
         ),
         Setting(
           'Top',
@@ -39,7 +41,7 @@ Layer interfaceSet(dynamic non) => Layer(
           'Artist in tile',
           Icons.person_rounded,
           '${pf['artist']}',
-          (c) => revPref('artist', refresh: true),
+          (c) => revPref('artist'),
         ),
         Setting(
           'Search',
@@ -66,16 +68,14 @@ Layer interfaceSet(dynamic non) => Layer(
                       setPref(
                         'searchOrder',
                         l..insert(i - 1, l.removeAt(i)),
-                        refresh: true,
                       );
                     },
-                    onHold: (c) {
+                    secondary: (c) {
                       if (i == 0) return;
                       List<String> l = pf['searchOrder'];
                       setPref(
                         'searchOrder',
                         l..insert(i - 1, l.removeAt(i)),
-                        refresh: true,
                       );
                     },
                   ),
@@ -85,3 +85,46 @@ Layer interfaceSet(dynamic non) => Layer(
         ),
       ],
     );
+
+Layer themeMap(dynamic p) {
+  p is bool;
+  Layer layer = Layer(
+      action: Setting(
+        pf[p ? 'primary' : 'background'],
+        p ? Icons.colorize_rounded : Icons.tonality_rounded,
+        '',
+        (c) => fetchColor(p),
+      ),
+      list: []);
+  for (int i = 0; i < colors.length; i++) {
+    String name = colors.keys.toList()[i];
+    layer.list.add(
+      Setting(
+        name,
+        iconsTheme[name]!,
+        '',
+        (c) => setPref(
+          p ? 'primary' : 'background',
+          name,
+          refresh: true,
+        ),
+        iconColor: colors.values.elementAt(i),
+      ),
+    );
+  }
+  return layer;
+}
+
+void fetchColor(bool p) {
+  Clipboard.getData(Clipboard.kTextPlain).then((value) {
+    if (value == null || value.text == null || int.tryParse('0xFF${value.text!.replaceAll('#', '')}') == null) {
+      showSnack('Clipboard HEX', false);
+    } else {
+      setPref(
+        p ? 'primary' : 'background',
+        value.text,
+        refresh: true,
+      );
+    }
+  });
+}

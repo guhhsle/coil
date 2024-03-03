@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'data.dart';
-import 'functions.dart';
+import 'functions/other.dart';
 import 'theme.dart';
 import 'widgets/sheet_model.dart';
 import 'widgets/sheet_scroll.dart';
@@ -23,6 +23,39 @@ class Setting {
     this.onHold,
     this.iconColor,
   });
+
+  ListTile toTile(BuildContext context) {
+    Widget? leading, trailing;
+    if (secondary == null) {
+      leading = Icon(icon, color: iconColor);
+      trailing = Text(t(trailing));
+    } else {
+      trailing = InkWell(
+        borderRadius: BorderRadius.circular(10),
+        child: Icon(icon, color: iconColor),
+        onTap: () {
+          secondary!(context);
+          refreshLayer();
+        },
+      );
+    }
+
+    return ListTile(
+      leading: leading,
+      title: Text(t(title)),
+      trailing: trailing,
+      onTap: () {
+        onTap(context);
+        refreshLayer();
+      },
+      onLongPress: onHold == null
+          ? null
+          : () {
+              onHold!(context);
+              refreshLayer();
+            },
+    );
+  }
 }
 
 class Layer {

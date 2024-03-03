@@ -1,9 +1,9 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:coil/services/account.dart';
 import '../data.dart';
 import 'package:flutter/material.dart';
 
-import '../services/song.dart';
+import '../functions/song.dart';
+import '../http/account.dart';
 import 'song_tile.dart';
 
 class Subscriptions extends StatelessWidget {

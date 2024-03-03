@@ -1,7 +1,7 @@
-import 'package:coil/functions.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions/other.dart';
 import '../pages/page_artist.dart';
 import '../pages/playlist_page.dart';
 

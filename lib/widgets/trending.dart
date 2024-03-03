@@ -2,8 +2,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../services/playlist.dart';
-import '../services/song.dart';
+import '../functions/song.dart';
+import '../http/playlist.dart';
 import 'song_tile.dart';
 
 class Trending extends StatelessWidget {

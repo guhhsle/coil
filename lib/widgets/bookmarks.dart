@@ -1,9 +1,9 @@
 import 'package:coil/playlist.dart';
-import 'package:coil/services/playlist.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../functions.dart';
+import '../functions/cache.dart';
+import '../functions/other.dart';
 import 'thumbnail.dart';
 
 class Bookmarks extends StatelessWidget {

@@ -6,9 +6,8 @@ import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions/audio.dart';
 import '../layer.dart';
-import '../other/other.dart';
-import '../services/audio.dart';
 import '../widgets/body.dart';
 
 class PageSettings extends StatefulWidget {

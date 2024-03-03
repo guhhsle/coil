@@ -27,7 +27,6 @@ Map pf = {
   'background': 'Ivory',
   'primary': 'Black',
   //HOME
-  //'start': 'Playlists',
   'homeOrder': [
     'Playlists',
     'Offline',

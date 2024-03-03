@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import '../data.dart';
-import '../services/account.dart';
-import '../services/audio.dart';
-import '../services/song.dart';
+import '../functions/audio.dart';
+import '../functions/song.dart';
+import '../http/account.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
 import '../widgets/song_tile.dart';
@@ -60,16 +60,10 @@ class PageArtistState extends State<PageArtist> {
       floatingActionButton: const Float(),
       appBar: AppBar(
         title: Text(
-          widget.artist.replaceAll(' - Topic', '').replaceAll(
-                'Album - ',
-                '',
-              ),
+          widget.artist.replaceAll(' - Topic', '').replaceAll('Album - ', ''),
         ),
         actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: TopIcon(),
-          ),
+          Padding(padding: EdgeInsets.only(right: 8), child: TopIcon()),
         ],
       ),
       body: Body(
@@ -128,9 +122,7 @@ class PageArtistState extends State<PageArtist> {
                   List list = selectedHome == 'Videos' ? data['relatedStreams'] : data['content'];
                   List<MediaItem> songList = [];
                   return RefreshIndicator(
-                    onRefresh: () async {
-                      await channelVideos(widget.url);
-                    },
+                    onRefresh: () async => await channelVideos(widget.url),
                     child: ListView(
                       padding: const EdgeInsets.only(bottom: 32, top: 16),
                       physics: scrollPhysics,

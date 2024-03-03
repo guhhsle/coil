@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import '../data.dart';
-import '../functions.dart';
-import '../other/other.dart';
+import '../functions/other.dart';
 import '../playlist.dart';
 import 'playlist.dart';
 

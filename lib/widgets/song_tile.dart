@@ -2,9 +2,9 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions/audio.dart';
+import '../http/sheets.dart';
 import '../layer.dart';
-import '../services/audio.dart';
-import '../services/sheets.dart';
 
 class SongTile extends StatelessWidget {
   final List<MediaItem> list;

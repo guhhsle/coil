@@ -1,7 +1,7 @@
-import 'package:coil/functions.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions/prefs.dart';
 import '../layer.dart';
 
 Layer homeSet(dynamic non) => Layer(
@@ -10,41 +10,42 @@ Layer homeSet(dynamic non) => Layer(
         Icons.door_front_door_rounded,
         'Reorder',
         (c) => showSheet(
-            hidePrev: c,
-            func: (non) => Layer(
-                  action: Setting(
-                    'Home',
-                    Icons.door_front_door_rounded,
-                    '',
-                    (c) {},
-                  ),
-                  list: [
-                    for (int i = 0; i < 5; i++)
-                      Setting(
-                        pf['homeOrder'][i],
-                        Icons.expand_less_rounded,
-                        '',
-                        (c) {
-                          if (i == 0) return;
-                          List<String> l = pf['homeOrder'];
-                          setPref(
-                            'homeOrder',
-                            l..insert(i - 1, l.removeAt(i)),
-                            refresh: true,
-                          );
-                        },
-                        onHold: (c) {
-                          if (i == 0) return;
-                          List<String> l = pf['homeOrder'];
-                          setPref(
-                            'homeOrder',
-                            l..insert(i - 1, l.removeAt(i)),
-                            refresh: true,
-                          );
-                        },
-                      ),
-                  ],
-                )),
+          hidePrev: c,
+          func: (non) => Layer(
+            action: Setting(
+              'Home',
+              Icons.door_front_door_rounded,
+              '',
+              (c) {},
+            ),
+            list: [
+              for (int i = 0; i < 5; i++)
+                Setting(
+                  pf['homeOrder'][i],
+                  Icons.expand_less_rounded,
+                  '',
+                  (c) {
+                    if (i == 0) return;
+                    List<String> l = pf['homeOrder'];
+                    setPref(
+                      'homeOrder',
+                      l..insert(i - 1, l.removeAt(i)),
+                      refresh: true,
+                    );
+                  },
+                  secondary: (c) {
+                    if (i == 0) return;
+                    List<String> l = pf['homeOrder'];
+                    setPref(
+                      'homeOrder',
+                      l..insert(i - 1, l.removeAt(i)),
+                      refresh: true,
+                    );
+                  },
+                ),
+            ],
+          ),
+        ),
       ),
       list: [
         Setting(

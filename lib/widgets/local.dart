@@ -46,16 +46,12 @@ class LocalSongsState extends State<LocalSongs> {
               );
             }
           }
-          list.sort((item1, item2) {
-            return item1.title.compareTo(item2.title);
-          });
+          list.sort((item1, item2) => item1.title.compareTo(item2.title));
           return ListView.builder(
             itemCount: list.length,
             padding: const EdgeInsets.only(top: 8, bottom: 32),
             physics: scrollPhysics,
-            itemBuilder: (context, i) {
-              return SongTile(i: i, list: list);
-            },
+            itemBuilder: (context, i) => SongTile(i: i, list: list),
           );
         },
       ),

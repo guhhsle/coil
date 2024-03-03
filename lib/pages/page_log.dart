@@ -1,15 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:coil/main.dart';
-import 'package:coil/other/other.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
-import '../functions.dart';
+import '../functions/other.dart';
+import '../functions/prefs.dart';
+import '../http/account.dart';
 import '../layer.dart';
-import '../services/account.dart';
 import '../widgets/body.dart';
 
 class PageLog extends StatefulWidget {
@@ -47,7 +47,6 @@ class _PageLogState extends State<PageLog> {
                     List<String> history = pf['instanceHistory'];
                     showSheet(
                       scroll: true,
-                      param: 0,
                       func: (non) => Layer(
                         action: Setting(
                           'Delete',

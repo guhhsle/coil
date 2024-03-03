@@ -2,16 +2,18 @@
 
 import 'dart:async';
 
+import 'package:coil/functions/audio.dart';
 import 'package:coil/layer.dart';
 import 'package:coil/playlist.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../functions.dart';
-import '../services/audio.dart';
-import '../services/export.dart';
-import '../services/generate.dart';
-import '../services/playlist.dart';
+import '../functions/cache.dart';
+import '../functions/other.dart';
+import '../functions/prefs.dart';
+import '../http/export.dart';
+import '../http/generate.dart';
+import '../http/playlist.dart';
 import '../widgets/body.dart';
 import '../widgets/song_tile.dart';
 
@@ -58,11 +60,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                 title: TextFormField(
                   maxLines: 1,
                   maxLength: 24,
-                  initialValue: widget.user
-                      ? list.name
-                      : formatList(
-                          list.name,
-                        ),
+                  initialValue: widget.user ? list.name : formatList(list.name),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -74,7 +72,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                   ),
-                  onFieldSubmitted: (title) async => await renamePlaylist(
+                  onFieldSubmitted: (title) => renamePlaylist(
                     playlistId: widget.url,
                     newName: title,
                   ),
@@ -85,10 +83,10 @@ class PlaylistPageState extends State<PlaylistPage> {
                     tooltip: l['Generate similar'],
                     onPressed: () async {
                       setState(() => generating = true);
-                      await generate(list.list).then(
-                        (v) => setState(() => generating = v),
-                      );
-                      skipTo(0);
+                      generate(list.list).then((v) {
+                        setState(() => generating = v);
+                        skipTo(0);
+                      });
                     },
                     icon: generating
                         ? SizedBox(
@@ -106,6 +104,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: IconButton(
+                      icon: const Icon(Icons.menu_rounded),
                       tooltip: l['Menu'],
                       onPressed: () {
                         showSheet(
@@ -117,11 +116,8 @@ class PlaylistPageState extends State<PlaylistPage> {
                                 Icons.refresh_rounded,
                                 '',
                                 (c) async {
-                                  List<int> path = widget.path.toList();
-                                  list = await loadPlaylist(
-                                      widget.url,
-                                      !path.remove(2) ? path : path
-                                        ..add(2));
+                                  List<int> path = widget.path.toList()..remove(2);
+                                  list = await loadPlaylist(widget.url, path);
                                   setState(() {});
                                   Navigator.of(context).pop();
                                 },
@@ -156,23 +152,13 @@ class PlaylistPageState extends State<PlaylistPage> {
                                   'Export',
                                   Icons.settings_backup_restore_rounded,
                                   '',
-                                  (c) async {
-                                    await exportOther(snap.data!);
+                                  (c) {
                                     Navigator.of(c).pop();
+                                    exportOther(snap.data!);
                                   },
                                 ),
-                                Setting(
-                                  'Creator',
-                                  Icons.person_rounded,
-                                  list.uploader,
-                                  (c) {},
-                                ),
-                                Setting(
-                                  'Items',
-                                  Icons.numbers_rounded,
-                                  '${list.items}',
-                                  (c) {},
-                                ),
+                                Setting('Creator', Icons.person_rounded, list.uploader, (c) {}),
+                                Setting('Items', Icons.numbers_rounded, '${list.items}', (c) {}),
                                 Setting(
                                   'Delete',
                                   Icons.delete_forever_rounded,
@@ -197,7 +183,6 @@ class PlaylistPageState extends State<PlaylistPage> {
                           },
                         );
                       },
-                      icon: const Icon(Icons.menu_rounded),
                     ),
                   )
                 ],
@@ -205,12 +190,10 @@ class PlaylistPageState extends State<PlaylistPage> {
               body: Body(
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    List<int> path = widget.path.toList();
-                    list = await loadPlaylist(
-                        widget.url,
-                        !path.remove(2) ? path : path
-                          ..add(2));
+                    List<int> path = widget.path.toList()..remove(2);
+                    list = await loadPlaylist(widget.url, path);
                     setState(() {});
+                    Navigator.of(context).pop();
                   },
                   child: ListView.builder(
                     physics: scrollPhysics,

@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/data.dart';
-import 'package:coil/functions.dart';
-import 'package:coil/services/song.dart';
+
+import 'functions/other.dart';
+import 'functions/song.dart';
 
 class Playlist {
   String url, thumbnail, name, uploader;

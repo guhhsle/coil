@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:coil/layer.dart';
-import 'package:coil/services/playlist.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../functions.dart';
-import '../services/audio.dart';
-import '../services/song.dart';
+import '../functions/audio.dart';
+import '../functions/other.dart';
+import '../functions/prefs.dart';
+import '../functions/song.dart';
+import '../http/other.dart';
+import '../http/playlist.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
 import '../widgets/song_tile.dart';
@@ -41,7 +43,6 @@ class Delegate extends SearchDelegate {
             List<String> history = pf['searchHistory'];
             showSheet(
               scroll: true,
-              param: 0,
               func: (non) => Layer(
                 action: Setting(
                   'Delete',

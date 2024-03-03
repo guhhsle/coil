@@ -3,15 +3,16 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:coil/services/song.dart';
+import 'package:coil/http/other.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
+import '../functions/audio.dart';
+import '../functions/cache.dart';
+import '../functions/single_child.dart';
 import '../layer.dart';
-import '../other/other.dart';
 import '../pages/page_artist.dart';
-import 'audio.dart';
 import 'generate.dart';
 import 'playlist.dart';
 

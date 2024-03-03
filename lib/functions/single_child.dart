@@ -1,73 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../data.dart';
-import '../functions.dart';
 import '../layer.dart';
 import '../widgets/custom_card.dart';
-
-Layer themeMap(dynamic p) {
-  p is bool;
-  Layer layer = Layer(
-      action: Setting(
-        pf[p ? 'primary' : 'background'],
-        p ? Icons.colorize_rounded : Icons.tonality_rounded,
-        '',
-        (c) => fetchColor(p),
-      ),
-      list: []);
-  for (int i = 0; i < colors.length; i++) {
-    String name = colors.keys.toList()[i];
-    layer.list.add(
-      Setting(
-        name,
-        iconsTheme[name]!,
-        '',
-        (c) => setPref(
-          p ? 'primary' : 'background',
-          name,
-          refresh: true,
-        ),
-        iconColor: colors.values.elementAt(i),
-      ),
-    );
-  }
-  return layer;
-}
-
-void fetchColor(bool p) {
-  Clipboard.getData(Clipboard.kTextPlain).then((value) {
-    if (value == null || value.text == null || int.tryParse('0xFF${value.text!.replaceAll('#', '')}') == null) {
-      showSnack('Clipboard HEX', false);
-    } else {
-      setPref(
-        p ? 'primary' : 'background',
-        value.text,
-        refresh: true,
-      );
-    }
-  });
-}
-
-void showSnack(String text, bool good, {Function()? onTap}) {
-  ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-    SnackBar(
-      backgroundColor: good ? Colors.green.shade200 : Colors.red.shade200,
-      content: Center(
-        child: TextButton(
-          onPressed: onTap ?? () {},
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
 
 Future<void> singleChildSheet({
   required String title,

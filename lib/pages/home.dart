@@ -3,15 +3,17 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../functions.dart';
+import '../functions/audio.dart';
+import '../functions/cache.dart';
+import '../functions/other.dart';
+import '../functions/prefs.dart';
+import '../http/account.dart';
+import '../http/playlist.dart';
 import '../layer.dart';
-import '../services/account.dart';
-import '../services/audio.dart';
 import '../widgets/animated_text.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../services/playlist.dart';
 import '../widgets/body.dart';
 import '../widgets/bookmarks.dart';
 import '../widgets/custom_chip.dart';
@@ -88,22 +90,15 @@ class _HomeState extends State<Home> {
               List<String> history = pf['instanceHistory'];
               showSheet(
                 scroll: true,
-                param: 0,
                 func: (non) => Layer(
                   action: Setting(
                     pf['instance'],
                     Icons.domain_rounded,
                     '',
-                    (c) async {
-                      if (await canLaunchUrl(
-                        Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-                      )) {
-                        await launchUrl(
-                          Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      }
-                    },
+                    (c) async => await launchUrl(
+                      Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
+                      mode: LaunchMode.externalApplication,
+                    ),
                   ),
                   list: [
                     for (int i = 0; i < history.length; i++)
@@ -118,7 +113,7 @@ class _HomeState extends State<Home> {
                         },
                         secondary: (c) {
                           pf['instanceHistory'].removeAt(i);
-                          setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                          setPref('instanceHistory', pf['instanceHistory']);
                         },
                       ),
                     Setting(
@@ -126,9 +121,9 @@ class _HomeState extends State<Home> {
                       Icons.add_rounded,
                       '',
                       (c) async {
-                        String newInstance = await getInput('', hintText: 'Add instance');
+                        String newInstance = await getInput('');
                         pf['instanceHistory'].add(newInstance);
-                        setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                        setPref('instanceHistory', pf['instanceHistory']);
                         setPref('instance', newInstance, refresh: true);
                         barText.value = getInstanceName(newInstance);
                       },
@@ -153,20 +148,14 @@ class _HomeState extends State<Home> {
           IconButton(
             tooltip: l['Search'],
             icon: const Icon(Icons.fiber_manual_record_outlined),
-            onPressed: () {
-              showSearch(context: context, delegate: Delegate());
-            },
+            onPressed: () => showSearch(context: context, delegate: Delegate()),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               tooltip: l['Menu'],
               icon: const Icon(Icons.menu_rounded),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PageSettings(),
-                ),
-              ),
+              onPressed: () => goToPage(const PageSettings()),
             ),
           ),
         ],
@@ -232,14 +221,11 @@ class _HomeTagsState extends State<HomeTags> {
         itemCount: homeMap.length,
         itemBuilder: (context, i) => CustomChip(
           selected: selectedHome == homeMap.keys.elementAt(i),
-          onSelected: (val) {
-            pageController.animateToPage(
-              i,
-              duration: const Duration(milliseconds: 256),
-              curve: Curves.easeOutQuad,
-            );
-            setState(() {});
-          },
+          onSelected: (val) => pageController.animateToPage(
+            i,
+            duration: const Duration(milliseconds: 256),
+            curve: Curves.easeOutQuad,
+          ),
           label: homeMap.keys.elementAt(i),
         ),
       ),

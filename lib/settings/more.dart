@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../functions.dart';
+import '../functions/audio.dart';
+import '../functions/prefs.dart';
+import '../functions/single_child.dart';
 import '../layer.dart';
 import '../log.dart';
 import '../other/countries.dart';
 import '../other/license.dart';
-import '../other/other.dart';
-import '../services/audio.dart';
 
 Layer moreSet(dynamic non) => Layer(
       action: Setting(

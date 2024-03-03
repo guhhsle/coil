@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../data.dart';
+import '../http/playlist.dart';
 import '../layer.dart';
-import '../services/playlist.dart';
 import 'thumbnail.dart';
 
 class UserPlaylists extends StatelessWidget {
@@ -60,7 +60,7 @@ class CreatePlaylist extends StatelessWidget {
                 'Create a playlist',
                 Icons.playlist_add_rounded,
                 '',
-                (c) async => await createPlaylist().then((v) => Navigator.of(c).pop()),
+                (c) => createPlaylist().then((v) => Navigator.of(c).pop()),
               ),
               list: [],
             ),
@@ -80,7 +80,7 @@ class CreatePlaylist extends StatelessWidget {
                 'Create a playlist',
                 Icons.playlist_add_rounded,
                 '',
-                (c) async => await createPlaylist().then((v) => Navigator.of(c).pop()),
+                (c) => createPlaylist().then((v) => Navigator.of(c).pop()),
               ),
               list: [],
             ),

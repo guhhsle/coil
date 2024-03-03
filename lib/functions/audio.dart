@@ -3,16 +3,17 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:coil/functions.dart';
+import 'package:coil/functions/prefs.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 //import 'package:open_as_default/open_as_default.dart';
 //import 'package:path/path.dart' as path;
 
 import '../data.dart';
+import '../http/other.dart';
+import '../http/playlist.dart';
 import '../widgets/sheet_queue.dart';
-import 'playlist.dart';
-import 'song.dart';
+import 'cache.dart';
 
 enum LoopMode { off, one, all }
 
@@ -130,7 +131,9 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> addQueueItem(MediaItem mediaItem) => addItemToQueue(mediaItem);
 
   @override
-  Future<void> insertQueueItem(int index, MediaItem mediaItem) => insertItemToQueue(index, mediaItem);
+  Future<void> insertQueueItem(int index, MediaItem mediaItem) {
+    return insertItemToQueue(index, mediaItem);
+  }
 
   @override
   Future<void> removeQueueItemAt(int index) => removeItemAt(index);
@@ -264,6 +267,30 @@ void load(List<MediaItem> list) {
   queuePlaying = list.toList();
 }
 
+void checkToRemember(Duration duration, Duration position) {
+  if (duration.inMinutes >= pf['rememberThreshold'] && position.inSeconds > 10 && position.inSeconds % 5 == 0) {
+    List<String> urls = pf['rememberURLs'] as List<String>;
+    if (!urls.contains(queuePlaying[current.value].id)) {
+      if (urls.length > pf['rememberLimit']) {
+        urls.removeLast();
+        pf['rememberTimes'].removeLast;
+      }
+      urls.insert(0, queuePlaying[current.value].id);
+      pf['rememberTimes'].insert(0, '0');
+      setPref('rememberURLs', urls);
+    } else {
+      pf['rememberTimes'][urls.indexOf(queuePlaying[current.value].id)] = '${position.inSeconds}';
+    }
+    setPref('rememberTimes', pf['rememberTimes']);
+  }
+}
+
+int rememberedPosition(String url) {
+  if (!pf['rememberURLs'].contains(url)) return 0;
+  int i = pf['rememberURLs'].indexOf(url);
+  return int.tryParse(pf['rememberTimes'][i]) ?? 0;
+}
+
 Future<void> skipTo(int i) async {
   if (i < 0 || i >= queuePlaying.length) return;
   current.value = i;
@@ -289,6 +316,8 @@ class AudioSlider extends StatelessWidget {
         stream: player.positionStream,
         builder: (context, position) {
           if (!position.hasData) return Container();
+          Duration max = player.duration ?? const Duration(hours: 1);
+          Duration pos = position.data!;
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -301,16 +330,16 @@ class AudioSlider extends StatelessWidget {
                   secondaryActiveColor: Theme.of(context).colorScheme.primary,
                   value: position.data!.inSeconds.toDouble(),
                   min: 0,
-                  onChanged: (doub) {
-                    player.seek(Duration(seconds: doub.toInt()));
-                  },
-                  max: (player.duration ?? const Duration(hours: 1)).inSeconds.toDouble(),
+                  onChanged: (d) => player.seek(
+                    Duration(seconds: d.toInt()),
+                  ),
+                  max: max.inSeconds.toDouble(),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 24),
                 child: Text(
-                  '${position.data!.inMinutes}:${position.data!.inSeconds % 60}',
+                  '${pos.inMinutes}:${pos.inSeconds % 60}',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -354,18 +383,10 @@ class FloatState extends State<Float> {
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
-                            builder: (context) {
-                              return const SheetQueue();
-                            },
+                            builder: (context) => const SheetQueue(),
                           );
                         },
-                        onTap: () {
-                          if (player.playing) {
-                            pause();
-                          } else {
-                            play();
-                          }
-                        },
+                        onTap: () => player.playing ? pause() : play(),
                         borderRadius: BorderRadius.circular(12),
                         child: (queuePlaying.isEmpty)
                             ? Container()
@@ -453,13 +474,7 @@ class TopIcon extends StatelessWidget {
                         builder: (context) => const SheetQueue(),
                       );
                     },
-                    onTap: () {
-                      if (player.playing) {
-                        pause();
-                      } else {
-                        play();
-                      }
-                    },
+                    onTap: () => player.playing ? pause() : play(),
                     child: Padding(
                       padding: !top ? const EdgeInsets.only(right: 20) : const EdgeInsets.all(8.0),
                       child: Icon(
