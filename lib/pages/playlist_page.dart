@@ -148,7 +148,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                                     } else {
                                       (pf['bookmarks'] as List<String>).add(widget.url);
                                     }
-                                    setPref('bookmarks', pf['bookmarks'], refresh: true);
+                                    setPref('bookmarks', pf['bookmarks']);
                                     unawaited(fetchBookmarks());
                                   },
                                 ),
