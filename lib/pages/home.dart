@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 import '../functions.dart';
+import '../layer.dart';
 import '../services/account.dart';
 import '../services/audio.dart';
 import '../widgets/animated_text.dart';
@@ -86,8 +87,9 @@ class _HomeState extends State<Home> {
               List<String> history = pf['instanceHistory'];
               showSheet(
                 scroll: true,
-                list: (context) => [
-                  Setting(
+                param: 0,
+                func: (non) => Layer(
+                  action: Setting(
                     'Delete',
                     Icons.clear_all_rounded,
                     '',
@@ -96,22 +98,24 @@ class _HomeState extends State<Home> {
                       Navigator.of(c).pop();
                     },
                   ),
-                  for (int i = 0; i < history.length; i++)
-                    Setting(
-                      history[i],
-                      Icons.remove_rounded,
-                      '',
-                      (c) async {
-                        setPref('instance', history[i]);
-                        barText.value = getInstanceName(history[i]);
-                        Navigator.of(context).pop();
-                      },
-                      onHold: (c) {
-                        pf['instanceHistory'].removeAt(i);
-                        setPref('instanceHistory', pf['instanceHistory'], refresh: true);
-                      },
-                    ),
-                ],
+                  list: [
+                    for (int i = 0; i < history.length; i++)
+                      Setting(
+                        history[i],
+                        Icons.remove_rounded,
+                        '',
+                        (c) async {
+                          setPref('instance', history[i]);
+                          barText.value = getInstanceName(history[i]);
+                          Navigator.of(context).pop();
+                        },
+                        onHold: (c) {
+                          pf['instanceHistory'].removeAt(i);
+                          setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                        },
+                      ),
+                  ],
+                ),
               );
             },
             child: ValueListenableBuilder(

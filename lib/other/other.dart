@@ -3,20 +3,22 @@ import 'package:flutter/services.dart';
 
 import '../data.dart';
 import '../functions.dart';
+import '../layer.dart';
 import '../widgets/custom_card.dart';
 
-List<Setting> themeMap(bool p) {
-  List<Setting> list = [
-    Setting(
-      p ? 'pf//primary' : 'pf//background',
-      p ? Icons.colorize_rounded : Icons.tonality_rounded,
-      '',
-      (c) => fetchColor(p),
-    ),
-  ];
+Layer themeMap(dynamic p) {
+  p is bool;
+  Layer layer = Layer(
+      action: Setting(
+        pf[p ? 'primary' : 'background'],
+        p ? Icons.colorize_rounded : Icons.tonality_rounded,
+        '',
+        (c) => fetchColor(p),
+      ),
+      list: []);
   for (int i = 0; i < colors.length; i++) {
     String name = colors.keys.toList()[i];
-    list.add(
+    layer.list.add(
       Setting(
         name,
         iconsTheme[name]!,
@@ -30,7 +32,7 @@ List<Setting> themeMap(bool p) {
       ),
     );
   }
-  return list;
+  return layer;
 }
 
 void fetchColor(bool p) {

@@ -1,8 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
-import '../functions.dart';
 import '../data.dart';
+import '../layer.dart';
 import '../services/audio.dart';
 import '../services/sheets.dart';
 
@@ -76,7 +76,8 @@ class SongTileChild extends StatelessWidget {
         },
         onLongPress: () => showSheet(
           scroll: true,
-          list: (context) => mediaToMap(list[i]),
+          func: mediaToMap,
+          param: list[i],
         ),
         leading: pf['songThumbnails'] && web
             ? Padding(

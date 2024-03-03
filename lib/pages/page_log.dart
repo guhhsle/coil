@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../functions.dart';
+import '../layer.dart';
 import '../services/account.dart';
 import '../widgets/body.dart';
 
@@ -46,8 +47,9 @@ class _PageLogState extends State<PageLog> {
                     List<String> history = pf['instanceHistory'];
                     showSheet(
                       scroll: true,
-                      list: (context) => [
-                        Setting(
+                      param: 0,
+                      func: (non) => Layer(
+                        action: Setting(
                           'Delete',
                           Icons.clear_all_rounded,
                           '',
@@ -56,22 +58,24 @@ class _PageLogState extends State<PageLog> {
                             Navigator.of(c).pop();
                           },
                         ),
-                        for (int i = 0; i < history.length; i++)
-                          Setting(
-                            history[i],
-                            Icons.remove_rounded,
-                            '',
-                            (c) async {
-                              Clipboard.setData(ClipboardData(text: history[i]));
-                              showSnack('Clipboard', true);
-                              Navigator.of(context).pop();
-                            },
-                            onHold: (c) {
-                              pf['instanceHistory'].removeAt(i);
-                              setPref('instanceHistory', pf['instanceHistory'], refresh: true);
-                            },
-                          ),
-                      ],
+                        list: [
+                          for (int i = 0; i < history.length; i++)
+                            Setting(
+                              history[i],
+                              Icons.remove_rounded,
+                              '',
+                              (c) async {
+                                Clipboard.setData(ClipboardData(text: history[i]));
+                                showSnack('Clipboard', true);
+                                Navigator.of(context).pop();
+                              },
+                              onHold: (c) {
+                                pf['instanceHistory'].removeAt(i);
+                                setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                              },
+                            ),
+                        ],
+                      ),
                     );
                   },
                 )

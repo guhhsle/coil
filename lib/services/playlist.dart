@@ -78,6 +78,8 @@ Future<void> fetchBookmarks() async {
   List<Playlist> tempBookmarks = [];
   List<Future> futures = [];
 
+  bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
+
   for (int i = 0; i < pf['bookmarks'].length; i++) {
     futures.add(loadPlaylist(pf['bookmarks'][i], [2, 0, 1]).then(
       (val) => tempBookmarks.add(val),
@@ -241,6 +243,8 @@ Future<void> forceAddBackup(
     local.raw['relatedStreams'].add(mediaToMap(item));
   }
   await local.backup();
+  bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
+  refreshPlaylist.value = !refreshPlaylist.value;
 }
 
 Future<void> forceRemoveBackup(
@@ -261,6 +265,8 @@ Future<void> forceRemoveBackup(
   } else {
     local.name = t(url);
     await local.backup();
+    bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
+    refreshPlaylist.value = !refreshPlaylist.value;
   }
 }
 

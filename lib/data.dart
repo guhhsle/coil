@@ -128,27 +128,12 @@ final navigatorKey = GlobalKey<NavigatorState>();
 List<MediaItem> queuePlaying = [];
 List<MediaItem> queueLoading = [];
 
+final ValueNotifier<bool> refreshLay = ValueNotifier(true);
 const ScrollPhysics scrollPhysics = BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
-
-class Setting {
-  final String title, trailing;
-  final IconData icon;
-  final Color? iconColor;
-  final void Function(BuildContext) onTap;
-  final void Function(BuildContext)? onHold;
-
-  const Setting(
-    this.title,
-    this.icon,
-    this.trailing,
-    this.onTap, {
-    this.iconColor,
-    this.onHold,
-  });
-}
-
 final ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData());
 final ValueNotifier<int> current = ValueNotifier(0);
 final ValueNotifier<PageController> controller = ValueNotifier(PageController());
 final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
 final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
+
+late Playlist bookmarksPlaylist;

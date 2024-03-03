@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:coil/layer.dart';
 import 'package:coil/services/playlist.dart';
 import 'package:flutter/material.dart';
 
@@ -40,8 +41,9 @@ class Delegate extends SearchDelegate {
             List<String> history = pf['searchHistory'];
             showSheet(
               scroll: true,
-              list: (context) => [
-                Setting(
+              param: 0,
+              func: (non) => Layer(
+                action: Setting(
                   'Delete',
                   Icons.clear_all_rounded,
                   '',
@@ -50,19 +52,21 @@ class Delegate extends SearchDelegate {
                     Navigator.of(c).pop();
                   },
                 ),
-                for (int i = 0; i < history.length; i++)
-                  Setting(
-                    history[i],
-                    Icons.remove_rounded,
-                    '',
-                    (c) => query = history[i],
-                    onHold: (c) {
-                      List<String> l = pf['searchHistory'];
-                      setPref('searchHistory', l..removeAt(i), refresh: true);
-                      //searchPress(true, context);
-                    },
-                  ),
-              ],
+                list: [
+                  for (int i = 0; i < history.length; i++)
+                    Setting(
+                      history[i],
+                      Icons.remove_rounded,
+                      '',
+                      (c) => query = history[i],
+                      onHold: (c) {
+                        List<String> l = pf['searchHistory'];
+                        setPref('searchHistory', l..removeAt(i), refresh: true);
+                        //searchPress(true, context);
+                      },
+                    ),
+                ],
+              ),
             );
           },
         ),

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../data.dart';
 import '../functions.dart';
+import '../layer.dart';
 import '../other/countries.dart';
 import '../pages/page_log.dart';
 import '../services/export.dart';
 
-List<Setting> accountSet() => [
-      Setting(
+Layer accountSet(dynamic non) => Layer(
+      action: Setting(
         'Configure',
         Icons.person_rounded,
         '',
@@ -17,68 +18,74 @@ List<Setting> accountSet() => [
           ),
         ),
       ),
-      Setting(
-        'Export',
-        Icons.settings_backup_restore_rounded,
-        '',
-        (c) => showSheet(
-          hidePrev: c,
-          list: (context) => [
-            Setting(
-              'Export type',
-              Icons.settings_backup_restore_rounded,
-              '',
-              (c) {},
+      list: [
+        Setting(
+          'Export',
+          Icons.settings_backup_restore_rounded,
+          '',
+          (c) => showSheet(
+            hidePrev: c,
+            func: (non) => Layer(
+              action: Setting(
+                'Export type',
+                Icons.settings_backup_restore_rounded,
+                '',
+                (c) {},
+              ),
+              list: [
+                Setting(
+                  'File per list',
+                  Icons.folder_outlined,
+                  '',
+                  (c) async {
+                    Navigator.of(c).pop();
+                    await exportUser(false);
+                  },
+                ),
+                Setting(
+                  'One file',
+                  Icons.description_rounded,
+                  '',
+                  (c) async {
+                    Navigator.of(c).pop();
+                    await exportUser(true);
+                  },
+                ),
+              ],
             ),
-            Setting(
-              'File per list',
-              Icons.folder_outlined,
-              '',
-              (c) async {
-                Navigator.of(c).pop();
-                await exportUser(false);
-              },
-            ),
-            Setting(
-              'One file',
-              Icons.description_rounded,
-              '',
-              (c) async {
-                Navigator.of(c).pop();
-                await exportUser(true);
-              },
-            ),
-          ],
+          ),
         ),
-      ),
-      Setting(
-        'Country',
-        Icons.outlined_flag_rounded,
-        'pf//location',
-        (c) => showSheet(
-          hidePrev: c,
-          scroll: true,
-          list: (context) => [
-            Setting(
-              'Country',
-              Icons.outlined_flag_rounded,
-              '',
-              (c) {},
+        Setting(
+          'Country',
+          Icons.outlined_flag_rounded,
+          pf['location'],
+          (c) => showSheet(
+            hidePrev: c,
+            scroll: true,
+            func: (non) => Layer(
+              action: Setting(
+                'Country',
+                Icons.outlined_flag_rounded,
+                '',
+                (c) {},
+              ),
+              list: [
+                ...countries.entries
+                    .map(
+                      (e) => Setting(
+                        e.value,
+                        Icons.language_rounded,
+                        '',
+                        (c) {
+                          Navigator.of(c).pop();
+                          setPref('location', e.value);
+                        },
+                      ),
+                    )
+                    .toList(),
+              ],
             ),
-            ...countries.entries
-                .map(
-                  (e) => Setting(
-                    e.value,
-                    Icons.language_rounded,
-                    '',
-                    (c) {
-                      Navigator.of(c).pop();
-                      setPref('location', e.value);
-                    },
-                  ),
-                )
-                .toList(),
-          ],
+          ),
         ),
-      ),
-    ];
+      ],
+    );

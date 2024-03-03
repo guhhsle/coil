@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:coil/layer.dart';
 import 'package:coil/playlist.dart';
 import 'package:flutter/material.dart';
 
@@ -107,89 +108,93 @@ class PlaylistPageState extends State<PlaylistPage> {
                     child: IconButton(
                       tooltip: l['Menu'],
                       onPressed: () {
-                        bool b = pf['bookmarks'].contains(widget.url);
                         showSheet(
-                          list: (context) => [
-                            Setting(
-                              'Refresh',
-                              Icons.refresh_rounded,
-                              '',
-                              (c) async {
-                                List<int> path = widget.path.toList();
-                                list = await loadPlaylist(
-                                    widget.url,
-                                    !path.remove(2) ? path : path
-                                      ..add(2));
-                                setState(() {});
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Setting(
-                              'Shuffle',
-                              Icons.low_priority_rounded,
-                              '',
-                              (c) {
-                                load(list.list);
-                                shuffle();
-                                skipTo(0);
-                                Navigator.of(c).pop();
-                              },
-                            ),
-                            Setting(
-                              b ? 'Remove from bookmarks' : 'Bookmark',
-                              b ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                              '',
-                              (c) {
-                                if (b) {
-                                  (pf['bookmarks'] as List<String>).remove(widget.url);
-                                } else {
-                                  (pf['bookmarks'] as List<String>).add(widget.url);
-                                }
-                                setPref('bookmarks', pf['bookmarks']);
-                                unawaited(fetchBookmarks());
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Setting(
-                              'Export',
-                              Icons.settings_backup_restore_rounded,
-                              '',
-                              (c) async {
-                                await exportOther(snap.data!);
-                                Navigator.of(c).pop();
-                              },
-                            ),
-                            Setting(
-                              'Creator',
-                              Icons.person_rounded,
-                              list.uploader,
-                              (c) {},
-                            ),
-                            Setting(
-                              'Items',
-                              Icons.numbers_rounded,
-                              '${list.items}',
-                              (c) {},
-                            ),
-                            Setting(
-                              'Delete',
-                              Icons.delete_forever_rounded,
-                              'Forever',
-                              (c) => showSheet(
-                                list: (context) => [
-                                  Setting(
-                                    'Delete',
-                                    Icons.delete_forever_rounded,
-                                    '',
-                                    (c) async {
-                                      await deletePlaylist(widget.url);
-                                      Navigator.of(c).pop();
-                                    },
-                                  ),
-                                ],
+                          func: (non) {
+                            bool b = pf['bookmarks'].contains(widget.url);
+                            return Layer(
+                              action: Setting(
+                                'Refresh',
+                                Icons.refresh_rounded,
+                                '',
+                                (c) async {
+                                  List<int> path = widget.path.toList();
+                                  list = await loadPlaylist(
+                                      widget.url,
+                                      !path.remove(2) ? path : path
+                                        ..add(2));
+                                  setState(() {});
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                            ),
-                          ],
+                              list: [
+                                Setting(
+                                  'Shuffle',
+                                  Icons.low_priority_rounded,
+                                  '',
+                                  (c) {
+                                    load(list.list);
+                                    shuffle();
+                                    skipTo(0);
+                                    Navigator.of(c).pop();
+                                  },
+                                ),
+                                Setting(
+                                  b ? 'Remove from bookmarks' : 'Bookmark',
+                                  b ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                  '',
+                                  (c) {
+                                    if (b) {
+                                      (pf['bookmarks'] as List<String>).remove(widget.url);
+                                    } else {
+                                      (pf['bookmarks'] as List<String>).add(widget.url);
+                                    }
+                                    setPref('bookmarks', pf['bookmarks'], refresh: true);
+                                    unawaited(fetchBookmarks());
+                                  },
+                                ),
+                                Setting(
+                                  'Export',
+                                  Icons.settings_backup_restore_rounded,
+                                  '',
+                                  (c) async {
+                                    await exportOther(snap.data!);
+                                    Navigator.of(c).pop();
+                                  },
+                                ),
+                                Setting(
+                                  'Creator',
+                                  Icons.person_rounded,
+                                  list.uploader,
+                                  (c) {},
+                                ),
+                                Setting(
+                                  'Items',
+                                  Icons.numbers_rounded,
+                                  '${list.items}',
+                                  (c) {},
+                                ),
+                                Setting(
+                                  'Delete',
+                                  Icons.delete_forever_rounded,
+                                  'Forever',
+                                  (c) => showSheet(
+                                    func: (non) => Layer(
+                                      action: Setting(
+                                        'Delete',
+                                        Icons.delete_forever_rounded,
+                                        '',
+                                        (c) async {
+                                          await deletePlaylist(widget.url);
+                                          Navigator.of(c).pop();
+                                        },
+                                      ),
+                                      list: [],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         );
                       },
                       icon: const Icon(Icons.menu_rounded),

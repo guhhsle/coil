@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../data.dart';
-import '../functions.dart';
+import '../layer.dart';
 import '../services/playlist.dart';
 import 'thumbnail.dart';
 
@@ -55,14 +55,15 @@ class CreatePlaylist extends StatelessWidget {
           icon: const Icon(Icons.add_rounded),
           tooltip: l['Create a playlist'],
           onPressed: () => showSheet(
-            list: (context) => [
-              Setting(
+            func: (non) => Layer(
+              action: Setting(
                 'Create a playlist',
                 Icons.playlist_add_rounded,
                 '',
                 (c) async => await createPlaylist().then((v) => Navigator.of(c).pop()),
-              )
-            ],
+              ),
+              list: [],
+            ),
           ),
         ),
       );
@@ -74,14 +75,15 @@ class CreatePlaylist extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () => showSheet(
-            list: (context) => [
-              Setting(
+            func: (non) => Layer(
+              action: Setting(
                 'Create a playlist',
                 Icons.playlist_add_rounded,
                 '',
                 (c) async => await createPlaylist().then((v) => Navigator.of(c).pop()),
-              )
-            ],
+              ),
+              list: [],
+            ),
           ),
           child: Card(
             margin: EdgeInsets.zero,

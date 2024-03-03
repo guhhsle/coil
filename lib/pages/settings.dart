@@ -1,4 +1,3 @@
-import 'package:coil/functions.dart';
 import 'package:coil/settings/account.dart';
 import 'package:coil/settings/data.dart';
 import 'package:coil/settings/home.dart';
@@ -7,6 +6,7 @@ import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../layer.dart';
 import '../other/other.dart';
 import '../services/audio.dart';
 import '../widgets/body.dart';
@@ -19,14 +19,14 @@ class PageSettings extends StatefulWidget {
 }
 
 class PageSettingsState extends State<PageSettings> {
-  Map<String, List<Setting>> map = {
-    'More': moreSet(),
-    'Account': accountSet(),
-    'Data': dataSet(),
-    'Interface': interfaceSet(),
-    'Home': homeSet(),
-    'Primary': themeMap(true),
-    'Background': themeMap(false),
+  Map<String, Layer Function(dynamic)> map = {
+    'More': moreSet,
+    'Account': accountSet,
+    'Data': dataSet,
+    'Interface': interfaceSet,
+    'Home': homeSet,
+    'Primary': themeMap,
+    'Background': themeMap,
   };
 
   @override
@@ -50,10 +50,11 @@ class PageSettingsState extends State<PageSettings> {
           itemBuilder: (context, index) => ListTile(
             title: Text(l[map.keys.elementAt(index)]!),
             leading: Icon(
-              map.values.elementAt(index).first.icon,
+              map.values.elementAt(index)(true).action.icon,
             ),
             onTap: () => showSheet(
-              list: (context) => map.values.elementAt(index),
+              func: map.values.elementAt(index),
+              param: index == 2,
               scroll: index > 4,
             ),
           ),

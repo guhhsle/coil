@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:coil/theme.dart';
-import 'package:coil/widgets/sheet_model.dart';
-import 'package:coil/widgets/sheet_scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
@@ -10,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data.dart';
+import 'layer.dart';
 
 Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();
@@ -104,6 +103,40 @@ void setPref(
   if (pString == 'instance' || pString == 'authInstance') {
     rememberInstance(value);
   }
+  refreshLayer();
+}
+
+ListTile settingToTile(Setting set, BuildContext context) {
+  Widget? leading, trailing;
+  if (set.secondary == null) {
+    leading = Icon(set.icon, color: set.iconColor);
+    trailing = Text(t(set.trailing));
+  } else {
+    trailing = InkWell(
+      borderRadius: BorderRadius.circular(10),
+      child: Icon(set.icon, color: set.iconColor),
+      onTap: () {
+        set.secondary!(context);
+        refreshLayer();
+      },
+    );
+  }
+
+  return ListTile(
+    leading: leading,
+    title: Text(t(set.title)),
+    trailing: trailing,
+    onTap: () {
+      set.onTap(context);
+      refreshLayer();
+    },
+    onLongPress: set.onHold == null
+        ? null
+        : () {
+            set.onHold!(context);
+            refreshLayer();
+          },
+  );
 }
 
 void refreshInterface() {
@@ -178,27 +211,6 @@ String t(dynamic d) {
     return t(pf[s.replaceAll('pf//', '')]);
   }
   return l[s] ?? s;
-}
-
-void showSheet({
-  required List<Setting> Function(BuildContext context) list,
-  bool scroll = false,
-  BuildContext? hidePrev,
-}) {
-  if (hidePrev != null) {
-    Navigator.of(hidePrev).pop();
-  }
-  showModalBottomSheet(
-    context: navigatorKey.currentContext!,
-    isScrollControlled: true,
-    builder: (context) {
-      if (scroll) {
-        return SheetScrollModel(list: list(context));
-      } else {
-        return SheetModel(list: list(context));
-      }
-    },
-  );
 }
 
 void checkToRemember(Duration duration, Duration position) {
