@@ -3,6 +3,7 @@ import 'package:coil/services/playlist.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions.dart';
 import 'thumbnail.dart';
 
 class Bookmarks extends StatelessWidget {
@@ -22,6 +23,19 @@ class Bookmarks extends StatelessWidget {
               Wrap(
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
+                  FutureBuilder(
+                    future: Playlist.fromStorage('Bookmarks'),
+                    builder: (context, snap) {
+                      if (snap.hasError) return Container();
+                      return Thumbnail(
+                        url: 'Bookmarks',
+                        thumbnail: '',
+                        title: t('Bookmarks'),
+                        playlist: true,
+                        path: const [2],
+                      );
+                    },
+                  ),
                   FutureBuilder(
                     future: Playlist.fromStorage('100'),
                     builder: (context, snap) {
