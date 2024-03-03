@@ -1,6 +1,6 @@
 {
-    "name": "pipe",
-    "short_name": "pipe",
+    "name": "coil",
+    "short_name": "coil",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

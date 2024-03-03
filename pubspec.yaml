@@ -4,23 +4,23 @@ publish_to: 'none'
 version: 1.9.10
 
 environment:
-  sdk: '>=2.19.4 <3.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 dependencies:
   http: any
   path: any
-  path_provider: ^2.1.1
-  open_as_default: ^0.0.3
-  permission_handler: ^11.1.0
-  shared_preferences: ^2.2.2
-  url_launcher: ^6.2.1
+  path_provider: any
+    #open_as_default: any
+  permission_handler: any
+  shared_preferences: any
+  url_launcher: any
   flutter_file_saver: any
 
   #audio-packages
-  just_audio: ^0.9.36
+  just_audio: any
   #simple_audio: ^1.8.0
 
-  audio_service: ^0.18.12
+  audio_service: any
 
 
   flutter:
@@ -28,7 +28,7 @@ dependencies:
 
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: any
   flutter_test:
     sdk: flutter
 
@@ -48,7 +48,7 @@ flutter:
   fonts: 
     - family: JetBrainsMono
       fonts:
-        - asset : fonts/JetBrainsMono-Regular.ttf
+        - asset : assets/fonts/JetBrainsMono-Regular.ttf
 
   assets:
     - assets/translations/

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:coil/theme.dart';
@@ -82,6 +83,44 @@ Future<String> writeFile(String name, String content) async {
     fileName: name,
     data: content,
   );
+}
+
+Future<String> getInput(String? init, {String? hintText}) async {
+  if (navigatorKey.currentContext == null) return '';
+  Completer<String> completer = Completer();
+  TextEditingController controller = TextEditingController(text: init);
+  BuildContext context = navigatorKey.currentContext!;
+  showModalBottomSheet(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.8),
+    builder: (c) {
+      return Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: TextField(
+          cursorColor: Colors.white,
+          decoration: InputDecoration(
+            labelText: hintText,
+            border: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            floatingLabelAlignment: FloatingLabelAlignment.center,
+            labelStyle: const TextStyle(color: Colors.white),
+          ),
+          autofocus: true,
+          controller: controller,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+          onSubmitted: (text) {
+            Navigator.of(c).pop();
+            completer.complete(text);
+          },
+        ),
+      );
+    },
+  );
+  return completer.future;
 }
 
 void setPref(

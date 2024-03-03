@@ -116,11 +116,23 @@ class _HomeState extends State<Home> {
                           barText.value = getInstanceName(history[i]);
                           Navigator.of(context).pop();
                         },
-                        onHold: (c) {
+                        secondary: (c) {
                           pf['instanceHistory'].removeAt(i);
                           setPref('instanceHistory', pf['instanceHistory'], refresh: true);
                         },
                       ),
+                    Setting(
+                      'New',
+                      Icons.add_rounded,
+                      '',
+                      (c) async {
+                        String newInstance = await getInput('', hintText: 'Add instance');
+                        pf['instanceHistory'].add(newInstance);
+                        setPref('instanceHistory', pf['instanceHistory'], refresh: true);
+                        setPref('instance', newInstance, refresh: true);
+                        barText.value = getInstanceName(newInstance);
+                      },
+                    ),
                   ],
                 ),
               );

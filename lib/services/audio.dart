@@ -6,8 +6,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:coil/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:open_as_default/open_as_default.dart';
-import 'package:path/path.dart' as path;
+//import 'package:open_as_default/open_as_default.dart';
+//import 'package:path/path.dart' as path;
 
 import '../data.dart';
 import '../widgets/sheet_queue.dart';
@@ -54,6 +54,7 @@ class MyAudioHandler extends BaseAudioHandler {
         );
       }
     });
+    /*
     OpenAsDefault.getFileIntent.then((value) {
       if (value != null) {
         load([
@@ -67,6 +68,7 @@ class MyAudioHandler extends BaseAudioHandler {
         skipTo(0);
       }
     });
+	*/
   }
 
   Future<void> _loadEmptyPlaylist() async {

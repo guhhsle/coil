@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.marko.pipe" "\0"
-            VALUE "FileDescription", "pipe" "\0"
+            VALUE "CompanyName", "com.guhhsle" "\0"
+            VALUE "FileDescription", "coil" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "pipe" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 com.marko.pipe. All rights reserved." "\0"
-            VALUE "OriginalFilename", "pipe.exe" "\0"
-            VALUE "ProductName", "pipe" "\0"
+            VALUE "InternalName", "coil" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 com.guhhsle. All rights reserved." "\0"
+            VALUE "OriginalFilename", "coil.exe" "\0"
+            VALUE "ProductName", "coil" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
