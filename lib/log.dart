@@ -6,7 +6,6 @@ String versions = """
 	Better state management ( refreshing)
 	Added quick instances on home
 	Force refresh playlist option
-	Icons to filter search
 
 0.9.10						07.12.23
 

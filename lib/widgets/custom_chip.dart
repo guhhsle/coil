@@ -25,6 +25,7 @@ class _CustomChipState extends State<CustomChip> {
       padding: const EdgeInsets.only(right: 8),
       child: InputChip(
         selected: widget.selected,
+        showCheckmark: false,
         onSelected: widget.onSelected,
         label: Text(
           l[widget.label] ?? widget.label,

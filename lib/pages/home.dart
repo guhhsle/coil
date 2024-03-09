@@ -234,17 +234,17 @@ class _HomeTagsState extends State<HomeTags> {
 }
 
 double? calculateShift(BuildContext context, int index) {
-  double tagsLength = 24;
+  double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
   double wantedShift = index == 0 ? 0 : 28;
   double word = pf['locale'] == 'ja' ? 14 : 8.45;
   double width = MediaQuery.of(context).size.width;
-  for (int i = 0; i < homeMap.length; i++) {
-    tagsLength += 36 + (l[homeMap.keys.elementAt(i)] as String).length * word;
+  for (int i = 0; i < filters.length; i++) {
+    tagsLength += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
   }
   for (int i = 0; i < index - 1; i++) {
-    wantedShift += 36 + (l[homeMap.keys.elementAt(i)] as String).length * word;
+    wantedShift += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
   }
-  double maxShift = 40 + tagsLength - width;
+  double maxShift = 32 + tagsLength - width;
 
   if (wantedShift < maxShift) {
     return wantedShift;
