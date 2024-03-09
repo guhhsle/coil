@@ -180,9 +180,9 @@ class _HomeState extends State<Home> {
                   onPageChanged: (index) {
                     selectedHome = homeMap.keys.elementAt(index);
                     barText.value = l[selectedHome];
-                    if (calculateShift(context, index) != null) {
+                    if (calculateShift(context, index, homeMap) != null) {
                       scrollController.animateTo(
-                        calculateShift(context, index)!,
+                        calculateShift(context, index, homeMap)!,
                         duration: const Duration(milliseconds: 256),
                         curve: Curves.easeOutQuad,
                       );
@@ -233,18 +233,18 @@ class _HomeTagsState extends State<HomeTags> {
   }
 }
 
-double? calculateShift(BuildContext context, int index) {
+double? calculateShift(BuildContext context, int index, Map map) {
   double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
   double wantedShift = index == 0 ? 0 : 28;
   double word = pf['locale'] == 'ja' ? 14 : 8.45;
   double width = MediaQuery.of(context).size.width;
-  for (int i = 0; i < filters.length; i++) {
-    tagsLength += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
+  for (int i = 0; i < homeMap.length; i++) {
+    tagsLength += 24 + (l[map.keys.elementAt(i)] as String).length * word;
   }
   for (int i = 0; i < index - 1; i++) {
-    wantedShift += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
+    wantedShift += 24 + (l[map.keys.elementAt(i)] as String).length * word;
   }
-  double maxShift = 32 + tagsLength - width;
+  double maxShift = 72 + tagsLength - width;
 
   if (wantedShift < maxShift) {
     return wantedShift;
