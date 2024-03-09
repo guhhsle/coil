@@ -11,7 +11,6 @@ import '../functions/song.dart';
 import '../http/other.dart';
 import '../http/playlist.dart';
 import '../widgets/body.dart';
-import '../widgets/custom_chip.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/thumbnail.dart';
 
@@ -45,7 +44,7 @@ class Delegate extends SearchDelegate {
               scroll: true,
               func: (non) => Layer(
                 action: Setting(
-                  'Delete',
+                  'Clear',
                   Icons.clear_all_rounded,
                   '',
                   (c) {
@@ -128,7 +127,6 @@ class SuggestionList extends StatefulWidget {
   SuggestionListState createState() => SuggestionListState();
 }
 
-Map<String, String> filters = {};
 String? filter;
 
 class SuggestionListState extends State<SuggestionList> {
@@ -137,22 +135,31 @@ class SuggestionListState extends State<SuggestionList> {
   late bool result;
   ScrollController scrollController = ScrollController();
 
+  IconData icon(String option, sel) {
+    return {
+      'Songs': sel ? Icons.music_note_rounded : Icons.music_note_outlined,
+      'Videos': sel ? Icons.movie_rounded : Icons.movie_outlined,
+      'Playlists': sel ? Icons.video_library_rounded : Icons.video_library_outlined,
+      'Artists': sel ? Icons.person_rounded : Icons.person_outlined,
+      'Albums': sel ? Icons.album_rounded : Icons.album_outlined,
+      'Music playlists': sel ? Icons.my_library_music_rounded : Icons.my_library_music_outlined,
+    }[option]!;
+  }
+
+  Map<String, String> filters = {
+    'Songs': 'music_songs',
+    'Videos': 'videos',
+    'Playlists': 'playlists',
+    'Artists': 'channels',
+    'Albums': 'music_albums',
+    'Music playlists': 'music_playlists',
+  };
+
+  List<String> options = pf['searchOrder'];
+
   @override
   initState() {
-    filters.clear();
-    for (int i = 0; i < 6; i++) {
-      filters.addAll({
-        pf['searchOrder'][i]: {
-          'Songs': 'music_songs',
-          'Videos': 'videos',
-          'Playlists': 'playlists',
-          'Artists': 'channels',
-          'Albums': 'music_albums',
-          'Music playlists': 'music_playlists',
-        }[pf['searchOrder'][i]]!
-      });
-    }
-    filter ??= filters[pf['searchOrder'][0]] ?? 'music_songs';
+    filter ??= filters[options[0]] ?? 'music_songs';
     query = widget.query;
     result = widget.result;
     super.initState();
@@ -172,30 +179,23 @@ class SuggestionListState extends State<SuggestionList> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Container(
-                height: 64,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ListView.builder(
-                  physics: scrollPhysics,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: filters.length,
-                  controller: scrollController,
-                  itemBuilder: (context, i) => CustomChip(
-                    onSelected: (val) {
-                      filter = filters.values.toList()[i];
-                      if (calculateShift(context, i) != null) {
-                        scrollController.animateTo(
-                          calculateShift(context, i)!,
-                          duration: const Duration(milliseconds: 256),
-                          curve: Curves.easeOutQuad,
-                        );
-                      }
-                      result = true;
-                      setState(() {});
-                    },
-                    label: filters.keys.toList()[i],
-                    selected: filter == filters.values.toList()[i],
-                  ),
+              child: SizedBox(
+                height: 48,
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceEvenly,
+                  children: [
+                    for (String option in options)
+                      IconButton(
+                        icon: Icon(icon(option, filter == filters[option])),
+                        tooltip: t(option),
+                        onPressed: () {
+                          filter = filters[option];
+                          result = true;
+                          setState(() {});
+                        },
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -205,21 +205,26 @@ class SuggestionListState extends State<SuggestionList> {
                 if (snap.isEmpty) return Container();
                 queueLoading.clear();
                 if (filter == 'music_songs' || filter == 'videos') {
-                  for (var q = 0; q < snap.length; q++) {
-                    queueLoading.add(mapToMedia(snap[q]));
-                  }
-                  unawaited(preload(range: 10));
-                  return Expanded(
-                    child: ListView.builder(
-                      physics: scrollPhysics,
-                      itemCount: snap.length,
-                      itemBuilder: (context, i) => SongTile(
-                        list: queueLoading,
-                        i: i,
-                        haptic: false,
+                  try {
+                    for (var q = 0; q < snap.length; q++) {
+                      queueLoading.add(mapToMedia(snap[q]));
+                    }
+                    unawaited(preload(range: 10));
+                    return Expanded(
+                      child: ListView.builder(
+                        physics: scrollPhysics,
+                        itemCount: snap.length,
+                        itemBuilder: (context, i) => SongTile(
+                          list: queueLoading,
+                          i: i,
+                          haptic: false,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } catch (e) {
+                    //FORMATTING ISSUE
+                    return Container();
+                  }
                 } else {
                   return Expanded(
                     child: ListView(
@@ -247,7 +252,7 @@ class SuggestionListState extends State<SuggestionList> {
                                     path: const [0, 1],
                                   );
                                 },
-                              )
+                              ),
                           ],
                         ),
                       ],
@@ -262,7 +267,7 @@ class SuggestionListState extends State<SuggestionList> {
     );
   }
 }
-
+/*
 double? calculateShift(BuildContext context, int index) {
   double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
   double wantedShift = index == 0 ? 0 : 28;
@@ -284,3 +289,4 @@ double? calculateShift(BuildContext context, int index) {
     return null;
   }
 }
+*/

@@ -224,20 +224,9 @@ class _PageLogState extends State<PageLog> {
                           ),
                           child: InkWell(
                             onTap: () async {
-                              setPref(
-                                'instance',
-                                trimUrl(controllers[0].text),
-                              );
-                              setPref(
-                                  'authInstance',
-                                  trimUrl(
-                                    controllers[1].text,
-                                  ));
-                              if (await login(
-                                controllers[2].text.trim(),
-                                controllers[3].text,
-                                true,
-                              )) {
+                              setPref('instance', trimUrl(controllers[0].text));
+                              setPref('authInstance', trimUrl(controllers[1].text));
+                              if (await login(controllers[2].text.trim(), controllers[3].text, true)) {
                                 runApp(MyApp(
                                   key: Key('${DateTime.now()}'),
                                   account: false,

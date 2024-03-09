@@ -37,9 +37,9 @@ Map pf = {
   'searchOrder': [
     'Songs',
     'Videos',
+    'Albums',
     'Playlists',
     'Artists',
-    'Albums',
     'Music playlists',
   ],
   'tags': 'Top',

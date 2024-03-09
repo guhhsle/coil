@@ -1,12 +1,12 @@
 String versions = """
 
-0.9.11						03.03.24
+0.9.11						09.03.24
 
 	Better bookmarks option in bottom sheet.
 	Better state management ( refreshing)
 	Added quick instances on home
 	Force refresh playlist option
-
+	Icons to filter search
 
 0.9.10						07.12.23
 
