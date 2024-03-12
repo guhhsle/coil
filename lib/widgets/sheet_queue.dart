@@ -26,7 +26,7 @@ class _SheetQueueState extends State<SheetQueue> {
     return Container(
       color: Colors.transparent,
       child: DraggableScrollableSheet(
-        initialChildSize: 0.4,
+        initialChildSize: 0.6,
         minChildSize: 0.2,
         maxChildSize: 0.85,
         builder: (_, controller) {
@@ -58,20 +58,11 @@ class _SheetQueueState extends State<SheetQueue> {
                                 setState(() {});
                               },
                             ),
-                            margin: const EdgeInsets.only(
-                              top: 24,
-                              bottom: 12,
-                              left: 16,
-                              right: 12,
-                            ),
+                            margin: const EdgeInsets.only(left: 16, right: 4, bottom: 12, top: 16),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                            right: 16,
-                            top: 24,
-                            bottom: 12,
-                          ),
+                          padding: const EdgeInsets.only(bottom: 12, top: 16),
                           child: IconButton(
                             tooltip: l['Repeat ${loop.name}'],
                             color: Theme.of(context).colorScheme.primary,
@@ -82,6 +73,13 @@ class _SheetQueueState extends State<SheetQueue> {
                             },
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12, top: 16, right: 8),
+                          child: TopIcon(
+                            top: false,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
                       ],
                     ),
                     const AudioSlider(),
@@ -90,7 +88,7 @@ class _SheetQueueState extends State<SheetQueue> {
                         valueListenable: current,
                         builder: (context, data, child) {
                           return Padding(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Scrollbar(
                               controller: controller,
                               child: ListView.builder(

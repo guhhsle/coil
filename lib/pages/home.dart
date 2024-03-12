@@ -47,7 +47,8 @@ PageController pageController = PageController();
 ScrollController scrollController = ScrollController();
 GlobalKey key = GlobalKey(debugLabel: 'Tags');
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
   @override
   initState() {
     selectedHome = pf['homeOrder'][0];
@@ -63,6 +64,7 @@ class _HomeState extends State<Home> {
         }[pf['homeOrder'][i]]!
       });
     }
+    animationController = AnimationController(vsync: this);
     unawaited(fetchUserPlaylists(false));
     unawaited(getLocal());
     unawaited(fetchBookmarks());
@@ -80,6 +82,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //bottomSheet: const ScrollableBottomPlayer(),
       floatingActionButton: const Float(),
       appBar: AppBar(
         automaticallyImplyLeading: false,

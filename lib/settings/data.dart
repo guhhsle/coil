@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data.dart';
+import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../layer.dart';
 
@@ -9,21 +10,14 @@ Layer dataSet(dynamic non) => Layer(
         'Quality',
         Icons.cloud_rounded,
         '${pf['bitrate']}',
-        (c) => showSheet(
-          hidePrev: c,
-          func: (non) => Layer(
-            action: Setting('${pf['bitrate']}', Icons.graphic_eq_rounded, '', (c) {}),
-            list: [
-              for (int i = 180000; i >= 30000; i -= 30000)
-                Setting(
-                  '$i',
-                  Icons.graphic_eq_rounded,
-                  '',
-                  (c) => setPref('bitrate', i),
-                ),
-            ],
-          ),
-        ),
+        (c) async {
+          int? input = int.tryParse(await getInput('${pf['bitrate']}'));
+          if (input == null) {
+            showSnack('Invalid', false);
+          } else {
+            setPref('bitrate', input);
+          }
+        },
       ),
       list: [
         Setting(
@@ -48,22 +42,14 @@ Layer dataSet(dynamic non) => Layer(
           'Recommend timeout (s)',
           Icons.track_changes_rounded,
           '${pf['timeLimit']}',
-          (c) => showSheet(
-            scroll: true,
-            hidePrev: c,
-            func: (non) => Layer(
-              action: Setting('${pf['timeLimit']}s', Icons.track_changes_rounded, '', (c) {}),
-              list: [
-                for (int i = 2; i < 22; i += 2)
-                  Setting(
-                    '$i s',
-                    Icons.track_changes_rounded,
-                    '',
-                    (c) => setPref('timeLimit', i),
-                  ),
-              ],
-            ),
-          ),
+          (c) async {
+            int? input = int.tryParse(await getInput('${pf['timeLimit']}'));
+            if (input == null) {
+              showSnack('Invalid', false);
+            } else {
+              setPref('timeLimit', input);
+            }
+          },
         ),
       ],
     );

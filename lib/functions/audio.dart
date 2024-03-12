@@ -264,7 +264,11 @@ Future<void> playItem(MediaItem item) async {
 }
 
 void load(List<MediaItem> list) {
-  queuePlaying = list.toList();
+  if (list == queuePlaying) return;
+  queuePlaying.clear();
+  for (MediaItem item in list) {
+    queuePlaying.add(item..extras!['playlist'] = 'queue');
+  }
 }
 
 void checkToRemember(Duration duration, Duration position) {
@@ -310,45 +314,59 @@ class AudioSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 24,
-      child: StreamBuilder<Duration>(
-        stream: player.positionStream,
-        builder: (context, position) {
-          if (!position.hasData) return Container();
-          Duration max = player.duration ?? const Duration(hours: 1);
-          Duration pos = position.data!;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 84,
-                child: Slider(
-                  thumbColor: Theme.of(context).colorScheme.primary,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  inactiveColor: Theme.of(context).colorScheme.primary,
-                  secondaryActiveColor: Theme.of(context).colorScheme.primary,
-                  value: position.data!.inSeconds.toDouble(),
-                  min: 0,
-                  onChanged: (d) => player.seek(
-                    Duration(seconds: d.toInt()),
-                  ),
-                  max: max.inSeconds.toDouble(),
+    return StreamBuilder<Duration>(
+      stream: player.positionStream,
+      builder: (context, position) {
+        if (!position.hasData) return Container();
+        Duration max = player.duration ?? const Duration(hours: 1);
+        //Duration pos = position.data!;
+        return SizedBox(
+          height: 24,
+          child: Slider(
+            thumbColor: Theme.of(context).colorScheme.primary,
+            activeColor: Theme.of(context).colorScheme.primary,
+            inactiveColor: Theme.of(context).colorScheme.primary,
+            secondaryActiveColor: Theme.of(context).colorScheme.primary,
+            value: position.data!.inSeconds.toDouble(),
+            min: 0,
+            onChanged: (d) => player.seek(
+              Duration(seconds: d.toInt()),
+            ),
+            max: max.inSeconds.toDouble(),
+          ),
+        );
+        /*
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width - 84,
+              child: Slider(
+                thumbColor: Theme.of(context).colorScheme.primary,
+                activeColor: Theme.of(context).colorScheme.primary,
+                inactiveColor: Theme.of(context).colorScheme.primary,
+                secondaryActiveColor: Theme.of(context).colorScheme.primary,
+                value: position.data!.inSeconds.toDouble(),
+                min: 0,
+                onChanged: (d) => player.seek(
+                  Duration(seconds: d.toInt()),
+                ),
+                max: max.inSeconds.toDouble(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: Text(
+                '${pos.inMinutes}:${pos.inSeconds % 60}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 24),
-                child: Text(
-                  '${pos.inMinutes}:${pos.inSeconds % 60}',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+        );
+		*/
+      },
     );
   }
 }
@@ -440,7 +458,8 @@ class FloatState extends State<Float> {
 
 class TopIcon extends StatelessWidget {
   final bool top;
-  const TopIcon({super.key, this.top = true});
+  final Color? color;
+  const TopIcon({super.key, this.top = true, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -465,25 +484,23 @@ class TopIcon extends StatelessWidget {
                   );
                 } else if (!top || (pf['player'] == 'Top' && queuePlaying.isNotEmpty)) {
                   ProcessingState? state = snapshot.data?.processingState;
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onLongPress: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => const SheetQueue(),
-                      );
-                    },
-                    onTap: () => player.playing ? pause() : play(),
-                    child: Padding(
-                      padding: !top ? const EdgeInsets.only(right: 20) : const EdgeInsets.all(8.0),
-                      child: Icon(
-                        (!snapshot.hasData || state == ProcessingState.buffering || state == ProcessingState.loading)
-                            ? Icons.language_rounded
-                            : snapshot.data!.playing
-                                ? Icons.stop_rounded
-                                : Icons.play_arrow_rounded,
-                        color: Theme.of(context).appBarTheme.foregroundColor,
+                  return GestureDetector(
+                    onLongPress: () => showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => const SheetQueue(),
+                    ),
+                    child: IconButton(
+                      onPressed: () => player.playing ? pause() : play(),
+                      icon: Icon(
+                        !snapshot.hasData
+                            ? Icons.stop_rounded
+                            : (state == ProcessingState.buffering || state == ProcessingState.loading)
+                                ? Icons.language_rounded
+                                : snapshot.data!.playing
+                                    ? Icons.stop_rounded
+                                    : Icons.play_arrow_rounded,
+                        color: color ?? Theme.of(context).appBarTheme.foregroundColor,
                       ),
                     ),
                   );

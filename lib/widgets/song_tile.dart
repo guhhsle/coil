@@ -79,24 +79,7 @@ class SongTileChild extends StatelessWidget {
           func: mediaToLayer,
           param: list[i],
         ),
-        leading: pf['songThumbnails'] && web
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Image.network(
-                      list[i].artUri.toString(),
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.graphic_eq_rounded,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            : null,
+        leading: songImage(list[i]),
         title: Text(
           web && pf['artist'] ? '${list[i].title} - ${list[i].artist}' : list[i].title,
           style: TextStyle(
@@ -107,4 +90,27 @@ class SongTileChild extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget? songImage(MediaItem item, {EdgeInsets? padding}) {
+  if (!pf['songThumbnails']) return null;
+  if (item.extras!['offline'] != null) return null;
+
+  padding ??= const EdgeInsets.symmetric(vertical: 8);
+  return Padding(
+    padding: padding,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Image.network(
+          item.artUri.toString(),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => const Icon(
+            Icons.graphic_eq_rounded,
+          ),
+        ),
+      ),
+    ),
+  );
 }

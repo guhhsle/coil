@@ -1,3 +1,4 @@
+import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
@@ -60,51 +61,40 @@ Layer moreSet(dynamic non) => Layer(
             ),
           ),
         ),
-        Setting('Music folder', Icons.folder_outlined, pf['musicFolder'], (c) {}),
+        Setting(
+          'Music folder',
+          Icons.folder_outlined,
+          pf['musicFolder'],
+          (c) async {
+            setPref('musicFolder', await getInput(pf['musicFolder']));
+          },
+        ),
         Setting(
           'Volume',
           Icons.graphic_eq_rounded,
           '${pf['volume']}',
-          (c) => showSheet(
-            scroll: true,
-            hidePrev: c,
-            func: (non) => Layer(
-              action: Setting('${pf['volume']}', Icons.graphic_eq_rounded, '', (c) {}),
-              list: [
-                for (int i = 100; i >= 0; i -= 5)
-                  Setting(
-                    '$i %',
-                    Icons.graphic_eq_rounded,
-                    '',
-                    (c) {
-                      setPref('volume', i);
-                      setVolume();
-                    },
-                  ),
-              ],
-            ),
-          ),
+          (c) async {
+            int? input = int.tryParse(await getInput('${pf['volume']}'));
+            if (input == null || (input > 100 || input < 0)) {
+              showSnack('Invalid', false);
+            } else {
+              setPref('volume', input);
+              setVolume();
+            }
+          },
         ),
         Setting(
           'Remember threshold',
           Icons.timelapse_rounded,
           '${pf['rememberThreshold']} min',
-          (c) => showSheet(
-            scroll: true,
-            hidePrev: c,
-            func: (non) => Layer(
-              action: Setting('${pf['rememberThreshold']} min', Icons.timelapse_rounded, '', (c) {}),
-              list: [
-                for (int i = 0; i < 65; i += 5)
-                  Setting(
-                    '$i min',
-                    Icons.timelapse_rounded,
-                    '',
-                    (c) => setPref('rememberThreshold', i),
-                  ),
-              ],
-            ),
-          ),
+          (c) async {
+            int? input = int.tryParse(await getInput('${pf['rememberThreshold']}'));
+            if (input == null || (input < 0)) {
+              showSnack('Invalid', false);
+            } else {
+              setPref('rememberThreshold', input);
+            }
+          },
         ),
       ],
     );

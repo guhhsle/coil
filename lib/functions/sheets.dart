@@ -158,77 +158,89 @@ Layer mediaToLayer(dynamic item) {
   unawaited(forceLoad(item).then((v) => loaded.value = true));
   unawaited(lyrics(item));
   Layer layer = Layer(
-      action: Setting(item.title, Icons.radio_outlined, '', (c) async {
-        await generate([item]);
-        load(queuePlaying..insert(0, item));
-        await skipTo(0);
-        Navigator.of(c).pop();
+    action: Setting(item.title, Icons.radio_outlined, '', (c) async {
+      await generate([item]);
+      load(queuePlaying..insert(0, item));
+      await skipTo(0);
+      Navigator.of(c).pop();
+    }),
+    list: [
+      Setting(
+        '',
+        Icons.person_outline_rounded,
+        item.artist ?? 'Artist',
+        (c) => Navigator.of(c).push(
+          MaterialPageRoute(
+            builder: (c) => PageArtist(
+              url: item.extras!['uploaderUrl'],
+              artist: item.artist!,
+            ),
+          ),
+        ),
+      ),
+      Setting('', Icons.link_rounded, 'Audio/Video', (c) {
+        if (loaded.value) {
+          showLinks(item, c);
+        } else {
+          loaded.addListener(() {
+            if (loaded.value) {
+              showLinks(item, c);
+            }
+          });
+        }
       }),
-      list: [
-        Setting(
-          '',
-          Icons.person_outline_rounded,
-          item.artist ?? 'Artist',
-          (c) => Navigator.of(c).push(
-            MaterialPageRoute(
-              builder: (c) => PageArtist(
-                url: item.extras!['uploaderUrl'],
-                artist: item.artist!,
-              ),
-            ),
+      Setting(
+        '',
+        Icons.playlist_add_rounded,
+        'Add to playlist',
+        (c) async {
+          showSheet(func: userPlaylistsToMap, param: item, scroll: true, hidePrev: c);
+        },
+      ),
+      Setting(
+        '',
+        Icons.format_align_center,
+        'Lyrics',
+        (c) => singleChildSheet(
+          title: item.title,
+          context: c,
+          icon: Icons.format_align_center_rounded,
+          child: ValueListenableBuilder<String>(
+            valueListenable: currentLyrics,
+            builder: (context, snap, child) => Text(snap),
           ),
         ),
-        Setting('', Icons.link_rounded, 'Audio/Video', (c) {
-          if (loaded.value) {
-            showLinks(item, c);
-          } else {
-            loaded.addListener(() {
-              if (loaded.value) {
-                showLinks(item, c);
-              }
-            });
-          }
-        }),
-        Setting(
-          '',
-          Icons.playlist_add_rounded,
-          'Add to playlist',
-          (c) async {
-            showSheet(func: userPlaylistsToMap, param: item, scroll: true, hidePrev: c);
-          },
+      ),
+      Setting(
+        '',
+        Icons.skip_next_rounded,
+        'Play next',
+        (c) => insertItemToQueue(current.value + 1, item).then(
+          (v) => Navigator.of(c).pop(),
         ),
-        Setting(
-          '',
-          Icons.format_align_center,
-          'Lyrics',
-          (c) => singleChildSheet(
-            title: item.title,
-            context: c,
-            icon: Icons.format_align_center_rounded,
-            child: ValueListenableBuilder<String>(
-              valueListenable: currentLyrics,
-              builder: (context, snap, child) => Text(snap),
-            ),
-          ),
+      ),
+      Setting(
+        '',
+        Icons.wrap_text_rounded,
+        'Enqueue',
+        (c) => addItemToQueue(item).then(
+          (v) => Navigator.of(c).pop(),
         ),
-        Setting(
-          '',
-          Icons.skip_next_rounded,
-          'Play next',
-          (c) => insertItemToQueue(current.value + 1, item).then(
-            (v) => Navigator.of(c).pop(),
-          ),
-        ),
-        Setting(
-          '',
-          Icons.wrap_text_rounded,
-          'Enqueue',
-          (c) => addItemToQueue(item).then(
-            (v) => Navigator.of(c).pop(),
-          ),
-        ),
-      ]);
-  if (item.extras!['playlist'] != null) {
+      ),
+    ],
+  );
+  if (item.extras!['playlist'] == 'queue') {
+    layer.list.add(
+      Setting(
+        '',
+        Icons.remove_rounded,
+        'Dequeue',
+        (c) async {
+          removeItemAt(queuePlaying.indexOf(item));
+        },
+      ),
+    );
+  } else if (item.extras!['playlist'] != null) {
     layer.list.add(
       Setting(
         '',
