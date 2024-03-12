@@ -4,14 +4,14 @@ import '../data.dart';
 import '../functions/prefs.dart';
 import '../layer.dart';
 
-Layer homeSet(dynamic non) => Layer(
+Future<Layer> homeSet(dynamic non) async => Layer(
       action: Setting(
         'Home',
         Icons.door_front_door_rounded,
         'Reorder',
         (c) => showSheet(
           hidePrev: c,
-          func: (non) => Layer(
+          func: (non) async => Layer(
             action: Setting(
               'Home',
               Icons.door_front_door_rounded,
@@ -65,7 +65,7 @@ Layer homeSet(dynamic non) => Layer(
           Icons.sort_rounded,
           pf['sortBy'],
           (c) => showSheet(
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(pf['sortBy'], Icons.sort_rounded, '', (c) {}),
               list: [
                 for (String s in [

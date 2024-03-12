@@ -108,7 +108,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                       tooltip: l['Menu'],
                       onPressed: () {
                         showSheet(
-                          func: (non) {
+                          func: (non) async {
                             bool b = pf['bookmarks'].contains(widget.url);
                             return Layer(
                               action: Setting(
@@ -164,7 +164,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                                   Icons.delete_forever_rounded,
                                   'Forever',
                                   (c) => showSheet(
-                                    func: (non) => Layer(
+                                    func: (non) async => Layer(
                                       action: Setting(
                                         'Delete',
                                         Icons.delete_forever_rounded,

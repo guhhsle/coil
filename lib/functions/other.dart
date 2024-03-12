@@ -36,6 +36,10 @@ void showSnack(String text, bool good, {Function()? onTap}) {
   );
 }
 
+void refreshList() {
+  refreshPlaylist.value = !refreshPlaylist.value;
+}
+
 String formatUrl(String old) {
   old = old.replaceAll('/watch?v=', '');
   return old.replaceAll('/playlist?list=', '');
@@ -95,7 +99,7 @@ Future<String> getInput(String? init, {String? hintText}) async {
 
 void refreshInterface() {
   themeNotifier.value = theme(color(true), color(false));
-  refreshPlaylist.value = !refreshPlaylist.value;
+  refreshList();
 }
 
 void rememberSearch(String str) {

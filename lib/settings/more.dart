@@ -10,7 +10,7 @@ import '../log.dart';
 import '../other/countries.dart';
 import '../other/license.dart';
 
-Layer moreSet(dynamic non) => Layer(
+Future<Layer> moreSet(dynamic non) async => Layer(
       action: Setting(
         'Versions',
         Icons.segment_rounded,
@@ -41,7 +41,7 @@ Layer moreSet(dynamic non) => Layer(
           (c) => showSheet(
             scroll: true,
             hidePrev: c,
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Language',
                 Icons.language_rounded,

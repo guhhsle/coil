@@ -47,7 +47,7 @@ class _PageLogState extends State<PageLog> {
                     List<String> history = pf['instanceHistory'];
                     showSheet(
                       scroll: true,
-                      func: (non) => Layer(
+                      func: (non) async => Layer(
                         action: Setting(
                           'Delete',
                           Icons.clear_all_rounded,

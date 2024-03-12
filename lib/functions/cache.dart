@@ -9,10 +9,8 @@ import '../playlist.dart';
 import 'song.dart';
 
 Future<void> refreshBookmarks() async {
-  try {
-    bookmarksPlaylist = await Playlist.fromStorage('Bookmarks');
-  } catch (e) {
-    bookmarksPlaylist = Playlist.fromJson(
+  Playlist.fromStorage('Bookmarks').catchError(
+    (e) => Playlist.fromJson(
       {
         "name": "Bookmarks",
         "thumbnailUrl": "",
@@ -21,9 +19,8 @@ Future<void> refreshBookmarks() async {
         "relatedStreams": <Map>[],
       },
       'Bookmarks',
-    )..backup();
-  }
-  refreshPlaylist.value = !refreshPlaylist.value;
+    )..backup(),
+  );
 }
 
 Future<void> fetchBookmarks() async {
@@ -56,7 +53,7 @@ Future<void> forceAddBackup(
     local.raw['relatedStreams'].add(mediaToMap(item));
   }
   await local.backup();
-  await refreshBookmarks();
+  refreshList();
 }
 
 Future<void> forceRemoveBackup(
@@ -78,7 +75,7 @@ Future<void> forceRemoveBackup(
     local.name = t(url);
   }
   await local.backup();
-  await refreshBookmarks();
+  refreshList();
 }
 
 Future<void> addTo100(MediaItem item) async {

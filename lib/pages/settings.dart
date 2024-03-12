@@ -18,7 +18,7 @@ class PageSettings extends StatefulWidget {
 }
 
 class PageSettingsState extends State<PageSettings> {
-  Map<String, Layer Function(dynamic)> map = {
+  Map<String, Future<Layer> Function(dynamic)> map = {
     'More': moreSet,
     'Account': accountSet,
     'Data': dataSet,
@@ -26,6 +26,16 @@ class PageSettingsState extends State<PageSettings> {
     'Home': homeSet,
     'Primary': themeMap,
     'Background': themeMap,
+  };
+
+  Map<String, IconData> iconMap = {
+    'More': Icons.segment_rounded,
+    'Account': Icons.person_rounded,
+    'Data': Icons.cloud_rounded,
+    'Interface': Icons.toggle_on,
+    'Home': Icons.door_front_door_rounded,
+    'Primary': Icons.colorize_rounded,
+    'Background': Icons.colorize_rounded,
   };
 
   @override
@@ -48,9 +58,7 @@ class PageSettingsState extends State<PageSettings> {
           itemCount: map.length,
           itemBuilder: (context, index) => ListTile(
             title: Text(l[map.keys.elementAt(index)]!),
-            leading: Icon(
-              map.values.elementAt(index)(true).action.icon,
-            ),
+            leading: Icon(iconMap.values.elementAt(index)),
             onTap: () => showSheet(
               func: map.values.elementAt(index),
               param: index == 5,

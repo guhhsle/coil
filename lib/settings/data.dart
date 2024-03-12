@@ -5,7 +5,7 @@ import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../layer.dart';
 
-Layer dataSet(dynamic non) => Layer(
+Future<Layer> dataSet(dynamic non) async => Layer(
       action: Setting(
         'Quality',
         Icons.cloud_rounded,

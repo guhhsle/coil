@@ -71,7 +71,7 @@ class Layer {
 }
 
 void showSheet({
-  required Layer Function(dynamic) func,
+  required Future<Layer> Function(dynamic) func,
   dynamic param,
   bool scroll = false,
   BuildContext? hidePrev,

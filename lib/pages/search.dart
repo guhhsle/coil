@@ -43,7 +43,7 @@ class Delegate extends SearchDelegate {
             List<String> history = pf['searchHistory'];
             showSheet(
               scroll: true,
-              func: (non) => Layer(
+              func: (non) async => Layer(
                 action: Setting(
                   'Clear',
                   Icons.clear_all_rounded,

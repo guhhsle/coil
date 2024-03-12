@@ -93,7 +93,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               List<String> history = pf['instanceHistory'];
               showSheet(
                 scroll: true,
-                func: (non) => Layer(
+                func: (non) async => Layer(
                   action: Setting(
                     pf['instance'],
                     Icons.domain_rounded,

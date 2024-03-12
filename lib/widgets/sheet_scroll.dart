@@ -5,7 +5,7 @@ import '../layer.dart';
 import 'custom_card.dart';
 
 class SheetScrollModel extends StatefulWidget {
-  final Layer Function(dynamic) func;
+  final Future<Layer> Function(dynamic) func;
   final dynamic param;
   const SheetScrollModel({
     super.key,
@@ -36,31 +36,37 @@ class SheetScrollModelState extends State<SheetScrollModel> {
               child: ValueListenableBuilder(
                 valueListenable: refreshLay,
                 builder: (context, non, child) {
-                  Layer layer = widget.func(widget.param);
-                  List<Setting> list = layer.list;
-                  return Column(
-                    children: [
-                      Row(
-                        children: <Widget>[
-                              Expanded(
-                                child: CustomCard(layer.action),
-                              )
-                            ] +
-                            (layer.trailing == null ? [] : layer.trailing!(context)),
-                      ),
-                      Expanded(
-                        child: Scrollbar(
-                          controller: controller,
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.only(bottom: 8),
-                            controller: controller,
-                            itemCount: list.length,
-                            itemBuilder: (context, i) => list[i].toTile(context),
+                  return FutureBuilder(
+                    future: widget.func.call(widget.param),
+                    builder: (context, snap) {
+                      if (!snap.hasData) return Container();
+                      Layer layer = snap.data!;
+                      List<Setting> list = layer.list;
+                      return Column(
+                        children: [
+                          Row(
+                            children: <Widget>[
+                                  Expanded(
+                                    child: CustomCard(layer.action),
+                                  )
+                                ] +
+                                (layer.trailing == null ? [] : layer.trailing!(context)),
                           ),
-                        ),
-                      ),
-                    ],
+                          Expanded(
+                            child: Scrollbar(
+                              controller: controller,
+                              child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                padding: const EdgeInsets.only(bottom: 8),
+                                controller: controller,
+                                itemCount: list.length,
+                                itemBuilder: (context, i) => list[i].toTile(context),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               ),

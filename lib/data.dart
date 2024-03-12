@@ -134,5 +134,3 @@ final ValueNotifier<int> current = ValueNotifier(0);
 final ValueNotifier<PageController> controller = ValueNotifier(PageController());
 final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
 final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
-
-late Playlist bookmarksPlaylist;

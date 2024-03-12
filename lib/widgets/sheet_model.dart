@@ -5,7 +5,7 @@ import '../layer.dart';
 import 'custom_card.dart';
 
 class SheetModel extends StatefulWidget {
-  final Layer Function(dynamic) func;
+  final Future<Layer> Function(dynamic) func;
   final dynamic param;
   const SheetModel({
     super.key,
@@ -28,27 +28,33 @@ class _SheetModelState extends State<SheetModel> {
         child: ValueListenableBuilder(
           valueListenable: refreshLay,
           builder: (context, non, child) {
-            Layer layer = widget.func(widget.param);
-            List<Setting> list = layer.list;
-            return ListView(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                Row(
-                  children: <Widget>[
-                        Expanded(
-                          child: CustomCard(layer.action),
-                        ),
-                      ] +
-                      (layer.trailing == null ? [] : layer.trailing!(context)),
-                ),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
+            return FutureBuilder(
+              future: widget.func.call(widget.func),
+              builder: (context, snap) {
+                if (!snap.hasData) return Container();
+                Layer layer = snap.data!;
+                List<Setting> list = layer.list;
+                return ListView(
                   shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, i) => list[i].toTile(context),
-                ),
-              ],
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    Row(
+                      children: <Widget>[
+                            Expanded(
+                              child: CustomCard(layer.action),
+                            ),
+                          ] +
+                          (layer.trailing == null ? [] : layer.trailing!(context)),
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: list.length,
+                      itemBuilder: (context, i) => list[i].toTile(context),
+                    ),
+                  ],
+                );
+              },
             );
           },
         ),

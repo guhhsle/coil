@@ -6,7 +6,7 @@ import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../layer.dart';
 
-Layer interfaceSet(dynamic non) => Layer(
+Future<Layer> interfaceSet(dynamic non) async => Layer(
       action: Setting(
         'Player',
         Icons.toggle_on,
@@ -49,7 +49,7 @@ Layer interfaceSet(dynamic non) => Layer(
           'Reorder',
           (c) => showSheet(
             hidePrev: c,
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Search',
                 Icons.fiber_manual_record_outlined,
@@ -86,7 +86,7 @@ Layer interfaceSet(dynamic non) => Layer(
       ],
     );
 
-Layer themeMap(dynamic p) {
+Future<Layer> themeMap(dynamic p) async {
   p is bool;
   Layer layer = Layer(
       action: Setting(

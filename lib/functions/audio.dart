@@ -484,7 +484,7 @@ class TopIcon extends StatelessWidget {
                   );
                 } else if (!top || (pf['player'] == 'Top' && queuePlaying.isNotEmpty)) {
                   ProcessingState? state = snapshot.data?.processingState;
-                  return GestureDetector(
+                  return InkWell(
                     onLongPress: () => showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,

@@ -7,7 +7,7 @@ import '../layer.dart';
 import '../other/countries.dart';
 import '../pages/page_log.dart';
 
-Layer accountSet(dynamic non) => Layer(
+Future<Layer> accountSet(dynamic non) async => Layer(
       action: Setting(
         'Configure',
         Icons.person_rounded,
@@ -25,7 +25,7 @@ Layer accountSet(dynamic non) => Layer(
           '',
           (c) => showSheet(
             hidePrev: c,
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Export type',
                 Icons.settings_backup_restore_rounded,
@@ -62,7 +62,7 @@ Layer accountSet(dynamic non) => Layer(
           (c) => showSheet(
             hidePrev: c,
             scroll: true,
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Country',
                 Icons.outlined_flag_rounded,

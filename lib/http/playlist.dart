@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:coil/layer.dart';
 import 'package:coil/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -121,21 +122,21 @@ Future<void> trending() async {
 Future<void> addToPlaylist({
   required String playlistId,
   required MediaItem item,
-  required BuildContext c,
 }) async {
   if (pf['token'] == '') return;
   try {
     Playlist playlist = await Playlist.fromStorage(playlistId);
     if (playlist.list.indexWhere((e) => e.id == item.id) != -1) {
       showSnack('Already saved, tap to add again', false, onTap: () async {
-        await forceAddToPlaylist(playlistId: playlistId, item: item, c: c);
+        await forceAddToPlaylist(playlistId: playlistId, item: item);
       });
       return;
     } else {}
   } catch (e) {
     //Playlist not offline
   }
-  forceAddToPlaylist(playlistId: playlistId, item: item, c: c);
+  await forceAddToPlaylist(playlistId: playlistId, item: item);
+  refreshLayer();
 }
 
 Future<void> removeFromPlaylist({
@@ -199,7 +200,6 @@ Future<void> preload({int range = 5}) async {
 Future<void> forceAddToPlaylist({
   required String playlistId,
   required MediaItem item,
-  required BuildContext c,
 }) async {
   if (pf['token'] == '') return;
   Response response = await post(

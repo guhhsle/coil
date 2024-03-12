@@ -15,19 +15,32 @@ import '../http/generate.dart';
 import '../http/playlist.dart';
 import '../layer.dart';
 import '../pages/page_artist.dart';
+import '../playlist.dart';
 
 //																	USER PLAYLIST TO MAP
 
-Layer userPlaylistsToMap(dynamic item) {
+Future<Layer> userPlaylistsToMap(dynamic item) async {
   item as MediaItem;
 
   if (userPlaylists.value.isEmpty) {
-    fetchUserPlaylists(true).then((value) {
-      refreshLayer();
-    });
+    await fetchUserPlaylists(true);
   }
 
-  bool bookmarked = bookmarksPlaylist.list.indexWhere((e) => e.id == item.id) != -1;
+  Playlist bookmarks = await Playlist.fromStorage('Bookmarks');
+
+  bool bookmarked = bookmarks.list.indexWhere((e) => e.id == item.id) != -1;
+  Map<dynamic, bool?> playlists = {};
+
+  for (var map in userPlaylists.value) {
+    bool? has;
+    try {
+      var pl = await Playlist.fromStorage(map['id']);
+      has = pl.list.indexWhere((e) => e.id == item.id) != -1;
+    } catch (e) {
+      //NOT CACHED
+    }
+    playlists.addAll({map: has});
+  }
 
   return Layer(
     action: bookmarked
@@ -50,16 +63,14 @@ Layer userPlaylistsToMap(dynamic item) {
             },
           ),
     list: [
-      for (int i = 0; i < userPlaylists.value.length; i++)
+      for (MapEntry<dynamic, bool?> entry in playlists.entries)
         Setting(
-          userPlaylists.value[i]['name'],
+          entry.key['name'],
           Icons.clear_all_rounded,
-          '',
+          entry.value == null ? '?' : '${entry.value}',
           (c) {
-            Navigator.of(c).pop();
             addToPlaylist(
-              playlistId: userPlaylists.value[i]['id'],
-              c: c,
+              playlistId: entry.key['id'],
               item: item,
             );
           },
@@ -90,7 +101,7 @@ void showLinks(MediaItem item, BuildContext context) {
             showSheet(
               scroll: true,
               hidePrev: c,
-              func: (non) => Layer(
+              func: (non) async => Layer(
                 action: Setting(
                   'Bitrate',
                   Icons.graphic_eq_rounded,
@@ -144,7 +155,7 @@ void showLinks(MediaItem item, BuildContext context) {
     ],
   );
   showSheet(
-    func: (non) => layer,
+    func: (non) async => layer,
     scroll: true,
     hidePrev: context,
   );
@@ -152,7 +163,7 @@ void showLinks(MediaItem item, BuildContext context) {
 
 //																	MEDIA MAP
 
-Layer mediaToLayer(dynamic item) {
+Future<Layer> mediaToLayer(dynamic item) async {
   item as MediaItem;
   ValueNotifier<bool> loaded = ValueNotifier(false);
   unawaited(forceLoad(item).then((v) => loaded.value = true));
@@ -194,7 +205,12 @@ Layer mediaToLayer(dynamic item) {
         Icons.playlist_add_rounded,
         'Add to playlist',
         (c) async {
-          showSheet(func: userPlaylistsToMap, param: item, scroll: true, hidePrev: c);
+          showSheet(
+            func: userPlaylistsToMap,
+            param: item,
+            scroll: true,
+            hidePrev: c,
+          );
         },
       ),
       Setting(

@@ -55,7 +55,7 @@ class CreatePlaylist extends StatelessWidget {
           icon: const Icon(Icons.add_rounded),
           tooltip: l['Create a playlist'],
           onPressed: () => showSheet(
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Create a playlist',
                 Icons.playlist_add_rounded,
@@ -75,7 +75,7 @@ class CreatePlaylist extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () => showSheet(
-            func: (non) => Layer(
+            func: (non) async => Layer(
               action: Setting(
                 'Create a playlist',
                 Icons.playlist_add_rounded,
