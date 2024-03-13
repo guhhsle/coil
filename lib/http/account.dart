@@ -24,11 +24,11 @@ Future<bool> login(
     setPref('token', jsonDecode(result.body)['token']);
     setPref('username', username);
     setPref('password', password);
+    unawaited(fetchUserPlaylists(true));
     return true;
   } else {
     showSnack(jsonDecode(result.body)['error'], false);
   }
-  unawaited(fetchUserPlaylists(true));
   return false;
 }
 
