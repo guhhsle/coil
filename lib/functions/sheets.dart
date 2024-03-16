@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/http/other.dart';
+import 'package:coil/widgets/song_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -175,6 +176,16 @@ Future<Layer> mediaToLayer(dynamic item) async {
       await skipTo(0);
       Navigator.of(c).pop();
     }),
+    leading: (context) => [
+      SizedBox(
+        height: 40,
+        child: songImage(
+          item,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          force: true,
+        ),
+      )
+    ],
     list: [
       Setting(
         '',

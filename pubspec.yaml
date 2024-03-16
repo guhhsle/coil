@@ -1,7 +1,7 @@
 name: coil
 description: A music player that connnects to Piped.
 publish_to: 'none'
-version: 1.9.11
+version: 1.9.12
 
 environment:
   sdk: '>=3.3.0 <4.0.0'

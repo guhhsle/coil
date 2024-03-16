@@ -61,12 +61,12 @@ class Setting {
 class Layer {
   final Setting action;
   final List<Setting> list;
-  List<Widget> Function(BuildContext)? trailing;
+  List<Widget> Function(BuildContext)? leading;
 
   Layer({
     required this.action,
     required this.list,
-    this.trailing,
+    this.leading,
   });
 }
 

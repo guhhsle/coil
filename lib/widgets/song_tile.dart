@@ -92,10 +92,11 @@ class SongTileChild extends StatelessWidget {
   }
 }
 
-Widget? songImage(MediaItem item, {EdgeInsets? padding}) {
-  if (!pf['songThumbnails']) return null;
-  if (item.extras!['offline'] != null) return null;
-
+Widget? songImage(MediaItem item, {EdgeInsets? padding, force = false}) {
+  if (!force) {
+    if (!pf['songThumbnails']) return null;
+    if (item.extras!['offline'] != null) return null;
+  }
   padding ??= const EdgeInsets.symmetric(vertical: 8);
   return Padding(
     padding: padding,

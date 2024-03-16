@@ -39,12 +39,12 @@ class _SheetModelState extends State<SheetModel> {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     Row(
-                      children: <Widget>[
+                      children: (layer.leading == null ? <Widget>[] : layer.leading!(context)) +
+                          <Widget>[
                             Expanded(
                               child: CustomCard(layer.action),
-                            ),
-                          ] +
-                          (layer.trailing == null ? [] : layer.trailing!(context)),
+                            )
+                          ],
                     ),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),

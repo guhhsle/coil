@@ -1,11 +1,19 @@
 String versions = """
 
+0.9.12						16.03.24
+
+	Added song thumbnail on song sheet
+	Changes in Now Playing sheet
+	Better adding to playlists
+
+
 0.9.11						09.03.24
 
 	Better bookmarks option in bottom sheet.
 	Better state management ( refreshing)
 	Added quick instances on home
 	Force refresh playlist option
+
 
 0.9.10						07.12.23
 
