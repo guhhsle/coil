@@ -193,7 +193,6 @@ class PlaylistPageState extends State<PlaylistPage> {
                     List<int> path = widget.path.toList()..remove(2);
                     list = await loadPlaylist(widget.url, path);
                     setState(() {});
-                    Navigator.of(context).pop();
                   },
                   child: ListView.builder(
                     physics: scrollPhysics,
