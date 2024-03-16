@@ -45,6 +45,7 @@ class _SheetQueueState extends State<SheetQueue> {
                 ),
                 child: Column(
                   children: [
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         Expanded(
