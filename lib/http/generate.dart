@@ -5,13 +5,12 @@ import 'package:http/http.dart';
 
 import '../data.dart';
 import '../functions/song.dart';
-import '../playlist.dart';
 import 'playlist.dart';
 
 Map<int, List<MediaItem>> generated = {};
-Future<bool> generate(List<MediaItem> list) async {
+Future<bool> generate(List<MediaItem> rawList) async {
+  List<MediaItem> list = rawList.toList()..shuffle();
   generated.clear();
-  list.shuffle();
   var futures = <Future>[];
 
   for (int i = 0; i < list.length && i < pf['requestLimit']; i++) {
@@ -54,23 +53,23 @@ Future<bool> generate(List<MediaItem> list) async {
 }
 
 Future<void> generateFromId(String id) async {
-  Response result = await get(Uri.https(pf['instance'], 'streams/$id'));
-  await generateFrom(
-      Playlist.fromJson(
-        jsonDecode(utf8.decode(result.bodyBytes)),
-        id,
-      ),
-      false);
+  Response response = await get(Uri.https(pf['instance'], 'streams/$id'));
+  late List related;
+  try {
+    related = jsonDecode(utf8.decode(response.bodyBytes))['relatedStreams'];
+  } catch (e) {
+    related = jsonDecode(response.body)['relatedStreams'];
+  }
+  await generateFrom(related, false);
 }
 
-Future<void> generateFrom(Playlist m, bool r) async {
+Future<void> generateFrom(List related, bool r) async {
   try {
-    List related = m.raw['relatedStreams'];
     List<Future> waiting = [];
     for (int i = 0; i < related.length; i++) {
       if (related[i]['type'] == 'playlist') {
         waiting.add(loadPlaylist(related[i]['url'], [0, 1]).then((value) {
-          generateFrom(value, true);
+          generateFrom(value.raw['relatedStreams'], true);
         }));
       } else {
         addToGen(related[i], r ? -10 : i);
