@@ -1,9 +1,8 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
-import '../functions/song.dart';
 import '../http/playlist.dart';
+import '../song.dart';
 import 'song_tile.dart';
 
 class Trending extends StatelessWidget {
@@ -16,9 +15,9 @@ class Trending extends StatelessWidget {
       child: ValueListenableBuilder<List>(
         valueListenable: trendingVideos,
         builder: (context, snap, child) {
-          List<MediaItem> list = [];
+          List<Song> list = [];
           for (var q = 0; q < snap.length; q++) {
-            list.add(mapToMedia(snap[q]));
+            list.add(Song.from(snap[q]));
           }
           return ListView.builder(
             padding: const EdgeInsets.only(top: 8, bottom: 32),

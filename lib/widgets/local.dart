@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data.dart';
+import '../song.dart';
 import 'song_tile.dart';
 
 class LocalSongs extends StatefulWidget {
@@ -32,12 +32,12 @@ class LocalSongsState extends State<LocalSongs> {
       child: ValueListenableBuilder<List>(
         valueListenable: localMusic,
         builder: (context, data, child) {
-          List<MediaItem> list = [];
+          List<Song> list = [];
           for (int i = 0; i < localMusic.value.length; i++) {
             String songPath = localMusic.value[i].path.replaceAll('.m4a', '').replaceAll('.mp3', '');
             if (localMusic.value[i].path.endsWith('.m4a') || localMusic.value[i].path.endsWith('.mp3')) {
               list.add(
-                MediaItem(
+                Song(
                   title: basename(songPath),
                   artist: '',
                   id: localMusic.value[i].path,

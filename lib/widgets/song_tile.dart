@@ -1,13 +1,13 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
 import '../functions/audio.dart';
 import '../functions/sheets.dart';
 import '../layer.dart';
+import '../song.dart';
 
 class SongTile extends StatelessWidget {
-  final List<MediaItem> list;
+  final List<Song> list;
   final int i;
   final bool haptic;
 
@@ -33,7 +33,7 @@ class SongTile extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: selected ? primary.withOpacity(0.4) : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               width: selected ? 2 : 0,
               color: selected ? primary : Colors.transparent,
@@ -54,7 +54,7 @@ class SongTile extends StatelessWidget {
 }
 
 class SongTileChild extends StatelessWidget {
-  final List<MediaItem> list;
+  final List<Song> list;
   final int i;
   final bool selected;
 
@@ -92,7 +92,7 @@ class SongTileChild extends StatelessWidget {
   }
 }
 
-Widget? songImage(MediaItem item, {EdgeInsets? padding, force = false}) {
+Widget? songImage(Song item, {EdgeInsets? padding, force = false}) {
   if (!force) {
     if (!pf['songThumbnails']) return null;
     if (item.extras!['offline'] != null) return null;

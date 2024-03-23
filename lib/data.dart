@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:coil/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'song.dart';
 
 Map pf = {
   //APP
@@ -124,8 +125,8 @@ final ValueNotifier<bool> showTopDock = ValueNotifier(false);
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-List<MediaItem> queuePlaying = [];
-List<MediaItem> queueLoading = [];
+List<Song> queuePlaying = [];
+List<Song> queueLoading = [];
 
 final ValueNotifier<bool> refreshLay = ValueNotifier(true);
 const ScrollPhysics scrollPhysics = BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());

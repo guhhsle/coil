@@ -1,17 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:coil/data.dart';
 
 import 'functions/other.dart';
-import 'functions/song.dart';
+import 'song.dart';
 
 class Playlist {
   String url, thumbnail, name, uploader;
   Map raw;
   int items;
-  List<MediaItem> list;
+  List<Song> list;
 
   Playlist({
     required this.url,
@@ -23,23 +22,23 @@ class Playlist {
     required this.raw,
   });
 
-  static List<MediaItem> listFromMap(Map json, String url) {
+  static List<Song> listFromMap(Map json, String url) {
     List playlist = json['relatedStreams'] ?? [];
-    List<MediaItem> list = [];
+    List<Song> list = [];
     for (var i = 0; i < playlist.length; i++) {
       int index = userPlaylists.value.indexWhere((el) => el['id'] == url);
       if (url == 'Bookmarks') index++;
       if (pf['reverse'] && index >= 0) {
         list.insert(
           0,
-          mapToMedia(
+          Song.from(
             playlist[i],
             playlist: index >= 0 ? url : null,
             i: i,
           ),
         );
       } else {
-        list.add(mapToMedia(
+        list.add(Song.from(
           playlist[i],
           playlist: index >= 0 ? url : null,
           i: i,

@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:coil/http/other.dart';
 import 'package:coil/widgets/song_tile.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +16,12 @@ import '../http/playlist.dart';
 import '../layer.dart';
 import '../pages/page_artist.dart';
 import '../playlist.dart';
+import '../song.dart';
 
 //																	USER PLAYLIST TO MAP
 
 Future<Layer> userPlaylistsToMap(dynamic item) async {
-  item as MediaItem;
+  item as Song;
 
   if (userPlaylists.value.isEmpty) {
     await fetchUserPlaylists(true);
@@ -88,7 +88,7 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
   );
 }
 
-void showLinks(MediaItem item, BuildContext context) {
+void showLinks(Song song, BuildContext context) {
   Layer layer = Layer(
     action: Setting('Links', Icons.link_rounded, '', (c) {}),
     list: [
@@ -97,8 +97,8 @@ void showLinks(MediaItem item, BuildContext context) {
         Icons.file_download_outlined,
         'Audio',
         (c) async {
-          if (await canLaunchUrl(Uri.parse(item.extras!['url']))) {
-            Map<String, int> map = item.extras!['audioUrls'];
+          if (await canLaunchUrl(Uri.parse(song.extras!['url']))) {
+            Map<String, int> map = song.extras!['audioUrls'];
             showSheet(
               scroll: true,
               hidePrev: c,
@@ -112,7 +112,7 @@ void showLinks(MediaItem item, BuildContext context) {
                 list: [
                   for (int i = map.length - 1; i >= 0; i--)
                     Setting(
-                      '${map.keys.elementAt(i) == item.extras!['url'] ? '>   ' : ''}${map.values.elementAt(i)}',
+                      '${map.keys.elementAt(i) == song.extras!['url'] ? '>   ' : ''}${map.values.elementAt(i)}',
                       Icons.graphic_eq_rounded,
                       '',
                       (c) async => await launchUrl(
@@ -131,23 +131,23 @@ void showLinks(MediaItem item, BuildContext context) {
         Icons.video_label_rounded,
         'Piped',
         (c) async {
-          if (await canLaunchUrl(Uri.parse('${pf['watchOnPiped']}${item.id}'))) {
+          if (await canLaunchUrl(Uri.parse('${pf['watchOnPiped']}${song.id}'))) {
             await launchUrl(
-              Uri.parse('https://piped.video/watch?v=${item.id}'),
+              Uri.parse('https://piped.video/watch?v=${song.id}'),
               mode: LaunchMode.externalApplication,
             );
           }
         },
       ),
-      for (int i = 0; i < (item.extras!['video'] as List<Map>).length; i++)
+      for (int i = 0; i < (song.extras!['video'] as List<Map>).length; i++)
         Setting(
-          item.extras!['video'][i]['quality'],
+          song.extras!['video'][i]['quality'],
           Icons.theaters_rounded,
-          item.extras!['video'][i]['format'],
+          song.extras!['video'][i]['format'],
           (c) async {
-            if (await canLaunchUrl(Uri.parse(item.extras!['video'][i]['url']))) {
+            if (await canLaunchUrl(Uri.parse(song.extras!['video'][i]['url']))) {
               await launchUrl(
-                Uri.parse(item.extras!['video'][i]['url']),
+                Uri.parse(song.extras!['video'][i]['url']),
                 mode: LaunchMode.externalApplication,
               );
             }
@@ -164,15 +164,15 @@ void showLinks(MediaItem item, BuildContext context) {
 
 //																	MEDIA MAP
 
-Future<Layer> mediaToLayer(dynamic item) async {
-  item as MediaItem;
+Future<Layer> mediaToLayer(dynamic song) async {
+  song as Song;
   ValueNotifier<bool> loaded = ValueNotifier(false);
-  unawaited(forceLoad(item).then((v) => loaded.value = true));
-  unawaited(lyrics(item));
+  unawaited(forceLoad(song).then((v) => loaded.value = true));
+  unawaited(lyrics(song));
   Layer layer = Layer(
-    action: Setting(item.title, Icons.radio_outlined, '', (c) async {
-      await generate([item]);
-      load(queuePlaying..insert(0, item));
+    action: Setting(song.title, Icons.radio_outlined, '', (c) async {
+      await generate([song]);
+      load(queuePlaying..insert(0, song));
       await skipTo(0);
       Navigator.of(c).pop();
     }),
@@ -180,7 +180,7 @@ Future<Layer> mediaToLayer(dynamic item) async {
       SizedBox(
         height: 40,
         child: songImage(
-          item,
+          song,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           force: true,
         ),
@@ -190,23 +190,23 @@ Future<Layer> mediaToLayer(dynamic item) async {
       Setting(
         '',
         Icons.person_outline_rounded,
-        item.artist ?? 'Artist',
+        song.artist ?? 'Artist',
         (c) => Navigator.of(c).push(
           MaterialPageRoute(
             builder: (c) => PageArtist(
-              url: item.extras!['uploaderUrl'],
-              artist: item.artist!,
+              url: song.extras!['uploaderUrl'],
+              artist: song.artist!,
             ),
           ),
         ),
       ),
       Setting('', Icons.link_rounded, 'Audio/Video', (c) {
         if (loaded.value) {
-          showLinks(item, c);
+          showLinks(song, c);
         } else {
           loaded.addListener(() {
             if (loaded.value) {
-              showLinks(item, c);
+              showLinks(song, c);
             }
           });
         }
@@ -218,7 +218,7 @@ Future<Layer> mediaToLayer(dynamic item) async {
         (c) async {
           showSheet(
             func: userPlaylistsToMap,
-            param: item,
+            param: song,
             scroll: true,
             hidePrev: c,
           );
@@ -229,7 +229,7 @@ Future<Layer> mediaToLayer(dynamic item) async {
         Icons.format_align_center,
         'Lyrics',
         (c) => singleChildSheet(
-          title: item.title,
+          title: song.title,
           context: c,
           icon: Icons.format_align_center_rounded,
           child: ValueListenableBuilder<String>(
@@ -242,7 +242,7 @@ Future<Layer> mediaToLayer(dynamic item) async {
         '',
         Icons.skip_next_rounded,
         'Play next',
-        (c) => insertItemToQueue(current.value + 1, item).then(
+        (c) => insertItemToQueue(current.value + 1, song).then(
           (v) => Navigator.of(c).pop(),
         ),
       ),
@@ -250,24 +250,24 @@ Future<Layer> mediaToLayer(dynamic item) async {
         '',
         Icons.wrap_text_rounded,
         'Enqueue',
-        (c) => addItemToQueue(item).then(
+        (c) => addItemToQueue(song).then(
           (v) => Navigator.of(c).pop(),
         ),
       ),
     ],
   );
-  if (item.extras!['playlist'] == 'queue') {
+  if (song.extras!['playlist'] == 'queue') {
     layer.list.add(
       Setting(
         '',
         Icons.remove_rounded,
         'Dequeue',
         (c) async {
-          removeItemAt(queuePlaying.indexOf(item));
+          removeItemAt(queuePlaying.indexOf(song));
         },
       ),
     );
-  } else if (item.extras!['playlist'] != null) {
+  } else if (song.extras!['playlist'] != null) {
     layer.list.add(
       Setting(
         '',
@@ -276,7 +276,7 @@ Future<Layer> mediaToLayer(dynamic item) async {
         (c) async {
           Navigator.of(c).pop();
           removeFromPlaylist(
-            item: item,
+            item: song,
           );
         },
       ),

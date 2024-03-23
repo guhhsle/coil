@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:audio_service/audio_service.dart';
 import 'package:http/http.dart';
 
 import '../data.dart';
-import '../functions/song.dart';
+import '../song.dart';
 import 'playlist.dart';
 
-Map<int, List<MediaItem>> generated = {};
-Future<bool> generate(List<MediaItem> rawList) async {
-  List<MediaItem> list = rawList.toList()..shuffle();
+Map<int, List<Song>> generated = {};
+Future<bool> generate(List<Song> rawList) async {
+  List<Song> list = rawList.toList()..shuffle();
   generated.clear();
   var futures = <Future>[];
 
@@ -26,21 +25,21 @@ Future<bool> generate(List<MediaItem> rawList) async {
     for (int i = 0; i < generated.length; i++) {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
-        MediaItem item = generated[key]!.removeAt(j);
-        int n = item.extras!['verified'] + 2 * item.extras!['reps'];
-        n += item.extras!['index'] ~/ 2 as int;
+        Song song = generated[key]!.removeAt(j);
+        int n = song.extras!['verified'] + 2 * song.extras!['reps'];
+        n += song.extras!['index'] ~/ 2 as int;
         if (!generated.containsKey(n)) {
           generated.addAll({
-            n: [item]
+            n: [song]
           });
         } else {
-          generated[n]!.add(item);
+          generated[n]!.add(song);
         }
       }
     }
   }
 
-  Map<int, List<MediaItem>> sorted = Map.fromEntries(
+  Map<int, List<Song>> sorted = Map.fromEntries(
     generated.entries.toList()..sort((e1, e2) => e2.key.compareTo(e1.key)),
   );
 
@@ -83,13 +82,13 @@ Future<void> generateFrom(List related, bool r) async {
 
 void addToGen(Map m, int i) {
   try {
-    MediaItem item = mapToMedia(m, i: i);
-    int e = item.extras!['verified'];
+    Song song = Song.from(m, i: i);
+    int e = song.extras!['verified'];
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {
-        List<MediaItem> list = generated.values.elementAt(j);
+        List<Song> list = generated.values.elementAt(j);
         for (int q = 0; q < list.length; q++) {
-          if (item.title == list[q].title) {
+          if (song.title == list[q].title) {
             list[q].extras!['index'] += 10;
             list[q].extras!['reps']++;
             return;
@@ -99,12 +98,12 @@ void addToGen(Map m, int i) {
     }
     if (!generated.containsKey(e)) {
       generated.addAll({
-        e: [item]
+        e: [song]
       });
     } else {
-      int j = generated[e]!.indexWhere((el) => el.id == item.id);
+      int j = generated[e]!.indexWhere((el) => el.id == song.id);
       if (j == -1) {
-        generated[e]!.add(item);
+        generated[e]!.add(song);
       } else {
         generated[e]![j].extras!['index'] += 2;
         generated[e]![j].extras!['reps']++;

@@ -7,9 +7,9 @@ import '../data.dart';
 import '../functions/audio.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
-import '../functions/song.dart';
 import '../http/other.dart';
 import '../http/playlist.dart';
+import '../song.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
 import '../widgets/song_tile.dart';
@@ -207,7 +207,7 @@ class SuggestionListState extends State<SuggestionList> {
                 if (filter == 'music_songs' || filter == 'videos') {
                   try {
                     for (var q = 0; q < snap.length; q++) {
-                      queueLoading.add(mapToMedia(snap[q]));
+                      queueLoading.add(Song.from(snap[q]));
                     }
                     unawaited(preload(range: 10));
                     return Expanded(

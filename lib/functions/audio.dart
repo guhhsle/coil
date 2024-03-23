@@ -12,6 +12,7 @@ import 'package:just_audio/just_audio.dart';
 import '../data.dart';
 import '../http/other.dart';
 import '../http/playlist.dart';
+import '../song.dart';
 import '../widgets/sheet_queue.dart';
 import 'cache.dart';
 
@@ -128,14 +129,6 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> stop() => stopPlayer();
 
   @override
-  Future<void> addQueueItem(MediaItem mediaItem) => addItemToQueue(mediaItem);
-
-  @override
-  Future<void> insertQueueItem(int index, MediaItem mediaItem) {
-    return insertItemToQueue(index, mediaItem);
-  }
-
-  @override
   Future<void> removeQueueItemAt(int index) => removeItemAt(index);
 
   @override
@@ -196,8 +189,8 @@ Future<void> stopPlayer() async {
   player.stop();
 }
 
-Future<void> addItemToQueue(MediaItem mediaItem) async {
-  queuePlaying.add(mediaItem);
+Future<void> addItemToQueue(Song song) async {
+  queuePlaying.add(song);
   unawaited(preload());
   if (queuePlaying.length == 1) skipTo(0);
   controller.value = PageController(initialPage: current.value);
@@ -206,14 +199,14 @@ Future<void> addItemToQueue(MediaItem mediaItem) async {
 
 Future<void> insertItemToQueue(
   int index,
-  MediaItem mediaItem, {
+  Song song, {
   bool e = false,
 }) async {
   if (queuePlaying.isEmpty) {
-    addItemToQueue(mediaItem);
+    addItemToQueue(song);
     return;
   }
-  queuePlaying.insert(index, mediaItem);
+  queuePlaying.insert(index, song);
   unawaited(preload());
   if (e) {
     current.value = current.value - 1;
@@ -233,41 +226,41 @@ Future<void> removeItemAt(int index) async {
 }
 
 void shuffle() {
-  MediaItem item = queuePlaying[current.value];
+  Song song = queuePlaying[current.value];
   queuePlaying.shuffle();
-  current.value = queuePlaying.indexOf(item);
+  current.value = queuePlaying.indexOf(song);
   controller.value = PageController(initialPage: current.value);
   refreshQueue.value = !refreshQueue.value;
 }
 
-Future<void> playItem(MediaItem item) async {
-  if (item.extras!['offline'] == null) {
-    unawaited(addTo100(item));
+Future<void> playItem(Song song) async {
+  if (song.extras!['offline'] == null) {
+    unawaited(addTo100(song));
     await player.setAudioSource(
       AudioSource.uri(
-        Uri.parse(item.extras!['url']),
-        tag: item,
+        Uri.parse(song.extras!['url']),
+        tag: song,
       ),
     );
   } else {
     await player.setAudioSource(
       AudioSource.file(
-        item.extras!['url'],
-        tag: item,
+        song.extras!['url'],
+        tag: song,
       ),
     );
   }
-  int pos = rememberedPosition(item.id);
+  int pos = rememberedPosition(song.id);
   if (pos > 10) await player.seek(Duration(seconds: pos));
   unawaited(player.play());
   unawaited(preload());
 }
 
-void load(List<MediaItem> list) {
+void load(List<Song> list) {
   if (list == queuePlaying) return;
   queuePlaying.clear();
-  for (MediaItem item in list) {
-    queuePlaying.add(item..extras!['playlist'] = 'queue');
+  for (Song song in list) {
+    queuePlaying.add(song..extras!['playlist'] = 'queue');
   }
 }
 

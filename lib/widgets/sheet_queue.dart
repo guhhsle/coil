@@ -1,9 +1,9 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../data.dart';
 import '../functions/audio.dart';
 import '../layer.dart';
+import '../song.dart';
 import 'custom_card.dart';
 import 'song_tile.dart';
 
@@ -126,7 +126,7 @@ class _SheetQueueState extends State<SheetQueue> {
                                       ),
                                     ),
                                     onDismissed: (direction) {
-                                      MediaItem item = queuePlaying[i];
+                                      Song item = queuePlaying[i];
                                       bool e = i == current.value;
                                       removeItemAt(i);
                                       if (direction == DismissDirection.startToEnd) {

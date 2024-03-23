@@ -6,7 +6,7 @@ import 'package:coil/functions/other.dart';
 import '../data.dart';
 import '../http/playlist.dart';
 import '../playlist.dart';
-import 'song.dart';
+import '../song.dart';
 
 Future<void> refreshBookmarks() async {
   Playlist.fromStorage('Bookmarks').catchError(
@@ -39,7 +39,7 @@ Future<void> fetchBookmarks() async {
 }
 
 Future<void> forceAddBackup(
-  MediaItem item,
+  Song song,
   String url, {
   bool top = false,
 }) async {
@@ -48,9 +48,9 @@ Future<void> forceAddBackup(
   );
   local.name = t(url);
   if (top) {
-    (local.raw['relatedStreams'] as List).insert(0, mediaToMap(item));
+    (local.raw['relatedStreams'] as List).insert(0, song.toMap());
   } else {
-    local.raw['relatedStreams'].add(mediaToMap(item));
+    local.raw['relatedStreams'].add(song.toMap());
   }
   await local.backup();
   refreshList();
@@ -78,8 +78,8 @@ Future<void> forceRemoveBackup(
   refreshList();
 }
 
-Future<void> addTo100(MediaItem item) async {
-  await forceAddBackup(item, '100raw', top: true);
+Future<void> addTo100(Song song) async {
+  await forceAddBackup(song, '100raw', top: true);
   Playlist hundred = await Playlist.fromStorage('100raw');
   Map<String, int> map = {};
   List listRaw = hundred.raw['relatedStreams'];
