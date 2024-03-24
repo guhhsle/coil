@@ -26,7 +26,9 @@ Map pf = {
   'appbar': 'Black',
   'player': 'Dock',
   'background': 'Ivory',
+  'backgroundDark': 'Ultramarine',
   'primary': 'Black',
+  'primaryDark': 'Light Green',
   //HOME
   'homeOrder': [
     'Playlists',
@@ -69,27 +71,27 @@ Map pf = {
   'rememberTimes': <String>[],
 };
 
-final Map<String, Color> colors = {
+const Map<String, Color> colors = {
   'White': Colors.white,
-  'Ivory': const Color(0xFFf6f7eb),
+  'Ivory': Color(0xFFf6f7eb),
   //'Beige': const Color(0xFFf5f5dc),
-  'Pink': const Color(0xFFFEDBD0),
-  'Gruv Light': const Color(0xFFC8A58A),
-  'Light Green': const Color(0xFFcbe2d4),
-  'PinkRed': const Color(0xFFee7674),
+  'Pink': Color(0xFFFEDBD0),
+  'Gruv Light': Color(0xFFC8A58A),
+  'Light Green': Color(0xFFcbe2d4),
+  'PinkRed': Color(0xFFee7674),
   'BlueGrey': Colors.blueGrey,
-  'Dark BlueGrey': Colors.blueGrey.shade900,
-  'Dark Green': const Color(0xFF25291C),
-  'Purple Grey': const Color(0xFF282a36),
-  'Ultramarine': const Color(0xFF01161E),
-  'Dark Pink': const Color(0xFF442C2E),
-  'Purple': const Color(0xFF170a1c),
-  'Gruv Dark': const Color(0xFF0F0A0A),
-  'Anchor': const Color(0xFF11150D),
+  'Dark BlueGrey': Color(0xFF263238),
+  'Dark Green': Color(0xFF25291C),
+  'Purple Grey': Color(0xFF282a36),
+  'Ultramarine': Color(0xFF01161E),
+  'Dark Pink': Color(0xFF442C2E),
+  'Purple': Color(0xFF170a1c),
+  'Gruv Dark': Color(0xFF0F0A0A),
+  'Anchor': Color(0xFF11150D),
   'Black': Colors.black,
 };
 
-final Map<String, IconData> iconsTheme = {
+const Map<String, IconData> iconsTheme = {
   'White': Icons.ac_unit_rounded,
   'Ivory': Icons.ac_unit_rounded,
   'Pink': Icons.spa_outlined,
@@ -108,9 +110,16 @@ final Map<String, IconData> iconsTheme = {
   'Black': Icons.nights_stay_outlined,
 };
 
-Map l = {};
-
 late final SharedPreferences prefs;
+const ScrollPhysics scrollPhysics = BouncingScrollPhysics(
+  parent: AlwaysScrollableScrollPhysics(),
+);
+
+List<Song> queuePlaying = [];
+List<Song> queueLoading = [];
+
+Map l = {};
+final navigatorKey = GlobalKey<NavigatorState>();
 
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
 final ValueNotifier<List<FileSystemEntity>> localMusic = ValueNotifier([]);
@@ -122,14 +131,7 @@ final ValueNotifier<List> searchSuggestions = ValueNotifier([]);
 final ValueNotifier<String> currentLyrics = ValueNotifier('');
 
 final ValueNotifier<bool> showTopDock = ValueNotifier(false);
-
-final navigatorKey = GlobalKey<NavigatorState>();
-
-List<Song> queuePlaying = [];
-List<Song> queueLoading = [];
-
 final ValueNotifier<bool> refreshLay = ValueNotifier(true);
-const ScrollPhysics scrollPhysics = BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics());
 final ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData());
 final ValueNotifier<int> current = ValueNotifier(0);
 final ValueNotifier<PageController> controller = ValueNotifier(PageController());

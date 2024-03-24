@@ -33,29 +33,32 @@ class MyApp extends StatelessWidget {
               locale: Locale(pf['locale']),
               navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
-              theme: theme(color(true), color(false)),
+              theme: theme(color(true, lightTheme: true), color(false, lightTheme: true)),
+              darkTheme: theme(color(true, lightTheme: false), color(false, lightTheme: false)),
               title: 'Coil',
-              home: AnnotatedRegion<SystemUiOverlayStyle>(
-                value: SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent,
-                  systemNavigationBarColor: pf['player'] != 'Dock'
-                      ? color(false)
-                      : {
-                          'Black': Colors.black,
-                          'Primary': color(true),
-                          'Transparent': color(false),
-                        }[pf['appbar']],
-                  systemNavigationBarIconBrightness: Brightness.dark,
-                ),
-                child: Builder(
-                  builder: (context) {
-                    SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-                    );
-                    return account ? const PageLog() : const Home();
-                  },
-                ),
-              ),
+              home: Builder(builder: (context) {
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor: pf['player'] != 'Dock'
+                        ? color(false)
+                        : {
+                            'Black': Colors.black,
+                            'Primary': color(true),
+                            'Transparent': color(false),
+                          }[pf['appbar']],
+                    systemNavigationBarIconBrightness: Brightness.dark,
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+                      );
+                      return account ? const PageLog() : const Home();
+                    },
+                  ),
+                );
+              }),
             );
           },
         );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../data.dart';
@@ -88,9 +89,11 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
 
 Future<Layer> themeMap(dynamic p) async {
   p is bool;
+  var dispatcher = SchedulerBinding.instance.platformDispatcher;
+  bool light = dispatcher.platformBrightness == Brightness.light;
   Layer layer = Layer(
       action: Setting(
-        pf[p ? 'primary' : 'background'],
+        light ? pf[p ? 'primary' : 'background'] : pf[p ? 'primaryDark' : 'backgroundDark'],
         p ? Icons.colorize_rounded : Icons.tonality_rounded,
         '',
         (c) => fetchColor(p),
@@ -104,7 +107,7 @@ Future<Layer> themeMap(dynamic p) async {
         iconsTheme[name]!,
         '',
         (c) => setPref(
-          p ? 'primary' : 'background',
+          light ? (p ? 'primary' : 'background') : (p ? 'primaryDark' : 'backgroundDark'),
           name,
           refresh: true,
         ),

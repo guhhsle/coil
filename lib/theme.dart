@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'data.dart';
 
-Color color(bool primary) {
+Color color(bool primary, {bool? lightTheme}) {
+  var dispatcher = SchedulerBinding.instance.platformDispatcher;
+  lightTheme ??= dispatcher.platformBrightness == Brightness.light;
+
   if (primary) {
-    return colors[pf['primary']] ?? Color(int.tryParse('0xFF${pf['primary']}') ?? 0xFF170a1c);
+    return colors[pf[lightTheme ? 'primary' : 'primaryDark']] ??
+        Color(int.tryParse('0xFF${pf['primary']}') ?? 0xFF170a1c);
   } else {
-    return colors[pf['background']] ?? Color(int.tryParse('0xFF${pf['background']}') ?? 0xFFf6f7eb);
+    return colors[pf[lightTheme ? 'background' : 'backgroundDark']] ??
+        Color(int.tryParse('0xFF${pf['background']}') ?? 0xFFf6f7eb);
   }
 }
 
