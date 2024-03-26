@@ -1,3 +1,4 @@
+import 'package:coil/audio/float.dart';
 import 'package:coil/settings/account.dart';
 import 'package:coil/settings/data.dart';
 import 'package:coil/settings/home.dart';
@@ -5,8 +6,8 @@ import 'package:coil/settings/interface.dart';
 import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/top_icon.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../layer.dart';
 import '../widgets/body.dart';
 

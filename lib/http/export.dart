@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../data.dart';
 import '../functions/other.dart';
-import '../playlist.dart';
+import '../playlist/playlist.dart';
 import 'playlist.dart';
 
 //BULK INDICATES ONE BIG FILE
@@ -37,7 +37,7 @@ List<Map> playlists = [];
 
 Future<void> exportPlaylist(int i, Playlist? list) async {
   List<String> videos = [];
-  list ??= await loadPlaylist(userPlaylists.value[i]['id'], [1, 2]);
+  list ??= await Playlist.load(userPlaylists.value[i]['id'], [1, 2]);
   for (int j = 0; j < list.list.length; j++) {
     videos.add('https://youtube.com${list.list[j].id}');
   }

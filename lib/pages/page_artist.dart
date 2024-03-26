@@ -4,10 +4,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+import '../audio/float.dart';
+import '../audio/top_icon.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../http/account.dart';
-import '../song.dart';
+import '../media/media.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
 import '../widgets/song_tile.dart';
@@ -119,7 +120,7 @@ class PageArtistState extends State<PageArtist> {
                 builder: (context, data, child) {
                   if (data == null) return Container();
                   List list = selectedHome == 'Videos' ? data['relatedStreams'] : data['content'];
-                  List<Song> songList = [];
+                  List<Media> songList = [];
                   return RefreshIndicator(
                     onRefresh: () async => await channelVideos(widget.url),
                     child: ListView(
@@ -133,7 +134,7 @@ class PageArtistState extends State<PageArtist> {
                               Builder(
                                 builder: (context) {
                                   if (list[i]['type'] == 'stream') {
-                                    songList.add(Song.from(list[i]));
+                                    songList.add(Media.from(list[i]));
                                     return SongTile(list: songList, i: songList.length - 1);
                                   } else {
                                     return Thumbnail(

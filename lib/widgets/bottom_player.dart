@@ -2,6 +2,7 @@ import 'package:coil/data.dart';
 import 'package:coil/widgets/song_tile.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/top_icon.dart';
 import '../functions/audio.dart';
 import '../functions/sheets.dart';
 import '../layer.dart';

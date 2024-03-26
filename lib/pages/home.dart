@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:coil/audio/float.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../functions/audio.dart';
+import '../audio/top_icon.dart';
 import '../functions/cache.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';

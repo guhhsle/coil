@@ -4,23 +4,23 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/functions/prefs.dart';
+import 'package:coil/media/audio.dart';
+import 'package:coil/media/cache.dart';
+import 'package:coil/media/http.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 //import 'package:open_as_default/open_as_default.dart';
 //import 'package:path/path.dart' as path;
 
 import '../data.dart';
-import '../http/other.dart';
-import '../http/playlist.dart';
-import '../song.dart';
+import '../media/media.dart';
 import '../widgets/sheet_queue.dart';
-import 'cache.dart';
 
 enum LoopMode { off, one, all }
 
 final AudioPlayer player = AudioPlayer();
 LoopMode loop = LoopMode.off;
-final Stream stateStream = player.playerStateStream;
+final Stream<PlayerState> stateStream = player.playerStateStream;
 late final AudioHandler handler;
 
 Future<void> initAudio() async {
@@ -126,10 +126,11 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> pause() => player.pause();
 
   @override
-  Future<void> stop() => stopPlayer();
-
-  @override
-  Future<void> removeQueueItemAt(int index) => removeItemAt(index);
+  Future<void> stop() async {
+    queuePlaying.clear();
+    current.value = 0;
+    player.stop();
+  }
 
   @override
   Future<void> seek(Duration position) => player.seek(position);
@@ -173,48 +174,22 @@ class MyAudioHandler extends BaseAudioHandler {
   }
 }
 
-Future<void> skipToNext() async {
-  skipTo(current.value + 1);
-}
-
-Future<void> skipToPrevious() async {
-  skipTo(current.value - 1);
-}
-
-Future<void> play() => player.play();
-Future<void> pause() => player.pause();
-Future<void> stopPlayer() async {
-  queuePlaying.clear();
-  current.value = 0;
-  player.stop();
-}
-
-Future<void> addItemToQueue(Song song) async {
-  queuePlaying.add(song);
-  unawaited(preload());
-  if (queuePlaying.length == 1) skipTo(0);
-  controller.value = PageController(initialPage: current.value);
-  refreshQueue.value = !refreshQueue.value;
-}
-
-Future<void> insertItemToQueue(
-  int index,
-  Song song, {
-  bool e = false,
-}) async {
-  if (queuePlaying.isEmpty) {
-    addItemToQueue(song);
-    return;
+Future<void> preload({int range = 5}) async {
+  var futures = <Future>[];
+  if (range == 10) {
+    for (int i = 0; i < 10; i++) {
+      if (i >= 0 && i < queueLoading.length) {
+        futures.add(queueLoading[i].forceLoad());
+      }
+    }
+  } else {
+    for (int i = current.value - 2; i < current.value + range; i++) {
+      if (i >= 0 && i < queuePlaying.length) {
+        futures.add(queuePlaying[i].forceLoad());
+      }
+    }
   }
-  queuePlaying.insert(index, song);
-  unawaited(preload());
-  if (e) {
-    current.value = current.value - 1;
-  } else if (index <= current.value) {
-    current.value = current.value + 1;
-  }
-  controller.value = PageController(initialPage: current.value);
-  refreshQueue.value = !refreshQueue.value;
+  await Future.wait(futures);
 }
 
 Future<void> removeItemAt(int index) async {
@@ -226,41 +201,18 @@ Future<void> removeItemAt(int index) async {
 }
 
 void shuffle() {
-  Song song = queuePlaying[current.value];
+  Media media = queuePlaying[current.value];
   queuePlaying.shuffle();
-  current.value = queuePlaying.indexOf(song);
+  current.value = queuePlaying.indexOf(media);
   controller.value = PageController(initialPage: current.value);
   refreshQueue.value = !refreshQueue.value;
 }
 
-Future<void> playItem(Song song) async {
-  if (song.extras!['offline'] == null) {
-    unawaited(addTo100(song));
-    await player.setAudioSource(
-      AudioSource.uri(
-        Uri.parse(song.extras!['url']),
-        tag: song,
-      ),
-    );
-  } else {
-    await player.setAudioSource(
-      AudioSource.file(
-        song.extras!['url'],
-        tag: song,
-      ),
-    );
-  }
-  int pos = rememberedPosition(song.id);
-  if (pos > 10) await player.seek(Duration(seconds: pos));
-  unawaited(player.play());
-  unawaited(preload());
-}
-
-void load(List<Song> list) {
+void load(List<Media> list) {
   if (list == queuePlaying) return;
   queuePlaying.clear();
-  for (Song song in list) {
-    queuePlaying.add(song..extras!['playlist'] = 'queue');
+  for (Media media in list) {
+    queuePlaying.add(media..extras!['playlist'] = 'queue');
   }
 }
 
@@ -292,221 +244,14 @@ Future<void> skipTo(int i) async {
   if (i < 0 || i >= queuePlaying.length) return;
   current.value = i;
   refreshQueue.value = !refreshQueue.value;
-  await forceLoad(queuePlaying[i]);
-  unawaited(playItem(queuePlaying[i]));
+  await queuePlaying[i].forceLoad();
+  unawaited(queuePlaying[i].play());
   controller.value = PageController(initialPage: i);
   refreshQueue.value = !refreshQueue.value;
 }
 
 void setVolume() {
   player.setVolume(pf['volume'] / 100);
-}
-
-class AudioSlider extends StatelessWidget {
-  const AudioSlider({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<Duration>(
-      stream: player.positionStream,
-      builder: (context, position) {
-        if (!position.hasData) return Container();
-        Duration max = player.duration ?? const Duration(hours: 1);
-        //Duration pos = position.data!;
-        return SizedBox(
-          height: 24,
-          child: Slider(
-            thumbColor: Theme.of(context).colorScheme.primary,
-            activeColor: Theme.of(context).colorScheme.primary,
-            inactiveColor: Theme.of(context).colorScheme.primary,
-            secondaryActiveColor: Theme.of(context).colorScheme.primary,
-            value: position.data!.inSeconds.toDouble(),
-            min: 0,
-            onChanged: (d) => player.seek(
-              Duration(seconds: d.toInt()),
-            ),
-            max: max.inSeconds.toDouble(),
-          ),
-        );
-        /*
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width - 84,
-              child: Slider(
-                thumbColor: Theme.of(context).colorScheme.primary,
-                activeColor: Theme.of(context).colorScheme.primary,
-                inactiveColor: Theme.of(context).colorScheme.primary,
-                secondaryActiveColor: Theme.of(context).colorScheme.primary,
-                value: position.data!.inSeconds.toDouble(),
-                min: 0,
-                onChanged: (d) => player.seek(
-                  Duration(seconds: d.toInt()),
-                ),
-                max: max.inSeconds.toDouble(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 24),
-              child: Text(
-                '${pos.inMinutes}:${pos.inSeconds % 60}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ],
-        );
-		*/
-      },
-    );
-  }
-}
-
-class Float extends StatefulWidget {
-  const Float({super.key});
-
-  @override
-  FloatState createState() => FloatState();
-}
-
-class FloatState extends State<Float> {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: refreshQueue,
-      builder: (context, snapIndex, widget) {
-        return ValueListenableBuilder<int>(
-          valueListenable: current,
-          builder: (context, snapIndex, widget) {
-            return StreamBuilder<Object>(
-              stream: player.playerStateStream,
-              builder: (context, snapshot) {
-                if (pf['player'] == 'Floating') {
-                  return Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: InkWell(
-                        onLongPress: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) => const SheetQueue(),
-                          );
-                        },
-                        onTap: () => player.playing ? pause() : play(),
-                        borderRadius: BorderRadius.circular(12),
-                        child: (queuePlaying.isEmpty)
-                            ? Container()
-                            : Card(
-                                margin: EdgeInsets.zero,
-                                color: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: pf['songThumbnails'] && queuePlaying[snapIndex].extras!['offline'] == null
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(14),
-                                          child: Image.network(
-                                            queuePlaying[snapIndex].artUri.toString(),
-                                            fit: BoxFit.cover,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                        )
-                                      : Container(
-                                          height: 24,
-                                          width: 24,
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                      ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-class TopIcon extends StatelessWidget {
-  final bool top;
-  final Color? color;
-  const TopIcon({super.key, this.top = true, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: refreshQueue,
-      builder: (context, snapIndex, widget) {
-        return ValueListenableBuilder<int>(
-          valueListenable: current,
-          builder: (context, snapIndex, widget) {
-            return StreamBuilder(
-              stream: player.playerStateStream,
-              builder: (context, snapshot) {
-                if (top && queuePlaying.isNotEmpty && pf['player'] == 'Top dock') {
-                  return ValueListenableBuilder(
-                    valueListenable: showTopDock,
-                    builder: (context, data, ch) {
-                      return IconButton(
-                        icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
-                        onPressed: () => showTopDock.value = !showTopDock.value,
-                      );
-                    },
-                  );
-                } else if (!top || (pf['player'] == 'Top' && queuePlaying.isNotEmpty)) {
-                  ProcessingState? state = snapshot.data?.processingState;
-                  return InkWell(
-                    onLongPress: () => showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (context) => const SheetQueue(),
-                    ),
-                    child: IconButton(
-                      onPressed: () => player.playing ? pause() : play(),
-                      icon: Icon(
-                        !snapshot.hasData
-                            ? Icons.stop_rounded
-                            : (state == ProcessingState.buffering || state == ProcessingState.loading)
-                                ? Icons.language_rounded
-                                : snapshot.data!.playing
-                                    ? Icons.stop_rounded
-                                    : Icons.play_arrow_rounded,
-                        color: color ?? Theme.of(context).appBarTheme.foregroundColor,
-                      ),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            );
-          },
-        );
-      },
-    );
-  }
 }
 
 //

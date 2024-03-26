@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 import '../data.dart';
-import '../song.dart';
-import 'playlist.dart';
+import '../media/media.dart';
+import '../playlist/playlist.dart';
 
-Map<int, List<Song>> generated = {};
-Future<bool> generate(List<Song> rawList) async {
-  List<Song> list = rawList.toList()..shuffle();
+Map<int, List<Media>> generated = {};
+Future<bool> generate(List<Media> rawList) async {
+  List<Media> list = rawList.toList()..shuffle();
   generated.clear();
   var futures = <Future>[];
 
@@ -25,21 +25,21 @@ Future<bool> generate(List<Song> rawList) async {
     for (int i = 0; i < generated.length; i++) {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
-        Song song = generated[key]!.removeAt(j);
-        int n = song.extras!['verified'] + 2 * song.extras!['reps'];
-        n += song.extras!['index'] ~/ 2 as int;
+        Media media = generated[key]!.removeAt(j);
+        int n = media.extras!['verified'] + 2 * media.extras!['reps'];
+        n += media.extras!['index'] ~/ 2 as int;
         if (!generated.containsKey(n)) {
           generated.addAll({
-            n: [song]
+            n: [media]
           });
         } else {
-          generated[n]!.add(song);
+          generated[n]!.add(media);
         }
       }
     }
   }
 
-  Map<int, List<Song>> sorted = Map.fromEntries(
+  Map<int, List<Media>> sorted = Map.fromEntries(
     generated.entries.toList()..sort((e1, e2) => e2.key.compareTo(e1.key)),
   );
 
@@ -67,7 +67,7 @@ Future<void> generateFrom(List related, bool r) async {
     List<Future> waiting = [];
     for (int i = 0; i < related.length; i++) {
       if (related[i]['type'] == 'playlist') {
-        waiting.add(loadPlaylist(related[i]['url'], [0, 1]).then((value) {
+        waiting.add(Playlist.load(related[i]['url'], [0, 1]).then((value) {
           generateFrom(value.raw['relatedStreams'], true);
         }));
       } else {
@@ -82,13 +82,13 @@ Future<void> generateFrom(List related, bool r) async {
 
 void addToGen(Map m, int i) {
   try {
-    Song song = Song.from(m, i: i);
-    int e = song.extras!['verified'];
+    Media media = Media.from(m, i: i);
+    int e = media.extras!['verified'];
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {
-        List<Song> list = generated.values.elementAt(j);
+        List<Media> list = generated.values.elementAt(j);
         for (int q = 0; q < list.length; q++) {
-          if (song.title == list[q].title) {
+          if (media.title == list[q].title) {
             list[q].extras!['index'] += 10;
             list[q].extras!['reps']++;
             return;
@@ -98,12 +98,12 @@ void addToGen(Map m, int i) {
     }
     if (!generated.containsKey(e)) {
       generated.addAll({
-        e: [song]
+        e: [media]
       });
     } else {
-      int j = generated[e]!.indexWhere((el) => el.id == song.id);
+      int j = generated[e]!.indexWhere((el) => el.id == media.id);
       if (j == -1) {
-        generated[e]!.add(song);
+        generated[e]!.add(media);
       } else {
         generated[e]![j].extras!['index'] += 2;
         generated[e]![j].extras!['reps']++;

@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:coil/data.dart';
+import 'package:http/http.dart';
 
-import 'functions/other.dart';
-import 'song.dart';
+import '../functions/other.dart';
+import '../media/media.dart';
 
 class Playlist {
   String url, thumbnail, name, uploader;
   Map raw;
   int items;
-  List<Song> list;
+  List<Media> list;
 
   Playlist({
     required this.url,
@@ -22,23 +23,23 @@ class Playlist {
     required this.raw,
   });
 
-  static List<Song> listFromMap(Map json, String url) {
+  static List<Media> listFromMap(Map json, String url) {
     List playlist = json['relatedStreams'] ?? [];
-    List<Song> list = [];
+    List<Media> list = [];
     for (var i = 0; i < playlist.length; i++) {
       int index = userPlaylists.value.indexWhere((el) => el['id'] == url);
       if (url == 'Bookmarks') index++;
       if (pf['reverse'] && index >= 0) {
         list.insert(
           0,
-          Song.from(
+          Media.from(
             playlist[i],
             playlist: index >= 0 ? url : null,
             i: i,
           ),
         );
       } else {
-        list.add(Song.from(
+        list.add(Media.from(
           playlist[i],
           playlist: index >= 0 ? url : null,
           i: i,
@@ -49,13 +50,14 @@ class Playlist {
   }
 
   static Playlist fromJson(Map json, String url) {
+    List<Media> list = listFromMap(json, url);
     return Playlist(
       url: url,
       name: json['name'] ?? 'NAME',
       thumbnail: json['thumbnailUrl'] ?? '',
-      list: listFromMap(json, url),
+      list: list,
       uploader: json['uploader'] ?? json['uploaderName'] ?? 'UPLOADER',
-      items: json['videos'] ?? 404,
+      items: list.length,
       raw: json,
     );
   }
@@ -111,5 +113,37 @@ class Playlist {
       name: t(url),
       raw: {'relatedStreams': []},
     );
+  }
+
+  static Future<Playlist> load(
+    String url,
+    List<int> path, {
+    int timeTried = 0,
+  }) async {
+    url = formatUrl(url);
+    Playlist? list;
+    for (int i in path) {
+      try {
+        if (i == 2) {
+          list = await Playlist.fromStorage(url);
+          return list;
+        } else {
+          Uri u = Uri.https(pf[i == 0 ? 'instance' : 'authInstance'], 'playlists/$url');
+          list = Playlist.fromJson(jsonDecode(utf8.decode((await get(u)).bodyBytes)), url)..backup();
+          return list;
+        }
+      } catch (e) {
+        //
+      }
+    }
+    if (timeTried < 4 && list == null) {
+      return load(
+        url,
+        path,
+        timeTried: ++timeTried,
+      );
+    } else {
+      return list!;
+    }
   }
 }

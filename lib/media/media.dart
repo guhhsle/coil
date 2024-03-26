@@ -2,23 +2,19 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 
-import 'data.dart';
+import '../data.dart';
 
-class Song extends MediaItem {
-  Song({required super.id, required super.title, super.artUri, super.artist, super.extras});
+class Media extends MediaItem {
+  Media({
+    required super.id,
+    required super.title,
+    super.artUri,
+    super.artist,
+    super.extras,
+  });
 
-  Map toMap() {
-    return {
-      'url': id.replaceAll('/watch?v=', ''),
-      'title': title,
-      'thumbnail': artUri.toString(),
-      'uploaderName': artist,
-      'uploaderUrl': extras!['uploaderUrl'],
-    };
-  }
-
-  static Song from(Map json, {int? i, String? playlist}) {
-    return Song(
+  static Media from(Map json, {int? i, String? playlist}) {
+    return Media(
       title: json['title'],
       id: json['url'].replaceAll('/watch?v=', ''),
       artUri: Uri.parse(json['thumbnail'] ?? ''),

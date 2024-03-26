@@ -1,9 +1,12 @@
+import 'package:coil/media/audio.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/audio_slider.dart';
+import '../audio/top_icon.dart';
 import '../data.dart';
 import '../functions/audio.dart';
 import '../layer.dart';
-import '../song.dart';
+import '../media/media.dart';
 import 'custom_card.dart';
 import 'song_tile.dart';
 
@@ -126,11 +129,11 @@ class _SheetQueueState extends State<SheetQueue> {
                                       ),
                                     ),
                                     onDismissed: (direction) {
-                                      Song item = queuePlaying[i];
+                                      Media item = queuePlaying[i];
                                       bool e = i == current.value;
                                       removeItemAt(i);
                                       if (direction == DismissDirection.startToEnd) {
-                                        insertItemToQueue(i - 1, item, e: e);
+                                        item.insertToQueue(i - 1, e: e);
                                       }
                                       setState(() {});
                                     },

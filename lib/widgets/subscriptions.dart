@@ -2,7 +2,7 @@ import '../data.dart';
 import 'package:flutter/material.dart';
 
 import '../http/account.dart';
-import '../song.dart';
+import '../media/media.dart';
 import 'song_tile.dart';
 
 class Subscriptions extends StatelessWidget {
@@ -15,9 +15,9 @@ class Subscriptions extends StatelessWidget {
       child: ValueListenableBuilder<List>(
         valueListenable: userSubscriptions,
         builder: (context, snap, widget) {
-          List<Song> list = [];
+          List<Media> list = [];
           for (var q = 0; q < snap.length; q++) {
-            list.add(Song.from(snap[q]));
+            list.add(Media.from(snap[q]));
           }
           return ListView.builder(
             padding: const EdgeInsets.only(top: 8, bottom: 32),

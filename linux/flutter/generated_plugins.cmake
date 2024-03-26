@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  simple_audio
   url_launcher_linux
 )
 

@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:coil/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'song.dart';
+import 'media/media.dart';
+import 'playlist/playlist.dart';
 
 Map pf = {
   //APP
@@ -115,8 +115,8 @@ const ScrollPhysics scrollPhysics = BouncingScrollPhysics(
   parent: AlwaysScrollableScrollPhysics(),
 );
 
-List<Song> queuePlaying = [];
-List<Song> queueLoading = [];
+List<Media> queuePlaying = [];
+List<Media> queueLoading = [];
 
 Map l = {};
 final navigatorKey = GlobalKey<NavigatorState>();

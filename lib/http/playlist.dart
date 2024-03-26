@@ -4,76 +4,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
-import 'package:audio_service/audio_service.dart';
-import 'package:coil/layer.dart';
-import 'package:coil/playlist.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import '../data.dart';
-import '../functions/cache.dart';
 import '../functions/other.dart';
 import '../other/countries.dart';
-import 'other.dart';
-
-Future<void> renamePlaylist({
-  required String newName,
-  required String playlistId,
-}) async {
-  if (pf['token'] == '') return;
-  await post(
-    Uri.https(pf['authInstance'], 'user/playlists/rename'),
-    headers: {'Authorization': pf['token']},
-    body: jsonEncode({
-      'playlistId': playlistId,
-      'newName': newName,
-    }),
-  );
-  unawaited(fetchUserPlaylists(true));
-}
-
-Future<void> deletePlaylist(String playlistId) async {
-  if (pf['token'] == '') return;
-  await post(
-    Uri.https(pf['authInstance'], 'user/playlists/delete'),
-    headers: {'Authorization': pf['token']},
-    body: jsonEncode({'playlistId': playlistId}),
-  );
-  await fetchUserPlaylists(true);
-}
-
-Future<Playlist> loadPlaylist(
-  String url,
-  List<int> path, {
-  int timeTried = 0,
-}) async {
-  url = formatUrl(url);
-  Playlist? list;
-  for (int i in path) {
-    try {
-      if (i == 2) {
-        list = await Playlist.fromStorage(url);
-        return list;
-      } else {
-        Uri u = Uri.https(pf[i == 0 ? 'instance' : 'authInstance'], 'playlists/$url');
-        list = Playlist.fromJson(jsonDecode(utf8.decode((await get(u)).bodyBytes)), url)..backup();
-        return list;
-      }
-    } catch (e) {
-      debugPrint('$e');
-    }
-  }
-  if (timeTried < 4 && list == null) {
-    return loadPlaylist(
-      url,
-      path,
-      timeTried: ++timeTried,
-    );
-  } else {
-    return list!;
-  }
-}
 
 Future<void> fetchUserPlaylists(bool force) async {
   try {
@@ -119,52 +54,6 @@ Future<void> trending() async {
   trendingVideos.value = jsonDecode(utf8.decode(response.bodyBytes));
 }
 
-Future<void> addToPlaylist({
-  required String playlistId,
-  required MediaItem item,
-}) async {
-  if (pf['token'] == '') return;
-  try {
-    Playlist playlist = await Playlist.fromStorage(playlistId);
-    if (playlist.list.indexWhere((e) => e.id == item.id) != -1) {
-      showSnack('Already saved, tap to add again', false, onTap: () async {
-        await forceAddToPlaylist(playlistId: playlistId, item: item);
-      });
-      return;
-    } else {}
-  } catch (e) {
-    //Playlist not offline
-  }
-  await forceAddToPlaylist(playlistId: playlistId, item: item);
-  refreshLayer();
-}
-
-Future<void> removeFromPlaylist({
-  required MediaItem item,
-}) async {
-  if (pf['token'] == '') return;
-  if (item.extras!['playlist'] == null) return;
-  if (item.extras!['playlist'] == 'Bookmarks') {
-    await forceRemoveBackup(item, 'Bookmarks');
-    refreshPlaylist.value = !refreshPlaylist.value;
-    return;
-  }
-  Response response = await post(
-    Uri.https(pf['authInstance'], 'user/playlists/remove'),
-    headers: {'Authorization': pf['token']},
-    body: jsonEncode({
-      'playlistId': item.extras!['playlist'],
-      'index': item.extras!['index'],
-    }),
-  );
-  String? error = jsonDecode(response.body)['error'];
-  if (error != null) {
-    showSnack(error, false);
-  }
-  await loadPlaylist(item.extras!['playlist'], [1, 2]);
-  refreshPlaylist.value = !refreshPlaylist.value;
-}
-
 Future<void> createPlaylist() async {
   if (pf['token'] == '') {
     showSnack('Invalid login', false);
@@ -177,38 +66,4 @@ Future<void> createPlaylist() async {
   );
   showSnack('${l['Added']}', true);
   await fetchUserPlaylists(true);
-}
-
-Future<void> preload({int range = 5}) async {
-  var futures = <Future>[];
-  if (range == 10) {
-    for (int i = 0; i < 10; i++) {
-      if (i >= 0 && i < queueLoading.length) {
-        futures.add(forceLoad(queueLoading[i]));
-      }
-    }
-  } else {
-    for (int i = current.value - 2; i < current.value + range; i++) {
-      if (i >= 0 && i < queuePlaying.length) {
-        futures.add(forceLoad(queuePlaying[i]));
-      }
-    }
-  }
-  await Future.wait(futures);
-}
-
-Future<void> forceAddToPlaylist({
-  required String playlistId,
-  required MediaItem item,
-}) async {
-  if (pf['token'] == '') return;
-  Response response = await post(
-    Uri.https(pf['authInstance'], 'user/playlists/add'),
-    headers: {'Authorization': pf['token']},
-    body: jsonEncode({'playlistId': playlistId, 'videoId': item.id}),
-  );
-  String? error = jsonDecode(response.body)['error'];
-  showSnack(error ?? '${l['Added']} ${item.title}', error == null);
-  await loadPlaylist(playlistId, [1, 2]);
-  refreshPlaylist.value = !refreshPlaylist.value;
 }

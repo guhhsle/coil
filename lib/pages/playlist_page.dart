@@ -2,18 +2,20 @@
 
 import 'dart:async';
 
+import 'package:coil/audio/float.dart';
 import 'package:coil/functions/audio.dart';
 import 'package:coil/layer.dart';
-import 'package:coil/playlist.dart';
+import 'package:coil/playlist/http.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/top_icon.dart';
 import '../data.dart';
 import '../functions/cache.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../http/export.dart';
 import '../http/generate.dart';
-import '../http/playlist.dart';
+import '../playlist/playlist.dart';
 import '../widgets/body.dart';
 import '../widgets/song_tile.dart';
 
@@ -43,7 +45,7 @@ class PlaylistPageState extends State<PlaylistPage> {
       valueListenable: refreshPlaylist,
       builder: (context, snapshot, child) {
         return FutureBuilder<Playlist>(
-          future: loadPlaylist(widget.url, widget.path),
+          future: Playlist.load(widget.url, widget.path),
           builder: (context, snap) {
             if (!snap.hasData) {
               return Scaffold(
@@ -72,10 +74,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                   ),
-                  onFieldSubmitted: (title) => renamePlaylist(
-                    playlistId: widget.url,
-                    newName: title,
-                  ),
+                  onFieldSubmitted: (title) => list.rename(title),
                 ),
                 actions: [
                   const TopIcon(),
@@ -117,7 +116,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                                 '',
                                 (c) async {
                                   List<int> path = widget.path.toList()..remove(2);
-                                  list = await loadPlaylist(widget.url, path);
+                                  list = await Playlist.load(widget.url, path);
                                   setState(() {});
                                   Navigator.of(context).pop();
                                 },
@@ -170,7 +169,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                                         Icons.delete_forever_rounded,
                                         '',
                                         (c) async {
-                                          await deletePlaylist(widget.url);
+                                          await list.delete();
                                           Navigator.of(c).pop();
                                         },
                                       ),
@@ -191,7 +190,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                 child: RefreshIndicator(
                   onRefresh: () async {
                     List<int> path = widget.path.toList()..remove(2);
-                    list = await loadPlaylist(widget.url, path);
+                    list = await Playlist.load(widget.url, path);
                     setState(() {});
                   },
                   child: ListView.builder(

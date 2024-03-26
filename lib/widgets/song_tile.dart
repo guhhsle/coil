@@ -4,10 +4,10 @@ import '../data.dart';
 import '../functions/audio.dart';
 import '../functions/sheets.dart';
 import '../layer.dart';
-import '../song.dart';
+import '../media/media.dart';
 
 class SongTile extends StatelessWidget {
-  final List<Song> list;
+  final List<Media> list;
   final int i;
   final bool haptic;
 
@@ -54,7 +54,7 @@ class SongTile extends StatelessWidget {
 }
 
 class SongTileChild extends StatelessWidget {
-  final List<Song> list;
+  final List<Media> list;
   final int i;
   final bool selected;
 
@@ -92,7 +92,7 @@ class SongTileChild extends StatelessWidget {
   }
 }
 
-Widget? songImage(Song item, {EdgeInsets? padding, force = false}) {
+Widget? songImage(Media item, {EdgeInsets? padding, force = false}) {
   if (!force) {
     if (!pf['songThumbnails']) return null;
     if (item.extras!['offline'] != null) return null;
