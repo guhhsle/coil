@@ -126,7 +126,7 @@ void fetchColor(bool p, bool light) {
     } else {
       setPref(
         light ? (p ? 'primary' : 'background') : (p ? 'primaryDark' : 'backgroundDark'),
-        value.text,
+        value.text!.replaceAll('#', ''),
         refresh: true,
       );
     }
