@@ -97,7 +97,7 @@ Future<Layer> themeMap(dynamic p) async {
         light ? pf[p ? 'primary' : 'background'] : pf[p ? 'primaryDark' : 'backgroundDark'],
         p ? Icons.colorize_rounded : Icons.tonality_rounded,
         '',
-        (c) => fetchColor(p),
+        (c) => fetchColor(p, light),
       ),
       list: []);
   for (int i = 0; i < colors.length; i++) {
@@ -119,13 +119,13 @@ Future<Layer> themeMap(dynamic p) async {
   return layer;
 }
 
-void fetchColor(bool p) {
+void fetchColor(bool p, bool light) {
   Clipboard.getData(Clipboard.kTextPlain).then((value) {
     if (value == null || value.text == null || int.tryParse('0xFF${value.text!.replaceAll('#', '')}') == null) {
       showSnack('Clipboard HEX', false);
     } else {
       setPref(
-        p ? 'primary' : 'background',
+        light ? (p ? 'primary' : 'background') : (p ? 'primaryDark' : 'backgroundDark'),
         value.text,
         refresh: true,
       );

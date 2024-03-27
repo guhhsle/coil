@@ -9,10 +9,10 @@ Color color(bool primary, {bool? lightTheme}) {
 
   if (primary) {
     return colors[pf[lightTheme ? 'primary' : 'primaryDark']] ??
-        Color(int.tryParse('0xFF${pf['primary']}') ?? 0xFF170a1c);
+        Color(int.tryParse('0xFF${pf[lightTheme ? 'primary' : 'primaryDark']}') ?? 0xFF170a1c);
   } else {
     return colors[pf[lightTheme ? 'background' : 'backgroundDark']] ??
-        Color(int.tryParse('0xFF${pf['background']}') ?? 0xFFf6f7eb);
+        Color(int.tryParse('0xFF${pf[lightTheme ? 'background' : 'backgroundDark']}') ?? 0xFFf6f7eb);
   }
 }
 

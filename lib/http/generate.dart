@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
+import '../audio/queue.dart';
 import '../audio/handler.dart';
 import '../data.dart';
 import '../media/media.dart';
@@ -44,10 +45,11 @@ Future<bool> generate(List<Media> rawList) async {
     generated.entries.toList()..sort((e1, e2) => e2.key.compareTo(e1.key)),
   );
 
-  Handler().queuePlaying.clear();
+  List<Media> finalList = [];
   for (int i = 0; i < sorted.length; i++) {
-    Handler().queuePlaying += sorted.values.elementAt(i)..shuffle();
+    finalList += sorted.values.elementAt(i)..shuffle();
   }
+  Handler().load(finalList);
   generated.clear();
   return false;
 }
