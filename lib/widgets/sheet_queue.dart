@@ -93,7 +93,7 @@ class _SheetQueueState extends State<SheetQueue> {
                         valueListenable: Handler().current,
                         builder: (context, data, child) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
                             child: Scrollbar(
                               controller: controller,
                               child: ListView.builder(

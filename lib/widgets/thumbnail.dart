@@ -23,7 +23,7 @@ class Thumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     if (pf['grid'] == 0) {
       return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: ListTile(
           leading: pf['thumbnails']
               ? Padding(

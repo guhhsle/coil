@@ -69,7 +69,7 @@ class SongTileChild extends StatelessWidget {
   Widget build(BuildContext context) {
     bool web = list[i].extras['offline'] == null;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         onTap: () {
           Handler().load(list);
