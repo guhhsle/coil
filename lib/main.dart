@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'package:coil/audio/handler.dart';
 import 'package:coil/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'data.dart';
-import 'functions/audio.dart';
 import 'functions/other.dart';
 import 'functions/prefs.dart';
 import 'pages/home.dart';
@@ -13,7 +13,8 @@ import 'pages/page_log.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initPrefs();
-  unawaited(initAudio());
+
+  Handler();
   runApp(MyApp(account: pf['firstBoot']));
 }
 

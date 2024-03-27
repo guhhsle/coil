@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:coil/layer.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+import '../audio/queue.dart';
+import '../layer.dart';
 import '../audio/float.dart';
+import '../audio/handler.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../media/media.dart';
@@ -217,19 +217,19 @@ class SuggestionListState extends State<SuggestionList> {
               valueListenable: searchResults,
               builder: (context, snap, child) {
                 if (snap.isEmpty) return Container();
-                queueLoading.clear();
+                Handler().queueLoading.clear();
                 if (filter == 'music_songs' || filter == 'videos') {
                   try {
                     for (var q = 0; q < snap.length; q++) {
-                      queueLoading.add(Media.from(snap[q]));
+                      Handler().queueLoading.add(Media.from(snap[q]));
                     }
-                    unawaited(preload(range: 10));
+                    unawaited(Handler().preload(range: 10));
                     return Expanded(
                       child: ListView.builder(
                         physics: scrollPhysics,
                         itemCount: snap.length,
                         itemBuilder: (context, i) => SongTile(
-                          list: queueLoading,
+                          list: Handler().queueLoading,
                           i: i,
                           haptic: false,
                         ),

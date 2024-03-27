@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../audio/handler.dart';
 import '../data.dart';
 import 'bottom_player.dart';
 
@@ -11,7 +12,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: refreshQueue,
+      valueListenable: Handler().refreshQueue,
       builder: (context, none, non) {
         bool dock = pf['player'] == 'Dock';
         return Column(
@@ -20,7 +21,7 @@ class Body extends StatelessWidget {
             Expanded(
               child: Card(
                 color: Theme.of(context).colorScheme.background,
-                margin: queuePlaying.isEmpty || !dock
+                margin: Handler().queuePlaying.isEmpty || !dock
                     ? EdgeInsets.zero
                     : const EdgeInsets.symmetric(
                         horizontal: 2,

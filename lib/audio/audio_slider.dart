@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:simple_audio/simple_audio.dart';
 
-import '../functions/audio.dart';
+import 'handler.dart';
 
 class AudioSlider extends StatelessWidget {
   const AudioSlider({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Duration>(
-      stream: player.positionStream,
+    return StreamBuilder<ProgressState>(
+      stream: Handler().player.progressStateStream,
       builder: (context, position) {
         if (!position.hasData) return Container();
-        Duration max = player.duration ?? const Duration(hours: 1);
-        //Duration pos = position.data!;
         return SizedBox(
           height: 24,
           child: Slider(
@@ -20,12 +19,10 @@ class AudioSlider extends StatelessWidget {
             activeColor: Theme.of(context).colorScheme.primary,
             inactiveColor: Theme.of(context).colorScheme.primary,
             secondaryActiveColor: Theme.of(context).colorScheme.primary,
-            value: position.data!.inSeconds.toDouble(),
+            value: (position.data?.position ?? 999).toDouble(),
             min: 0,
-            onChanged: (d) => player.seek(
-              Duration(seconds: d.toInt()),
-            ),
-            max: max.inSeconds.toDouble(),
+            onChanged: (d) => Handler().player.seek(d.toInt()),
+            max: (position.data?.duration ?? 999).toDouble(),
           ),
         );
       },

@@ -17,10 +17,12 @@ class LocalSongs extends StatefulWidget {
 }
 
 Future<void> getLocal() async {
-  await Permission.storage.request();
-  await Permission.audio.request();
-  if (Platform.isAndroid && await Directory(pf['musicFolder']).exists()) {
-    localMusic.value = Directory(pf['musicFolder']).listSync();
+  if (Platform.isAndroid) {
+    await Permission.storage.request();
+    await Permission.audio.request();
+    if (await Directory(pf['musicFolder']).exists()) {
+      localMusic.value = Directory(pf['musicFolder']).listSync();
+    }
   }
 }
 
@@ -46,7 +48,7 @@ class LocalSongsState extends State<LocalSongs> {
               );
             }
           }
-          list.sort((item1, item2) => item1.title.compareTo(item2.title));
+          list.sort((item1, item2) => item1.title!.compareTo(item2.title!));
           return ListView.builder(
             itemCount: list.length,
             padding: const EdgeInsets.only(top: 8, bottom: 32),

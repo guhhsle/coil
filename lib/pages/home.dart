@@ -83,7 +83,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //bottomSheet: const ScrollableBottomPlayer(),
       floatingActionButton: const Float(),
       appBar: AppBar(
         automaticallyImplyLeading: false,

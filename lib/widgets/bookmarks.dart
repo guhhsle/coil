@@ -24,7 +24,7 @@ class Bookmarks extends StatelessWidget {
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
                   FutureBuilder(
-                    future: Playlist.fromStorage('Bookmarks'),
+                    future: Playlist.load('Bookmarks', [2]),
                     builder: (context, snap) {
                       if (snap.hasError) return Container();
                       return Thumbnail(
@@ -37,7 +37,7 @@ class Bookmarks extends StatelessWidget {
                     },
                   ),
                   FutureBuilder(
-                    future: Playlist.fromStorage('100'),
+                    future: Playlist.load('100', [2]),
                     builder: (context, snap) {
                       if (snap.hasError) return Container();
                       return const Thumbnail(

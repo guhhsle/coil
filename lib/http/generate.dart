@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
+import '../audio/handler.dart';
 import '../data.dart';
 import '../media/media.dart';
 import '../playlist/playlist.dart';
@@ -26,8 +27,8 @@ Future<bool> generate(List<Media> rawList) async {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
         Media media = generated[key]!.removeAt(j);
-        int n = media.extras!['verified'] + 2 * media.extras!['reps'];
-        n += media.extras!['index'] ~/ 2 as int;
+        int n = media.extras['verified'] + 2 * media.extras['reps'];
+        n += media.extras['index'] ~/ 2 as int;
         if (!generated.containsKey(n)) {
           generated.addAll({
             n: [media]
@@ -43,9 +44,9 @@ Future<bool> generate(List<Media> rawList) async {
     generated.entries.toList()..sort((e1, e2) => e2.key.compareTo(e1.key)),
   );
 
-  queuePlaying.clear();
+  Handler().queuePlaying.clear();
   for (int i = 0; i < sorted.length; i++) {
-    queuePlaying += sorted.values.elementAt(i)..shuffle();
+    Handler().queuePlaying += sorted.values.elementAt(i)..shuffle();
   }
   generated.clear();
   return false;
@@ -83,14 +84,14 @@ Future<void> generateFrom(List related, bool r) async {
 void addToGen(Map m, int i) {
   try {
     Media media = Media.from(m, i: i);
-    int e = media.extras!['verified'];
+    int e = media.extras['verified'];
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {
         List<Media> list = generated.values.elementAt(j);
         for (int q = 0; q < list.length; q++) {
           if (media.title == list[q].title) {
-            list[q].extras!['index'] += 10;
-            list[q].extras!['reps']++;
+            list[q].extras['index'] += 10;
+            list[q].extras['reps']++;
             return;
           }
         }
@@ -105,8 +106,8 @@ void addToGen(Map m, int i) {
       if (j == -1) {
         generated[e]!.add(media);
       } else {
-        generated[e]![j].extras!['index'] += 2;
-        generated[e]![j].extras!['reps']++;
+        generated[e]![j].extras['index'] += 2;
+        generated[e]![j].extras['reps']++;
       }
     }
   } catch (e) {

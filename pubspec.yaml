@@ -10,17 +10,12 @@ dependencies:
   http: any
   path: any
   path_provider: any
-    #open_as_default: any
   permission_handler: any
   shared_preferences: any
   url_launcher: any
   flutter_file_saver: any
-
-  #audio-packages
-  just_audio: any
-  #simple_audio: ^1.9.0
-
-  audio_service: any
+  #open_as_default: any
+  simple_audio: any
 
 
   flutter:

@@ -1,8 +1,9 @@
-import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/player.dart';
+import '../functions/other.dart';
+import '../audio/handler.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../functions/prefs.dart';
 import '../functions/single_child.dart';
 import '../layer.dart';
@@ -79,7 +80,7 @@ Future<Layer> moreSet(dynamic non) async => Layer(
               showSnack('Invalid', false);
             } else {
               setPref('volume', input);
-              setVolume();
+              Handler().setVolume();
             }
           },
         ),

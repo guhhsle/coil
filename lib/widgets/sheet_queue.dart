@@ -1,10 +1,11 @@
-import 'package:coil/media/audio.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/queue.dart';
+import '../media/audio.dart';
 import '../audio/audio_slider.dart';
+import '../audio/handler.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../layer.dart';
 import '../media/media.dart';
 import 'custom_card.dart';
@@ -18,14 +19,9 @@ class SheetQueue extends StatefulWidget {
 }
 
 class _SheetQueueState extends State<SheetQueue> {
-  Map<LoopMode, IconData> m = {
-    LoopMode.off: Icons.wrap_text_rounded,
-    LoopMode.one: Icons.repeat_one_rounded,
-    LoopMode.all: Icons.repeat,
-  };
   @override
   Widget build(BuildContext context) {
-    queueLoading = queuePlaying.toList();
+    Handler().queueLoading = Handler().queuePlaying.toList();
     return Container(
       color: Colors.transparent,
       child: DraggableScrollableSheet(
@@ -34,7 +30,7 @@ class _SheetQueueState extends State<SheetQueue> {
         maxChildSize: 0.85,
         builder: (_, controller) {
           return ValueListenableBuilder(
-            valueListenable: refreshQueue,
+            valueListenable: Handler().refreshQueue,
             builder: (context, snapshot, child) {
               return Card(
                 margin: const EdgeInsets.all(8),
@@ -58,7 +54,7 @@ class _SheetQueueState extends State<SheetQueue> {
                               Icons.low_priority_rounded,
                               '',
                               (c) {
-                                shuffle();
+                                Handler().shuffle();
                                 setState(() {});
                               },
                             ),
@@ -68,11 +64,16 @@ class _SheetQueueState extends State<SheetQueue> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12, top: 16),
                           child: IconButton(
-                            tooltip: l['Repeat ${loop.name}'],
+                            tooltip: l['Repeat ${Handler().loop.name}'],
                             color: Theme.of(context).colorScheme.primary,
-                            icon: Icon(m[loop]!),
+                            icon: Icon({
+                              LoopMode.off: Icons.wrap_text_rounded,
+                              LoopMode.one: Icons.repeat_one_rounded,
+                              LoopMode.all: Icons.repeat,
+                            }[Handler().loop]!),
                             onPressed: () {
-                              loop = m.keys.elementAt((m.keys.toList().indexOf(loop) + 1) % 3);
+                              Handler().loop =
+                                  LoopMode.values[(LoopMode.values.toList().indexOf(Handler().loop) + 1) % 3];
                               setState(() {});
                             },
                           ),
@@ -89,7 +90,7 @@ class _SheetQueueState extends State<SheetQueue> {
                     const AudioSlider(),
                     Expanded(
                       child: ValueListenableBuilder<int>(
-                        valueListenable: current,
+                        valueListenable: Handler().current,
                         builder: (context, data, child) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -99,7 +100,7 @@ class _SheetQueueState extends State<SheetQueue> {
                                 controller: controller,
                                 physics: scrollPhysics,
                                 padding: const EdgeInsets.only(top: 8, bottom: 16),
-                                itemCount: queuePlaying.length,
+                                itemCount: Handler().queuePlaying.length,
                                 itemBuilder: (context, i) {
                                   return Dismissible(
                                     background: Container(
@@ -129,16 +130,16 @@ class _SheetQueueState extends State<SheetQueue> {
                                       ),
                                     ),
                                     onDismissed: (direction) {
-                                      Media item = queuePlaying[i];
-                                      bool e = i == current.value;
-                                      removeItemAt(i);
+                                      Media item = Handler().queuePlaying[i];
+                                      bool e = i == Handler().current.value;
+                                      Handler().removeItemAt(i);
                                       if (direction == DismissDirection.startToEnd) {
                                         item.insertToQueue(i - 1, e: e);
                                       }
                                       setState(() {});
                                     },
-                                    key: Key(queuePlaying[i].id),
-                                    child: SongTile(list: queuePlaying, i: i),
+                                    key: Key(Handler().queuePlaying[i].id),
+                                    child: SongTile(list: Handler().queuePlaying, i: i),
                                   );
                                 },
                               ),

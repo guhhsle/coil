@@ -1,9 +1,9 @@
-import 'package:coil/data.dart';
-import 'package:coil/widgets/song_tile.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/queue.dart';
+import '../data.dart';
+import '../audio/handler.dart';
 import '../audio/top_icon.dart';
-import '../functions/audio.dart';
 import '../functions/sheets.dart';
 import '../layer.dart';
 import 'sheet_queue.dart';
@@ -20,17 +20,17 @@ class BottomPlayer extends StatelessWidget {
       builder: (context, showTop, non) {
         bool td = pf['player'] == 'Top dock';
         return ValueListenableBuilder(
-          valueListenable: refreshQueue,
+          valueListenable: Handler().refreshQueue,
           builder: (context, non, none) {
             return ValueListenableBuilder(
-              valueListenable: current,
+              valueListenable: Handler().current,
               builder: (context, i, none) {
                 return AnimatedContainer(
-                  height: queuePlaying.isEmpty || (td && !showTop) ? 0 : 64,
+                  height: Handler().queuePlaying.isEmpty || (td && !showTop) ? 0 : 64,
                   key: const Key('cont'),
                   duration: Duration(milliseconds: td ? 128 : 256),
                   curve: Curves.easeOutQuad,
-                  child: queuePlaying.isEmpty
+                  child: Handler().queuePlaying.isEmpty
                       ? Container()
                       : GestureDetector(
                           onPanStart: (details) => showModalBottomSheet(
@@ -49,9 +49,9 @@ class BottomPlayer extends StatelessWidget {
                                     onTap: () => showSheet(
                                       scroll: true,
                                       func: mediaToLayer,
-                                      param: queuePlaying[i],
+                                      param: Handler().queuePlaying[i],
                                     ),
-                                    child: songImage(queuePlaying[i], padding: EdgeInsets.zero) ?? Container(),
+                                    child: Handler().queuePlaying[i].image(padding: EdgeInsets.zero) ?? Container(),
                                   ),
                                 ),
                                 Expanded(
@@ -61,14 +61,14 @@ class BottomPlayer extends StatelessWidget {
                                       return PageView(
                                         key: Key(controllerSnapshot.hashCode.toString()),
                                         controller: controllerSnapshot,
-                                        onPageChanged: (int newP) => skipTo(newP),
+                                        onPageChanged: (int newP) => Handler().skipTo(newP),
                                         physics: const BouncingScrollPhysics(),
                                         children: [
-                                          for (int i = 0; i < queuePlaying.length; i++)
+                                          for (int i = 0; i < Handler().queuePlaying.length; i++)
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                queuePlaying[i].title,
+                                                Handler().queuePlaying[i].title ?? '',
                                                 style: TextStyle(
                                                   color: Theme.of(context).appBarTheme.foregroundColor,
                                                   overflow: TextOverflow.ellipsis,

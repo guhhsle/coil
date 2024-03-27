@@ -2,14 +2,15 @@
 
 import 'dart:async';
 
+import 'package:coil/audio/queue.dart';
 import 'package:coil/media/audio.dart';
 import 'package:coil/media/cache.dart';
 import 'package:coil/media/http.dart';
 import 'package:coil/media/playlist.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/handler.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../functions/single_child.dart';
 import '../http/generate.dart';
 import '../http/playlist.dart';
@@ -17,7 +18,6 @@ import '../layer.dart';
 import '../media/media.dart';
 import '../pages/page_artist.dart';
 import '../playlist/playlist.dart';
-import '../widgets/song_tile.dart';
 
 //																	USER PLAYLIST TO MAP
 
@@ -27,7 +27,7 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
     await fetchUserPlaylists(true);
   }
 
-  Playlist bookmarks = await Playlist.fromStorage('Bookmarks');
+  Playlist bookmarks = await Playlist.load('Bookmarks', [2]);
 
   bool bookmarked = bookmarks.list.indexWhere((e) => e.id == item.id) != -1;
   Map<dynamic, bool?> playlists = {};
@@ -35,7 +35,7 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
   for (var map in userPlaylists.value) {
     bool? has;
     try {
-      var pl = await Playlist.fromStorage(map['id']);
+      var pl = await Playlist.load(map['id'], [2]);
       has = pl.list.indexWhere((e) => e.id == item.id) != -1;
     } catch (e) {
       //NOT CACHED
@@ -91,17 +91,16 @@ Future<Layer> mediaToLayer(dynamic media) async {
   unawaited(media.forceLoad().then((v) => loaded.value = true));
   unawaited(media.lyrics());
   Layer layer = Layer(
-    action: Setting(media.title, Icons.radio_outlined, '', (c) async {
+    action: Setting(media.title!, Icons.radio_outlined, '', (c) async {
       await generate([media]);
-      load(queuePlaying..insert(0, media));
-      await skipTo(0);
+      Handler().load(Handler().queuePlaying..insert(0, media));
+      await Handler().skipTo(0);
       Navigator.of(c).pop();
     }),
     leading: (context) => [
       SizedBox(
         height: 40,
-        child: songImage(
-          media,
+        child: media.image(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           force: true,
         ),
@@ -115,7 +114,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
         (c) => Navigator.of(c).push(
           MaterialPageRoute(
             builder: (c) => PageArtist(
-              url: media.extras!['uploaderUrl'],
+              url: media.extras['uploaderUrl'],
               artist: media.artist!,
             ),
           ),
@@ -150,7 +149,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
         Icons.format_align_center,
         'Lyrics',
         (c) => singleChildSheet(
-          title: media.title,
+          title: media.title!,
           context: c,
           icon: Icons.format_align_center_rounded,
           child: ValueListenableBuilder<String>(
@@ -164,7 +163,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
         Icons.skip_next_rounded,
         'Play next',
         (c) {
-          media.insertToQueue(current.value + 1);
+          media.insertToQueue(Handler().current.value + 1);
           Navigator.of(c).pop();
         },
       ),
@@ -179,18 +178,18 @@ Future<Layer> mediaToLayer(dynamic media) async {
       ),
     ],
   );
-  if (media.extras!['playlist'] == 'queue') {
+  if (media.extras['playlist'] == 'queue') {
     layer.list.add(
       Setting(
         '',
         Icons.remove_rounded,
         'Dequeue',
         (c) async {
-          removeItemAt(queuePlaying.indexOf(media));
+          Handler().removeItemAt(Handler().queuePlaying.indexOf(media));
         },
       ),
     );
-  } else if (media.extras!['playlist'] != null) {
+  } else if (media.extras['playlist'] != null) {
     layer.list.add(
       Setting(
         '',

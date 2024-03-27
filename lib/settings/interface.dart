@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
+import '../audio/handler.dart';
 import '../data.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
@@ -18,7 +19,7 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
             ['Dock', 'Top', 'Top dock', 'Floating'],
             refresh: true,
           );
-          refreshQueue.value = !refreshQueue.value;
+          Handler().refreshQueue.value = !Handler().refreshQueue.value;
         },
       ),
       list: [

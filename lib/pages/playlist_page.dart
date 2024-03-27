@@ -1,13 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-
-import 'package:coil/audio/float.dart';
-import 'package:coil/functions/audio.dart';
-import 'package:coil/layer.dart';
-import 'package:coil/playlist/http.dart';
 import 'package:flutter/material.dart';
 
+import '../audio/float.dart';
+import '../audio/queue.dart';
+import '../layer.dart';
+import '../playlist/http.dart';
+import '../audio/handler.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
 import '../functions/cache.dart';
@@ -54,8 +54,8 @@ class PlaylistPageState extends State<PlaylistPage> {
               );
             }
             list = snap.data!;
-            queueLoading = list.list.toList();
-            unawaited(preload(range: 10));
+            Handler().queueLoading = list.list.toList();
+            unawaited(Handler().preload(range: 10));
             return Scaffold(
               floatingActionButton: const Float(),
               appBar: AppBar(
@@ -84,7 +84,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                       setState(() => generating = true);
                       generate(list.list).then((v) {
                         setState(() => generating = v);
-                        skipTo(0);
+                        Handler().skipTo(0);
                       });
                     },
                     icon: generating
@@ -127,9 +127,9 @@ class PlaylistPageState extends State<PlaylistPage> {
                                   Icons.low_priority_rounded,
                                   '',
                                   (c) {
-                                    load(list.list);
-                                    shuffle();
-                                    skipTo(0);
+                                    Handler().load(list.list);
+                                    Handler().shuffle();
+                                    Handler().skipTo(0);
                                     Navigator.of(c).pop();
                                   },
                                 ),

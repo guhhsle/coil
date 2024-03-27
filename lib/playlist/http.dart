@@ -5,6 +5,8 @@ import 'package:http/http.dart';
 
 import '../data.dart';
 import '../http/playlist.dart';
+import 'cache.dart';
+import 'map.dart';
 import 'playlist.dart';
 
 extension PlaylistHTTP on Playlist {
@@ -29,5 +31,13 @@ extension PlaylistHTTP on Playlist {
       body: jsonEncode({'playlistId': url}),
     );
     await fetchUserPlaylists(true);
+  }
+
+  static Future<Playlist> from(String url, bool auth) async {
+    Uri u = Uri.https(pf[auth ? 'authInstance' : 'instance'], 'playlists/$url');
+    return PlaylistMap.from(
+      jsonDecode(utf8.decode((await get(u)).bodyBytes)),
+      url,
+    )..backup();
   }
 }

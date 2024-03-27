@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../audio/queue.dart';
+import '../audio/handler.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../functions/sheets.dart';
 import '../layer.dart';
 import '../media/media.dart';
@@ -21,9 +22,9 @@ class SongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     //if (haptic && i % 2 == 0) HapticFeedback.selectionClick();
     return ValueListenableBuilder(
-      valueListenable: refreshQueue,
+      valueListenable: Handler().refreshQueue,
       builder: (context, val, child) {
-        bool selected = queuePlaying.length > current.value && list[i].id == queuePlaying[current.value].id;
+        bool selected = Handler().selected(list[i]);
         Color primary = Theme.of(context).colorScheme.primary;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 256),
@@ -66,22 +67,22 @@ class SongTileChild extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    bool web = list[i].extras!['offline'] == null;
+    bool web = list[i].extras['offline'] == null;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         onTap: () {
-          load(list);
-          skipTo(i);
+          Handler().load(list);
+          Handler().skipTo(i);
         },
         onLongPress: () => showSheet(
           scroll: true,
           func: mediaToLayer,
           param: list[i],
         ),
-        leading: songImage(list[i]),
+        leading: list[i].image(),
         title: Text(
-          web && pf['artist'] ? '${list[i].title} - ${list[i].artist}' : list[i].title,
+          web && pf['artist'] ? '${list[i].title ?? ''} - ${list[i].artist ?? ''}' : list[i].title ?? '',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
             color: selected ? Theme.of(context).colorScheme.background : null,
@@ -90,28 +91,4 @@ class SongTileChild extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget? songImage(Media item, {EdgeInsets? padding, force = false}) {
-  if (!force) {
-    if (!pf['songThumbnails']) return null;
-    if (item.extras!['offline'] != null) return null;
-  }
-  padding ??= const EdgeInsets.symmetric(vertical: 8);
-  return Padding(
-    padding: padding,
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(6),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Image.network(
-          item.artUri.toString(),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const Icon(
-            Icons.graphic_eq_rounded,
-          ),
-        ),
-      ),
-    ),
-  );
 }

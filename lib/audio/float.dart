@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'player.dart';
 import '../data.dart';
-import '../functions/audio.dart';
 import '../widgets/sheet_queue.dart';
+import 'handler.dart';
 
 class Float extends StatelessWidget {
   const Float({super.key});
@@ -10,13 +11,13 @@ class Float extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: refreshQueue,
+      valueListenable: Handler().refreshQueue,
       builder: (context, snapIndex, widget) {
         return ValueListenableBuilder<int>(
-          valueListenable: current,
+          valueListenable: Handler().current,
           builder: (context, snapIndex, widget) {
             return StreamBuilder<Object>(
-              stream: stateStream,
+              stream: Handler().player.playbackStateStream,
               builder: (context, snapshot) {
                 if (pf['player'] == 'Floating') {
                   return Padding(
@@ -32,9 +33,9 @@ class Float extends StatelessWidget {
                             builder: (context) => const SheetQueue(),
                           );
                         },
-                        onTap: () => player.playing ? handler.pause() : handler.play(),
+                        onTap: () => Handler().swap(),
                         borderRadius: BorderRadius.circular(12),
-                        child: (queuePlaying.isEmpty)
+                        child: (Handler().queuePlaying.isEmpty)
                             ? Container()
                             : Card(
                                 margin: EdgeInsets.zero,
@@ -49,11 +50,12 @@ class Float extends StatelessWidget {
                                 ),
                                 child: AspectRatio(
                                   aspectRatio: 1,
-                                  child: pf['songThumbnails'] && queuePlaying[snapIndex].extras!['offline'] == null
+                                  child: pf['songThumbnails'] &&
+                                          Handler().queuePlaying[snapIndex].extras['offline'] == null
                                       ? ClipRRect(
                                           borderRadius: BorderRadius.circular(14),
                                           child: Image.network(
-                                            queuePlaying[snapIndex].artUri.toString(),
+                                            Handler().queuePlaying[snapIndex].artUri.toString(),
                                             fit: BoxFit.cover,
                                             height: 24,
                                             width: 24,

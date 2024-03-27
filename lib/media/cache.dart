@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:coil/data.dart';
-import 'package:coil/media/map.dart';
-import 'package:coil/media/media.dart';
-
+import 'map.dart';
+import 'media.dart';
+import '../data.dart';
+import '../playlist/cache.dart';
 import '../functions/other.dart';
 import '../playlist/playlist.dart';
 
@@ -12,7 +12,7 @@ extension MediaCache on Media {
     String url, {
     bool top = false,
   }) async {
-    Playlist local = await Playlist.fromStorage(url).onError(
+    Playlist local = await Playlist.load(url, [2]).onError(
       (err, stackTrace) => Playlist.fromString(url),
     );
     local.name = t(url);
@@ -29,7 +29,7 @@ extension MediaCache on Media {
     String url, {
     bool first = true,
   }) async {
-    Playlist local = await Playlist.fromStorage(url);
+    Playlist local = await Playlist.load(url, [2]);
     late int index;
     if (first) {
       index = local.raw['relatedStreams'].indexWhere((e) => e['url'] == id);
@@ -48,13 +48,13 @@ extension MediaCache on Media {
 
   Future<void> addTo100() async {
     await forceAddBackup('100raw', top: true);
-    Playlist hundred = await Playlist.fromStorage('100raw');
+    Playlist hundred = await Playlist.load('100raw', [2]);
     Map<String, int> map = {};
     List listRaw = hundred.raw['relatedStreams'];
     if (listRaw.length > 100) listRaw.removeLast();
     await hundred.backup();
 
-    Playlist formatted = await Playlist.fromStorage('100').onError(
+    Playlist formatted = await Playlist.load('100', [2]).onError(
       (err, stackTrace) => Playlist.fromString('100'),
     );
     List list = formatted.raw['relatedStreams'] = hundred.raw['relatedStreams'].toList();

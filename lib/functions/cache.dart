@@ -1,9 +1,11 @@
+import '../playlist/cache.dart';
 import '../data.dart';
+import '../playlist/map.dart';
 import '../playlist/playlist.dart';
 
 Future<void> refreshBookmarks() async {
-  Playlist.fromStorage('Bookmarks').catchError(
-    (e) => Playlist.fromJson(
+  Playlist.load('Bookmarks', [2]).catchError(
+    (e) => PlaylistMap.from(
       {
         "name": "Bookmarks",
         "thumbnailUrl": "",

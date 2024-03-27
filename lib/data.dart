@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'media/media.dart';
 import 'playlist/playlist.dart';
 
 Map pf = {
@@ -115,9 +114,6 @@ const ScrollPhysics scrollPhysics = BouncingScrollPhysics(
   parent: AlwaysScrollableScrollPhysics(),
 );
 
-List<Media> queuePlaying = [];
-List<Media> queueLoading = [];
-
 Map l = {};
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -133,7 +129,5 @@ final ValueNotifier<String> currentLyrics = ValueNotifier('');
 final ValueNotifier<bool> showTopDock = ValueNotifier(false);
 final ValueNotifier<bool> refreshLay = ValueNotifier(true);
 final ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData());
-final ValueNotifier<int> current = ValueNotifier(0);
 final ValueNotifier<PageController> controller = ValueNotifier(PageController());
 final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
-final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
