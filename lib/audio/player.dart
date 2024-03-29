@@ -33,6 +33,7 @@ extension HandlerPlayer on Handler {
         throw "Can't load this song";
       } else {
         await player.pause();
+        await player.stop();
         await player.open(media.audioUrl!);
         int pos = rememberedPosition(media.id);
         if (pos > 10) await player.seek(pos);

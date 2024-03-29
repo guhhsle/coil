@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:coil/audio/queue.dart';
 import 'package:coil/audio/remember.dart';
+import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_audio/simple_audio.dart';
 
@@ -28,9 +29,7 @@ class Handler {
   Handler.internal() {
     runZoned(
       zoneSpecification: ZoneSpecification(
-        print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
-          debugOutput.writeln(line);
-        },
+        print: (self, parent, zone, line) => debugOutput.writeln(line),
       ),
       () async {
         await SimpleAudio.init(
@@ -56,23 +55,24 @@ class Handler {
               await player.seek(0);
             }
           },
-          onNetworkStreamError: (player, error) {
-            debugPrint("Network Stream Error: $error");
-            player.stop();
+          onNetworkStreamError: (_, error) async {
+            showSnack("Network Stream Error: $error", false);
+            await player.stop();
           },
-          onDecodeError: (player, error) {
-            debugPrint("Decode Error: $error");
-            player.stop();
+          onDecodeError: (_, error) async {
+            showSnack("Decode Error: $error", false);
+            await player.stop();
           },
         );
         setVolume();
         player.playbackStateStream.listen((event) {
           if (event == PlaybackState.done) {
+            bool isLast = current.value == queuePlaying.length - 1;
             skipTo(
               {
                 LoopMode.off: current.value + 1,
                 LoopMode.one: current.value,
-                LoopMode.all: current.value == queuePlaying.length - 1 ? 0 : current.value + 1,
+                LoopMode.all: isLast ? 0 : current.value + 1,
               }[loop]!,
             );
           }
