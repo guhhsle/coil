@@ -18,6 +18,7 @@ import '../layer.dart';
 import '../media/media.dart';
 import '../pages/page_artist.dart';
 import '../playlist/playlist.dart';
+import 'other.dart';
 
 //																	USER PLAYLIST TO MAP
 
@@ -89,7 +90,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
   media as Media;
   ValueNotifier<bool> loaded = ValueNotifier(false);
   unawaited(media.forceLoad().then((v) => loaded.value = true));
-  unawaited(media.lyrics());
+  unawaited(media.getLyrics());
   Layer layer = Layer(
     action: Setting(media.title!, Icons.radio_outlined, '', (c) async {
       await generate([media]);
@@ -111,22 +112,20 @@ Future<Layer> mediaToLayer(dynamic media) async {
         '',
         Icons.person_outline_rounded,
         media.artist ?? 'Artist',
-        (c) => Navigator.of(c).push(
-          MaterialPageRoute(
-            builder: (c) => PageArtist(
-              url: media.extras['uploaderUrl'],
-              artist: media.artist!,
-            ),
+        (c) => goToPage(
+          PageArtist(
+            url: media.uploaderUrl ?? '',
+            artist: media.artist ?? 'ERROR',
           ),
         ),
       ),
       Setting('', Icons.link_rounded, 'Audio/Video', (c) {
         if (loaded.value) {
-          media.showLinks(c);
+          showSheet(func: media.links, hidePrev: c);
         } else {
           loaded.addListener(() {
             if (loaded.value) {
-              media.showLinks(c);
+              showSheet(func: media.links, hidePrev: c);
             }
           });
         }
@@ -178,7 +177,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
       ),
     ],
   );
-  if (media.extras['playlist'] == 'queue') {
+  if (media.playlist == 'queue') {
     layer.list.add(
       Setting(
         '',
@@ -189,7 +188,7 @@ Future<Layer> mediaToLayer(dynamic media) async {
         },
       ),
     );
-  } else if (media.extras['playlist'] != null) {
+  } else if (media.playlist != null) {
     layer.list.add(
       Setting(
         '',

@@ -6,24 +6,37 @@ import 'map.dart';
 
 class Media extends Metadata {
   String id;
-  Map extras;
+  int quality, index, reps;
+  bool offline;
+  String? audioUrl, playlist, uploaderUrl, lyrics;
+  Map<String, int> audioUrls;
+  List<Map> videoUrls;
 
   Media({
     required this.id,
+    this.quality = 10,
+    this.index = 0,
+    this.playlist,
+    this.audioUrl,
+    this.uploaderUrl,
+    this.audioUrls = const {},
+    this.lyrics,
+    this.videoUrls = const [],
+    this.offline = false,
+    this.reps = 1,
     required super.title,
-    required this.extras,
     super.artUri,
     super.artist,
   });
 
   static Media from(Map json, {int? i, String? playlist}) {
-    return MediaMap.fromMap(json, i: i, playlist: playlist);
+    return MediaMap.fromMap(json, i: i ?? 10, playlist: playlist);
   }
 
   Widget? image({EdgeInsets? padding, force = false}) {
     if (!force) {
       if (!pf['songThumbnails']) return null;
-      if (extras['offline'] != null) return null;
+      if (offline) return null;
     }
     padding ??= const EdgeInsets.symmetric(vertical: 8);
     return Padding(

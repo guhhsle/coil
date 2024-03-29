@@ -67,7 +67,6 @@ class SongTileChild extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    bool web = list[i].extras['offline'] == null;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
@@ -82,7 +81,7 @@ class SongTileChild extends StatelessWidget {
         ),
         leading: list[i].image(),
         title: Text(
-          web && pf['artist'] ? '${list[i].title ?? ''} - ${list[i].artist ?? ''}' : list[i].title ?? '',
+          !list[i].offline && pf['artist'] ? '${list[i].title ?? ''} - ${list[i].artist ?? ''}' : list[i].title ?? '',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
             color: selected ? Theme.of(context).colorScheme.background : null,

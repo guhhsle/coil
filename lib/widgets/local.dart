@@ -43,7 +43,8 @@ class LocalSongsState extends State<LocalSongs> {
                   title: basename(songPath),
                   artist: '',
                   id: localMusic.value[i].path,
-                  extras: {'url': localMusic.value[i].path, 'offline': true},
+                  audioUrl: localMusic.value[i].path,
+                  offline: true,
                 ),
               );
             }

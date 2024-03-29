@@ -12,7 +12,7 @@ extension HandlerQueue on Handler {
     if (list == queuePlaying) return;
     queuePlaying.clear();
     for (Media media in list) {
-      queuePlaying.add(media..extras['playlist'] = 'queue');
+      queuePlaying.add(media..playlist = 'queue');
     }
   }
 
@@ -28,7 +28,6 @@ extension HandlerQueue on Handler {
     if (i < 0 || i >= queuePlaying.length) return;
     current.value = i;
     refreshQueue.value = !refreshQueue.value;
-    await queuePlaying[i].forceLoad();
     unawaited(queuePlaying[i].play());
     controller.value = PageController(initialPage: i);
     refreshQueue.value = !refreshQueue.value;

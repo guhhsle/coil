@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:coil/functions/other.dart';
+import 'package:coil/media/http.dart';
 
 import 'queue.dart';
 import 'remember.dart';
@@ -26,13 +27,17 @@ extension HandlerPlayer on Handler {
   Future<void> play(Media media) async {
     try {
       unawaited(media.addTo100());
-      await player.pause();
-      await player.stop();
-      await player.open(media.extras['url']);
-      player.setMetadata(media);
-      int pos = rememberedPosition(media.id);
-      if (pos > 10) await player.seek(pos);
-      unawaited(player.play());
+      unawaited(player.setMetadata(media));
+      await media.forceLoad();
+      if (media.audioUrl == null) {
+        throw "Can't load this song";
+      } else {
+        await player.pause();
+        await player.open(media.audioUrl!);
+        int pos = rememberedPosition(media.id);
+        if (pos > 10) await player.seek(pos);
+        unawaited(player.play());
+      }
       unawaited(preload());
     } catch (e) {
       showSnack('$e', false);

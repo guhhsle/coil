@@ -50,8 +50,7 @@ class Float extends StatelessWidget {
                                 ),
                                 child: AspectRatio(
                                   aspectRatio: 1,
-                                  child: pf['songThumbnails'] &&
-                                          Handler().queuePlaying[snapIndex].extras['offline'] == null
+                                  child: pf['songThumbnails'] && !Handler().queuePlaying[snapIndex].offline
                                       ? ClipRRect(
                                           borderRadius: BorderRadius.circular(14),
                                           child: Image.network(

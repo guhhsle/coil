@@ -10,31 +10,21 @@ extension MediaMap on Media {
       'title': title,
       'thumbnail': artUri.toString(),
       'uploaderName': artist,
-      'uploaderUrl': extras['uploaderUrl'],
+      'uploaderUrl': uploaderUrl,
     };
   }
 
-  static Media fromMap(Map json, {int? i, String? playlist}) {
+  static Media fromMap(Map json, {int i = 10, String? playlist}) {
+    i = i < 10 ? 10 - i : 0;
     return Media(
       title: json['title'],
       id: json['url'].replaceAll('/watch?v=', ''),
       artUri: json['thumbnail'] ?? '',
       artist: (json['uploaderName'] ?? json['uploader']).replaceAll(' - Topic', ''),
-      extras: {
-        'url': '',
-        'uploaderUrl': json['uploaderUrl'] ?? '',
-        'verified': evaluateSong(json, i),
-        'duration': json['duration'] ?? 0,
-        'index': playlist != null
-            ? i
-            : i != null && i < 10
-                ? 10 - i
-                : 0,
-        'reps': 1,
-        'audioUrls': <String, int>{},
-        'video': <Map>[],
-        'playlist': playlist,
-      },
+      uploaderUrl: json['uploaderUrl'] ?? '',
+      quality: evaluateSong(json, i),
+      index: i,
+      playlist: playlist,
     );
   }
 

@@ -31,8 +31,8 @@ extension MediaPlaylist on Media {
 
   Future<void> removeFromPlaylist() async {
     if (pf['token'] == '') return;
-    if (extras['playlist'] == null) return;
-    if (extras['playlist'] == 'Bookmarks') {
+    if (playlist == null) return;
+    if (playlist == 'Bookmarks') {
       await forceRemoveBackup('Bookmarks');
       refreshPlaylist.value = !refreshPlaylist.value;
       return;
@@ -41,15 +41,15 @@ extension MediaPlaylist on Media {
       Uri.https(pf['authInstance'], 'user/playlists/remove'),
       headers: {'Authorization': pf['token']},
       body: jsonEncode({
-        'playlistId': extras['playlist'],
-        'index': extras['index'],
+        'playlistId': playlist,
+        'index': index,
       }),
     );
     String? error = jsonDecode(response.body)['error'];
     if (error != null) {
       showSnack(error, false);
     }
-    await Playlist.load(extras['playlist'], [1, 2]);
+    await Playlist.load(playlist!, [1, 2]);
     refreshPlaylist.value = !refreshPlaylist.value;
   }
 

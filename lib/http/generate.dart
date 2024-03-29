@@ -28,8 +28,7 @@ Future<bool> generate(List<Media> rawList) async {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
         Media media = generated[key]!.removeAt(j);
-        int n = media.extras['verified'] + 2 * media.extras['reps'];
-        n += media.extras['index'] ~/ 2 as int;
+        int n = media.quality + 2 * media.reps + media.index ~/ 2;
         if (!generated.containsKey(n)) {
           generated.addAll({
             n: [media]
@@ -86,14 +85,14 @@ Future<void> generateFrom(List related, bool r) async {
 void addToGen(Map m, int i) {
   try {
     Media media = Media.from(m, i: i);
-    int e = media.extras['verified'];
+    int e = media.quality;
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {
         List<Media> list = generated.values.elementAt(j);
         for (int q = 0; q < list.length; q++) {
           if (media.title == list[q].title) {
-            list[q].extras['index'] += 10;
-            list[q].extras['reps']++;
+            list[q].quality += 10;
+            list[q].reps++;
             return;
           }
         }
@@ -108,8 +107,8 @@ void addToGen(Map m, int i) {
       if (j == -1) {
         generated[e]!.add(media);
       } else {
-        generated[e]![j].extras['index'] += 2;
-        generated[e]![j].extras['reps']++;
+        generated[e]![j].index += 2;
+        generated[e]![j].reps++;
       }
     }
   } catch (e) {

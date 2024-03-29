@@ -84,18 +84,18 @@ class Handler {
 
   bool tryLoadFromCache(Media media) {
     for (int q = 0; q < queuePlaying.length; q++) {
-      if (queuePlaying[q].id == media.id && queuePlaying[q].extras['url'] != '') {
-        media.extras['url'] = queuePlaying[q].extras['url'];
-        media.extras['audioUrls'] = queuePlaying[q].extras['audioUrls'];
-        media.extras['video'] = queuePlaying[q].extras['video'];
+      if (queuePlaying[q].id == media.id && queuePlaying[q].audioUrl != null) {
+        media.audioUrl = queuePlaying[q].audioUrl;
+        media.audioUrls = queuePlaying[q].audioUrls;
+        media.videoUrls = queuePlaying[q].videoUrls;
         return true;
       }
     }
     for (int q = 0; q < queueLoading.length; q++) {
-      if (queueLoading[q].id == media.id && queueLoading[q].extras['url'] != '') {
-        media.extras['url'] = queueLoading[q].extras['url'];
-        media.extras['audioUrls'] = queueLoading[q].extras['audioUrls'];
-        media.extras['video'] = queueLoading[q].extras['video'];
+      if (queueLoading[q].id == media.id && queueLoading[q].audioUrl != null) {
+        media.audioUrl = queueLoading[q].audioUrl;
+        media.audioUrls = queueLoading[q].audioUrls;
+        media.videoUrls = queueLoading[q].videoUrls;
         return true;
       }
     }
