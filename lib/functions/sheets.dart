@@ -46,7 +46,7 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
 
   return Layer(
     leading: (context) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: IconButton(
         icon: const Icon(Icons.add_rounded),
         onPressed: () async => await createPlaylist().then((v) {
