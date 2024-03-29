@@ -45,14 +45,11 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
   }
 
   return Layer(
-    leading: (context) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: IconButton(
-        icon: const Icon(Icons.add_rounded),
-        onPressed: () async => await createPlaylist().then((v) {
-          refreshLayer();
-        }),
-      ),
+    leading: (context) => IconButton(
+      icon: const Icon(Icons.add_rounded),
+      onPressed: () async => await createPlaylist().then((v) {
+        refreshLayer();
+      }),
     ),
     action: bookmarked
         ? Setting(
