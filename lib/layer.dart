@@ -61,7 +61,7 @@ class Setting {
 class Layer {
   final Setting action;
   final List<Setting> list;
-  List<Widget> Function(BuildContext)? leading;
+  Widget Function(BuildContext)? leading;
 
   Layer({
     required this.action,

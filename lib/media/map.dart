@@ -15,7 +15,6 @@ extension MediaMap on Media {
   }
 
   static Media fromMap(Map json, {int i = 10, String? playlist}) {
-    i = i < 10 ? 10 - i : 0;
     return Media(
       title: json['title'],
       id: json['url'].replaceAll('/watch?v=', ''),

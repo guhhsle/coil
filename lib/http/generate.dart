@@ -84,7 +84,7 @@ Future<void> generateFrom(List related, bool r) async {
 
 void addToGen(Map m, int i) {
   try {
-    Media media = Media.from(m, i: i);
+    Media media = Media.from(m, i: i < 10 ? 10 - i : 0);
     int e = media.quality;
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {

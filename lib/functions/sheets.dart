@@ -45,6 +45,15 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
   }
 
   return Layer(
+    leading: (context) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: IconButton(
+        icon: const Icon(Icons.add_rounded),
+        onPressed: () async => await createPlaylist().then((v) {
+          refreshLayer();
+        }),
+      ),
+    ),
     action: bookmarked
         ? Setting(
             'Bookmarked',
@@ -64,23 +73,16 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
               refreshLayer();
             },
           ),
-    list: [
-      for (MapEntry<dynamic, bool?> entry in playlists.entries)
-        Setting(
-          entry.key['name'],
-          Icons.clear_all_rounded,
-          entry.value == null ? '?' : '${entry.value}',
-          (c) => item.addToPlaylist(entry.key['id']),
-        ),
-      Setting(
-        '',
-        Icons.add_rounded,
-        '',
-        (c) async => await createPlaylist().then((v) {
-          refreshLayer();
-        }),
-      ),
-    ],
+    list: playlists.entries
+        .map(
+          (entry) => Setting(
+            entry.key['name'],
+            Icons.clear_all_rounded,
+            entry.value == null ? '?' : '${entry.value}',
+            (c) => item.addToPlaylist(entry.key['id']),
+          ),
+        )
+        .toList(),
   );
 }
 
@@ -98,15 +100,13 @@ Future<Layer> mediaToLayer(dynamic media) async {
       await Handler().skipTo(0);
       Navigator.of(c).pop();
     }),
-    leading: (context) => [
-      SizedBox(
-        height: 40,
-        child: media.image(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          force: true,
-        ),
-      )
-    ],
+    leading: (context) => SizedBox(
+      height: 40,
+      child: media.image(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        force: true,
+      ),
+    ),
     list: [
       Setting(
         '',
