@@ -1,5 +1,13 @@
 String versions = """
 
+
+0.9.13						29.03.24
+
+	Changed the audio player
+	Better memory usage
+	Added Linux support
+
+
 0.9.12						16.03.24
 
 	Added song thumbnail on song sheet

@@ -121,11 +121,11 @@ Future<Layer> mediaToLayer(dynamic media) async {
       ),
       Setting('', Icons.link_rounded, 'Audio/Video', (c) {
         if (loaded.value) {
-          showSheet(func: media.links, hidePrev: c);
+          showSheet(func: media.links, hidePrev: c, scroll: true);
         } else {
           loaded.addListener(() {
             if (loaded.value) {
-              showSheet(func: media.links, hidePrev: c);
+              showSheet(func: media.links, hidePrev: c, scroll: true);
             }
           });
         }

@@ -71,7 +71,7 @@ extension MediaHTTP on Media {
         }
       }
       audioUrl = url;
-      videoUrls.clear();
+      videoUrls = [];
       for (int i = raw['videoStreams'].length - 1; i >= 0; i--) {
         if (!raw['videoStreams'][i]['videoOnly']) {
           Map video = raw['videoStreams'][i];
