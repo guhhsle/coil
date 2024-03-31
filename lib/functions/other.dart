@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 
 import '../data.dart';
+import '../layer.dart';
 
 void goToPage(Widget page) {
   if (navigatorKey.currentContext == null) return;
@@ -38,6 +39,7 @@ void showSnack(String text, bool good, {Function()? onTap}) {
 
 void refreshList() {
   refreshPlaylist.value = !refreshPlaylist.value;
+  refreshLayer();
 }
 
 String formatUrl(String old) {

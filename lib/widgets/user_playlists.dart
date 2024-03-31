@@ -1,9 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import '../data.dart';
 import '../http/playlist.dart';
-import '../layer.dart';
 import 'thumbnail.dart';
 
 class UserPlaylists extends StatelessWidget {
@@ -54,17 +51,7 @@ class CreatePlaylist extends StatelessWidget {
         child: IconButton(
           icon: const Icon(Icons.add_rounded),
           tooltip: l['Create a playlist'],
-          onPressed: () => showSheet(
-            func: (non) async => Layer(
-              action: Setting(
-                'Create a playlist',
-                Icons.playlist_add_rounded,
-                '',
-                (c) => createPlaylist().then((v) => Navigator.of(c).pop()),
-              ),
-              list: [],
-            ),
-          ),
+          onPressed: () async => createPlaylist(),
         ),
       );
     } else {
@@ -74,17 +61,7 @@ class CreatePlaylist extends StatelessWidget {
         width: width,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () => showSheet(
-            func: (non) async => Layer(
-              action: Setting(
-                'Create a playlist',
-                Icons.playlist_add_rounded,
-                '',
-                (c) => createPlaylist().then((v) => Navigator.of(c).pop()),
-              ),
-              list: [],
-            ),
-          ),
+          onTap: () async => createPlaylist(),
           child: Card(
             margin: EdgeInsets.zero,
             color: Colors.transparent,

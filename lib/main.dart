@@ -8,19 +8,17 @@ import 'data.dart';
 import 'functions/other.dart';
 import 'functions/prefs.dart';
 import 'pages/home.dart';
-import 'pages/page_log.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initPrefs();
 
   Handler();
-  runApp(MyApp(account: pf['firstBoot']));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool account;
-  const MyApp({super.key, required this.account});
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeData>(
@@ -55,7 +53,7 @@ class MyApp extends StatelessWidget {
                       SystemChrome.setSystemUIOverlayStyle(
                         const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
                       );
-                      return account ? const PageLog() : const Home();
+                      return const Home();
                     },
                   ),
                 );

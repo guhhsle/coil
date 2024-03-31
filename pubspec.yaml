@@ -14,6 +14,7 @@ dependencies:
   shared_preferences: any
   url_launcher: any
   flutter_file_saver: any
+  file_picker: any
   #open_as_default: any
   simple_audio: any
 

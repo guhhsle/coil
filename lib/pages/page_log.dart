@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:coil/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,7 +61,7 @@ class _PageLogState extends State<PageLog> {
                               history[i],
                               Icons.remove_rounded,
                               '',
-                              (c) async {
+                              (c) {
                                 Clipboard.setData(ClipboardData(text: history[i]));
                                 showSnack('Clipboard', true);
                                 Navigator.of(context).pop();
@@ -83,16 +81,10 @@ class _PageLogState extends State<PageLog> {
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
               tooltip: l['Instances'],
-              onPressed: () async {
-                if (await canLaunchUrl(
-                  Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-                )) {
-                  await launchUrl(
-                    Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-                    mode: LaunchMode.externalApplication,
-                  );
-                }
-              },
+              onPressed: () async => await launchUrl(
+                Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
+                mode: LaunchMode.externalApplication,
+              ),
               icon: const Icon(Icons.domain_rounded),
             ),
           ),
@@ -121,7 +113,8 @@ class _PageLogState extends State<PageLog> {
                         onPressed: () {
                           setPref('instance', trimUrl(controllers[0].text));
                           setPref('token', '');
-                          runApp(MyApp(key: Key('${DateTime.now()}'), account: false));
+                          setPref('authInstance', '');
+                          runApp(MyApp(key: Key('${DateTime.now()}')));
                         },
                       ),
                     ),
@@ -190,10 +183,7 @@ class _PageLogState extends State<PageLog> {
                                   controllers[3].text,
                                   false,
                                 )) {
-                                  runApp(MyApp(
-                                    key: Key('${DateTime.now()}'),
-                                    account: false,
-                                  ));
+                                  runApp(MyApp(key: Key('${DateTime.now()}')));
                                 }
                               },
                               borderRadius: BorderRadius.circular(12),
@@ -227,10 +217,7 @@ class _PageLogState extends State<PageLog> {
                               setPref('instance', trimUrl(controllers[0].text));
                               setPref('authInstance', trimUrl(controllers[1].text));
                               if (await login(controllers[2].text.trim(), controllers[3].text, true)) {
-                                runApp(MyApp(
-                                  key: Key('${DateTime.now()}'),
-                                  account: false,
-                                ));
+                                runApp(MyApp(key: Key('${DateTime.now()}')));
                               }
                             },
                             borderRadius: BorderRadius.circular(12),

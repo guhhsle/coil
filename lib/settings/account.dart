@@ -1,4 +1,10 @@
+import 'dart:io';
+
+import 'package:coil/functions/other.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_file_saver/flutter_file_saver.dart';
+import 'package:path/path.dart';
 
 import '../data.dart';
 import '../functions/prefs.dart';
@@ -34,7 +40,25 @@ Future<Layer> accountSet(dynamic non) async => Layer(
               ),
               list: [
                 Setting(
-                  'File per list',
+                  'Cache',
+                  Icons.cached_rounded,
+                  '',
+                  (c) async {
+                    File file = File('${pf['appDirectory']}/playlists.json');
+                    await writeFile('playlists.json', await file.readAsString());
+                    file = File('${pf['appDirectory']}/100raw.json');
+                    await writeFile('100raw.json', await file.readAsString());
+                    file = File('${pf['appDirectory']}/Bookmarks.json');
+                    await writeFile('Bookmarks.json', await file.readAsString());
+                    for (Map userPlaylist in userPlaylists.value) {
+                      String name = '${formatUrl(userPlaylist['id'])}.json';
+                      file = File('${pf['appDirectory']}/$name');
+                      await writeFile(name, await file.readAsString());
+                    }
+                  },
+                ),
+                Setting(
+                  'File per list (Standard)',
                   Icons.folder_outlined,
                   '',
                   (c) async {
@@ -43,7 +67,7 @@ Future<Layer> accountSet(dynamic non) async => Layer(
                   },
                 ),
                 Setting(
-                  'One file',
+                  'One file (Standard)',
                   Icons.description_rounded,
                   '',
                   (c) async {
@@ -54,6 +78,23 @@ Future<Layer> accountSet(dynamic non) async => Layer(
               ],
             ),
           ),
+        ),
+        Setting(
+          'Import Cache',
+          Icons.settings_backup_restore_rounded,
+          '',
+          (c) async {
+            try {
+              FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+              List<File> files = result!.paths.map((path) => File(path!)).toList();
+              for (File backedFile in files) {
+                File cacheFile = File('${pf['appDirectory']}/${basename(backedFile.path)}');
+                cacheFile.writeAsBytes(await backedFile.readAsBytes());
+              }
+            } catch (e) {
+              showSnack('$e', false);
+            }
+          },
         ),
         Setting(
           'Country',

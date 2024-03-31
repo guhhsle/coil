@@ -15,7 +15,6 @@ extension MediaCache on Media {
     Playlist local = await Playlist.load(url, [2]).onError(
       (err, stackTrace) => Playlist.fromString(url),
     );
-    local.name = t(url);
     if (top) {
       (local.raw['relatedStreams'] as List).insert(0, toMap());
     } else {
@@ -39,8 +38,6 @@ extension MediaCache on Media {
     if (index != -1) local.raw['relatedStreams'].removeAt(index);
     if ((local.raw['relatedStreams'] as List).isEmpty) {
       await File('${pf['appDirectory']}/$url.json').delete();
-    } else {
-      local.name = t(url);
     }
     await local.backup();
     refreshList();

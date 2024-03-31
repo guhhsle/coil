@@ -1,20 +1,10 @@
 import '../playlist/cache.dart';
 import '../data.dart';
-import '../playlist/map.dart';
 import '../playlist/playlist.dart';
 
 Future<void> refreshBookmarks() async {
   Playlist.load('Bookmarks', [2]).catchError(
-    (e) => PlaylistMap.from(
-      {
-        "name": "Bookmarks",
-        "thumbnailUrl": "",
-        "uploader": "Local",
-        "videos": 0,
-        "relatedStreams": <Map>[],
-      },
-      'Bookmarks',
-    )..backup(),
+    (e) => Playlist.fromString('Bookmarks')..backup(),
   );
 }
 

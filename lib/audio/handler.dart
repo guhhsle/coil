@@ -26,7 +26,7 @@ class Handler {
     return instance;
   }
 
-  Handler.internal() {
+  Future<void> initHandler() async {
     runZoned(
       zoneSpecification: ZoneSpecification(
         print: (self, parent, zone, line) => debugOutput.writeln(line),
@@ -80,6 +80,10 @@ class Handler {
         rememberStream();
       },
     );
+  }
+
+  Handler.internal() {
+    unawaited(initHandler());
   }
 
   bool tryLoadFromCache(Media media) {

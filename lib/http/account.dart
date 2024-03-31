@@ -13,6 +13,7 @@ Future<bool> login(
   String password,
   bool exists,
 ) async {
+  setPref('token', '');
   Response result = await post(
     Uri.https(pf['authInstance'], exists ? 'login' : 'register'),
     body: jsonEncode({

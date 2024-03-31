@@ -1,3 +1,4 @@
+import '../data.dart';
 import '../functions/other.dart';
 import '../media/media.dart';
 import 'cache.dart';
@@ -27,7 +28,7 @@ class Playlist {
       uploader: 'Local',
       items: 0,
       name: t(url),
-      raw: {'relatedStreams': []},
+      raw: {'relatedStreams': <Map>[]},
     );
   }
 
@@ -56,4 +57,13 @@ class Playlist {
       return Playlist.fromString(url);
     }
   }
+
+  bool isCacheOnly() => playlistIsCacheOnly(name);
+}
+
+bool playlistIsCacheOnly(String name) {
+  const List<String> userFiles = ['Bookmarks', '100', '100raw'];
+  if (pf['token'] == '') return true;
+  if (userFiles.contains(name)) return true;
+  return false;
 }
