@@ -24,12 +24,6 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
       ),
       list: [
         Setting(
-          'Reverse',
-          Icons.low_priority_rounded,
-          '${pf['reverse']}',
-          (c) => revPref('reverse'),
-        ),
-        Setting(
           'Top',
           Icons.gradient_rounded,
           pf['appbar'],
@@ -64,14 +58,7 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
                     pf['searchOrder'][i],
                     Icons.expand_less_rounded,
                     '',
-                    (c) {
-                      if (i == 0) return;
-                      List<String> l = pf['searchOrder'];
-                      setPref(
-                        'searchOrder',
-                        l..insert(i - 1, l.removeAt(i)),
-                      );
-                    },
+                    (c) {},
                     secondary: (c) {
                       if (i == 0) return;
                       List<String> l = pf['searchOrder'];

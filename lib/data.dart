@@ -19,7 +19,7 @@ Map pf = {
   'volume': 50,
   'locale': 'en',
   //INTERFACE
-  'reverse': true,
+  //'reverse': true,
   'artist': false,
   'appbar': 'Black',
   'player': 'Dock',

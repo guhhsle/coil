@@ -8,23 +8,19 @@ extension PlaylistMap on Playlist {
     List playlist = json['relatedStreams'] ?? [];
     List<Media> list = [];
     for (var i = 0; i < playlist.length; i++) {
-      int index = userPlaylists.value.indexWhere((el) => el['id'] == url);
-      if (url == 'Bookmarks') index++;
-      if (pf['reverse'] && index >= 0) {
+      bool userCreated = userPlaylists.value.indexWhere((el) => el['id'] == url) >= 0;
+      if (url == 'Bookmarks') userCreated = true;
+      if (userCreated) {
         list.insert(
           0,
           Media.from(
             playlist[i],
-            playlist: index >= 0 ? url : null,
+            playlist: url,
             i: i,
           ),
         );
       } else {
-        list.add(Media.from(
-          playlist[i],
-          playlist: index >= 0 ? url : null,
-          i: i,
-        ));
+        list.add(Media.from(playlist[i], i: i));
       }
     }
     return list;
