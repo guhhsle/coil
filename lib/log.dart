@@ -6,6 +6,7 @@ String versions = """
 	Changed the audio player
 	Better memory usage
 	Added Linux support
+	Full anonimous mode
 
 
 0.9.12						16.03.24

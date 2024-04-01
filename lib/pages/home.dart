@@ -25,18 +25,9 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-String getInstanceName(String str) {
-  if (!str.contains('.')) return str;
-  int i = 0;
-  while (str[i] != '.') {
-    i++;
-  }
-  return str.substring(i + 1);
-}
-
 Map<String, Widget> homeMap = {};
 String selectedHome = 'Playlists';
-ValueNotifier<String> barText = ValueNotifier(getInstanceName(pf['instance']));
+ValueNotifier<String> barText = ValueNotifier(formatInstanceName(pf['instance']));
 PageController pageController = PageController();
 ScrollController scrollController = ScrollController();
 GlobalKey key = GlobalKey(debugLabel: 'Tags');
@@ -85,7 +76,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             onTap: () async {
               String instance = await instanceHistory();
               setPref('instance', instance);
-              barText.value = getInstanceName(instance);
+              barText.value = formatInstanceName(instance);
             },
             child: ValueListenableBuilder(
               valueListenable: barText,

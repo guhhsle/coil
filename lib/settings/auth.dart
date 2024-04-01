@@ -13,7 +13,7 @@ Future<Layer> authSet(dynamic non) async => Layer(
       leading: (c) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
         child: IconButton(
-          icon: const Icon(Icons.add_rounded),
+          icon: const Icon(Icons.person_add_rounded),
           onPressed: () => login(false),
         ),
       ),
@@ -22,7 +22,7 @@ Future<Layer> authSet(dynamic non) async => Layer(
         Setting(
           pf['authInstance'] == '' ? 'Authentication Instance' : '',
           Icons.lock_rounded,
-          pf['authInstance'],
+          formatInstanceName(pf['authInstance']),
           (c) async {
             String newAuth = await instanceHistory();
             setPref('authInstance', newAuth);
@@ -41,9 +41,9 @@ Future<Layer> authSet(dynamic non) async => Layer(
           },
         ),
         Setting(
-          'Password',
+          pf['password'] == '' ? 'Password' : '',
           Icons.password_rounded,
-          pf['password'],
+          pf['password'].replaceAll(RegExp(r'.'), '*'),
           (c) async {
             String newPassword = await getInput(
               pf['password'],

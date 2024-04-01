@@ -56,7 +56,7 @@ class Handler {
             }
           },
           onNetworkStreamError: (_, error) async {
-            showSnack("Network Stream Error: $error", false);
+            showSnack('Instance error for this specific song', false);
             await player.stop();
             await initHandler();
           },

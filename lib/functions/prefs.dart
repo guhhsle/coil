@@ -75,6 +75,10 @@ void setPref(
   bool refresh = false,
 }) {
   pf[pString] = value;
+  if (pString == 'instance' || pString == 'authInstance') {
+    value = trimUrl(value.replaceAll(' ', ''));
+    rememberInstance(value);
+  }
   if (value is int) {
     prefs.setInt(pString, value);
   } else if (value is bool) {
@@ -85,8 +89,5 @@ void setPref(
     prefs.setStringList(pString, value);
   }
   if (refresh) refreshInterface();
-  if (pString == 'instance' || pString == 'authInstance') {
-    rememberInstance(value);
-  }
   refreshLayer();
 }

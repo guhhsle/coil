@@ -38,6 +38,19 @@ void showSnack(String text, bool good, {Function()? onTap}) {
   );
 }
 
+String formatInstanceName(String str) {
+  if (!str.contains('.')) return str;
+  int i = str.length - 1;
+  while (str[i] != '.' && i != 0) {
+    i--;
+  }
+  i--;
+  while (str[i] != '.' && i != 0) {
+    i--;
+  }
+  return str.substring(i + 1);
+}
+
 void refreshList() {
   refreshPlaylist.value = !refreshPlaylist.value;
   refreshLayer();
