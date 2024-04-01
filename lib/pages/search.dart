@@ -139,7 +139,7 @@ class SuggestionListState extends State<SuggestionList> {
   late bool result;
   ScrollController scrollController = ScrollController();
 
-  Future<void> search(String query, String filter) async {
+  Future<List> search(String query, String filter) async {
     Response response = await get(
       Uri.https(
         pf['instance'],
@@ -148,7 +148,7 @@ class SuggestionListState extends State<SuggestionList> {
       ),
     );
     List? list = jsonDecode(utf8.decode(response.bodyBytes))['items'];
-    if (list != null) searchResults.value = list;
+    return list ?? [];
   }
 
   @override
@@ -213,21 +213,22 @@ class SuggestionListState extends State<SuggestionList> {
                 ),
               ),
             ),
-            ValueListenableBuilder<List>(
-              valueListenable: searchResults,
-              builder: (context, snap, child) {
-                if (snap.isEmpty) return Container();
+            FutureBuilder(
+              future: search(query, filter ?? 'music_songs'),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return Container();
+                List result = snapshot.data ?? [];
                 Handler().queueLoading.clear();
                 if (filter == 'music_songs' || filter == 'videos') {
                   try {
-                    for (var q = 0; q < snap.length; q++) {
-                      Handler().queueLoading.add(Media.from(snap[q]));
+                    for (var q = 0; q < result.length; q++) {
+                      Handler().queueLoading.add(Media.from(result[q]));
                     }
                     unawaited(Handler().preload(range: 10));
                     return Expanded(
                       child: ListView.builder(
                         physics: scrollPhysics,
-                        itemCount: snap.length,
+                        itemCount: result.length,
                         itemBuilder: (context, i) => SongTile(
                           list: Handler().queueLoading,
                           i: i,
@@ -240,35 +241,19 @@ class SuggestionListState extends State<SuggestionList> {
                   }
                 } else {
                   return Expanded(
-                    child: ListView(
+                    child: ListView.builder(
                       physics: scrollPhysics,
                       padding: const EdgeInsets.only(bottom: 32, top: 16),
-                      children: [
-                        Wrap(
-                          alignment: WrapAlignment.spaceEvenly,
-                          children: [
-                            for (int i = 0; i < snap.length; i++)
-                              Builder(
-                                builder: (context) {
-                                  String title = '';
-                                  try {
-                                    title = snap[i]['name'] ?? snap[i]['title'];
-                                  } catch (e) {
-                                    debugPrint(e.toString());
-                                  }
-                                  if (snap[i]['uploaderName'] == 'YouTube Music') return Container();
-                                  return Thumbnail(
-                                    thumbnail: snap[i]['thumbnail'],
-                                    title: title,
-                                    playlist: filter != 'channels',
-                                    url: snap[i]['url'],
-                                    path: const [0, 1],
-                                  );
-                                },
-                              )
-                          ],
-                        ),
-                      ],
+                      itemCount: result.length,
+                      itemBuilder: (context, i) {
+                        Map item = result[i];
+                        if (item['uploaderName'] == 'YouTube Music') return Container();
+                        return PlaylistTile(
+                          info: item,
+                          playlist: filter != 'channels',
+                          path: const [0, 1],
+                        );
+                      },
                     ),
                   );
                 }

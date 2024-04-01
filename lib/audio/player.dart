@@ -1,15 +1,13 @@
 import 'dart:async';
 
-import 'package:coil/functions/other.dart';
-import 'package:coil/media/http.dart';
-
+import 'handler.dart';
 import 'queue.dart';
 import 'remember.dart';
-import '../media/cache.dart';
-
-import '../data.dart';
 import '../media/media.dart';
-import 'handler.dart';
+import '../functions/other.dart';
+import '../media/http.dart';
+import '../media/cache.dart';
+import '../data.dart';
 
 extension HandlerPlayer on Handler {
   void setVolume() {

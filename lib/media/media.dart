@@ -26,7 +26,7 @@ class Media extends Metadata {
     this.reps = 1,
     required super.title,
     super.artUri,
-    super.artist,
+    super.artist = '',
   });
 
   static Media from(Map json, {int? i, String? playlist}) {
@@ -35,7 +35,7 @@ class Media extends Metadata {
 
   Widget? image({EdgeInsets? padding, force = false}) {
     if (!force) {
-      if (!pf['songThumbnails']) return null;
+      if (!pf['thumbnails']) return null;
       if (offline) return null;
     }
     padding ??= const EdgeInsets.symmetric(vertical: 8);

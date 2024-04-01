@@ -7,7 +7,6 @@ import 'package:http/http.dart';
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
-import '../http/account.dart';
 import '../media/media.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
@@ -28,6 +27,27 @@ class PageArtist extends StatefulWidget {
 }
 
 class PageArtistState extends State<PageArtist> {
+  Future<bool> subscribed(String channelId) async {
+    Response result = await get(
+      Uri.https(pf['authInstance'], 'subscribed', {
+        'channelId': channelId,
+      }),
+      headers: {'Authorization': pf['token']},
+    );
+    return jsonDecode(result.body)['subscribed'];
+  }
+
+  Future<void> unSubscribe(String channelId, bool s) async {
+    await post(
+      Uri.https(pf['authInstance'], s ? 'unsubscribe' : 'subscribe'),
+      headers: {
+        'Authorization': pf['token'],
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'channelId': channelId}),
+    );
+  }
+
   @override
   void initState() {
     unawaited(channelVideos(widget.url));
@@ -42,16 +62,20 @@ class PageArtistState extends State<PageArtist> {
   List<String> options = ['Videos', 'Tabs'];
 
   Future<void> channelVideos(String url) async {
-    Response result = await get(Uri.https(pf['instance'], url));
-    videos.value = jsonDecode(utf8.decode(result.bodyBytes));
-    result = await get(
-      Uri.https(
-        pf['instance'],
-        'channels/tabs',
-        {'data': (jsonDecode(result.body)['tabs'][0])['data']},
-      ),
-    );
-    playlists.value = jsonDecode(utf8.decode(result.bodyBytes));
+    try {
+      Response result = await get(Uri.https(pf['instance'], url));
+      videos.value = jsonDecode(utf8.decode(result.bodyBytes));
+      result = await get(
+        Uri.https(
+          pf['instance'],
+          'channels/tabs',
+          {'data': (jsonDecode(result.body)['tabs'][0])['data']},
+        ),
+      );
+      playlists.value = jsonDecode(utf8.decode(result.bodyBytes));
+    } catch (e) {
+      //INVALID CHANNEL
+    }
   }
 
   @override
@@ -130,19 +154,17 @@ class PageArtistState extends State<PageArtist> {
                         Wrap(
                           alignment: WrapAlignment.spaceEvenly,
                           children: [
-                            for (int i = 0; i < list.length; i++)
+                            for (Map item in list)
                               Builder(
                                 builder: (context) {
-                                  if (list[i]['type'] == 'stream') {
-                                    songList.add(Media.from(list[i]));
+                                  if (item['type'] == 'stream') {
+                                    songList.add(Media.from(item));
                                     return SongTile(list: songList, i: songList.length - 1);
                                   } else {
-                                    return Thumbnail(
-                                      title: list[i]['name'],
-                                      thumbnail: list[i]['thumbnail'],
-                                      playlist: true,
-                                      url: list[i]['url'],
+                                    return PlaylistTile(
+                                      info: item,
                                       path: const [0, 1],
+                                      playlist: true,
                                     );
                                   }
                                 },

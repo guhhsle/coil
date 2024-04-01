@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import '../data.dart';
-import '../http/playlist.dart';
 import '../media/media.dart';
+import '../other/countries.dart';
 import 'song_tile.dart';
 
 class Trending extends StatelessWidget {
@@ -12,21 +14,26 @@ class Trending extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: trending,
-      child: ValueListenableBuilder<List>(
+      child: ValueListenableBuilder(
         valueListenable: trendingVideos,
-        builder: (context, snap, child) {
-          List<Media> list = [];
-          for (var q = 0; q < snap.length; q++) {
-            list.add(Media.from(snap[q]));
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.only(top: 8, bottom: 32),
-            itemCount: list.length,
-            physics: scrollPhysics,
-            itemBuilder: (context, i) => SongTile(i: i, list: list),
-          );
-        },
+        builder: (context, snap, child) => ListView.builder(
+          padding: const EdgeInsets.only(top: 8, bottom: 32),
+          itemCount: snap.length,
+          physics: scrollPhysics,
+          itemBuilder: (context, i) => SongTile(i: i, list: snap),
+        ),
       ),
     );
   }
+}
+
+Future<void> trending() async {
+  if (!pf['instance'].contains('.')) return;
+  Response response = await get(Uri.https(pf['instance'], 'trending', {
+    'region': countries.keys.elementAt(
+      countries.values.toList().indexOf(pf['location']),
+    ),
+  }));
+  List result = jsonDecode(utf8.decode(response.bodyBytes));
+  trendingVideos.value = result.map((map) => Media.from(map)).toList();
 }

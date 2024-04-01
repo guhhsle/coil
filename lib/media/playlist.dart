@@ -9,7 +9,7 @@ import '../playlist/playlist.dart';
 import 'media.dart';
 
 extension MediaPlaylist on Media {
-  Future<void> addToPlaylist(
+  Future addToPlaylist(
     String playlistId,
   ) async {
     try {
@@ -28,7 +28,7 @@ extension MediaPlaylist on Media {
     await forceAddToPlaylist(playlistId: playlistId);
   }
 
-  Future<void> removeFromPlaylist() async {
+  Future removeFromPlaylist() async {
     if (playlist == null) return;
     if (playlistIsCacheOnly(playlist!)) {
       await forceRemoveBackup(playlist!, first: false);
@@ -47,7 +47,7 @@ extension MediaPlaylist on Media {
     }
   }
 
-  Future<void> forceAddToPlaylist({
+  Future forceAddToPlaylist({
     required String playlistId,
   }) async {
     if (playlistIsCacheOnly(playlistId)) {

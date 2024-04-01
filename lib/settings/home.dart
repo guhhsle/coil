@@ -24,15 +24,7 @@ Future<Layer> homeSet(dynamic non) async => Layer(
                   pf['homeOrder'][i],
                   Icons.expand_less_rounded,
                   '',
-                  (c) {
-                    if (i == 0) return;
-                    List<String> l = pf['homeOrder'];
-                    setPref(
-                      'homeOrder',
-                      l..insert(i - 1, l.removeAt(i)),
-                      refresh: true,
-                    );
-                  },
+                  (c) {},
                   secondary: (c) {
                     if (i == 0) return;
                     List<String> l = pf['homeOrder'];
@@ -53,12 +45,6 @@ Future<Layer> homeSet(dynamic non) async => Layer(
           Icons.label_rounded,
           pf['tags'],
           (c) => nextPref('tags', ['Hide', 'Top', 'Bottom'], refresh: true),
-        ),
-        Setting(
-          'Grid',
-          Icons.grid_3x3_rounded,
-          '${pf['grid']}',
-          (c) => setPref('grid', (pf['grid'] + 1) % 5, refresh: true),
         ),
         Setting(
           'Sort',

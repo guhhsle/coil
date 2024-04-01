@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import 'handler.dart';
 import '../media/audio.dart';
 import '../media/http.dart';
 import '../data.dart';
 import '../media/media.dart';
-import 'handler.dart';
 
 extension HandlerQueue on Handler {
   void load(List<Media> list) {

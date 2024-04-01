@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coil/playlist/playlist.dart';
-
+import '../widgets/user_playlists.dart';
+import 'playlist.dart';
 import '../data.dart';
 import '../functions/other.dart';
 import 'map.dart';
 
 extension PlaylistCache on Playlist {
   Future<void> backup() async {
-    if (!isCacheOnly() &&
+    if (!userFiles.contains(url) &&
         userPlaylists.value.indexWhere((el) => el['id'] == url) == -1 &&
         !pf['bookmarks'].contains(url)) return;
     File file = File('${pf['appDirectory']}/${formatUrl(url)}.json');
@@ -42,11 +42,11 @@ extension PlaylistCache on Playlist {
   Future<void> renameBackupTo(String newName) async {
     name = newName;
     await backup();
-    await removeFromCache();
+    await removeBackup();
     await addToCache();
   }
 
-  Future<void> removeFromCache() async {
+  Future<void> removeBackup() async {
     File file = File('${pf['appDirectory']}/playlists.json');
     List list = jsonDecode(await file.readAsString());
     list.removeWhere((map) => map['id'] == url);
@@ -55,6 +55,9 @@ extension PlaylistCache on Playlist {
 
   Future<void> addToCache() async {
     File file = File('${pf['appDirectory']}/playlists.json');
+    if (!await file.exists()) {
+      await file.writeAsString('[]');
+    }
     List list = jsonDecode(await file.readAsString());
     list.add({
       'id': url,
@@ -63,5 +66,6 @@ extension PlaylistCache on Playlist {
       'videos': items,
     });
     await file.writeAsString(jsonEncode(list));
+    await fetchUserPlaylists(false);
   }
 }

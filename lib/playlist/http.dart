@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 import '../data.dart';
-import '../http/playlist.dart';
+import '../functions/other.dart';
+import '../widgets/user_playlists.dart';
 import 'cache.dart';
 import 'map.dart';
 import 'playlist.dart';
@@ -29,7 +30,7 @@ extension PlaylistHTTP on Playlist {
 
   Future<void> delete() async {
     if (isCacheOnly()) {
-      await removeFromCache();
+      await removeBackup();
     } else {
       await post(
         Uri.https(pf['authInstance'], 'user/playlists/delete'),
@@ -46,5 +47,24 @@ extension PlaylistHTTP on Playlist {
       jsonDecode(utf8.decode((await get(u)).bodyBytes)),
       url,
     )..backup();
+  }
+
+  Future<void> create() async {
+    if (pf['token'] == '') {
+      url = '$name-${DateTime.now()}';
+      await addToCache();
+      await backup();
+    } else {
+      try {
+        await post(
+          Uri.https(pf['authInstance'], 'user/playlists/create'),
+          body: jsonEncode({'name': name}),
+          headers: {'Authorization': pf['token']},
+        );
+      } catch (e) {
+        showSnack('$e', false);
+      }
+    }
+    await fetchUserPlaylists(true);
   }
 }

@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'media/media.dart';
 import 'playlist/playlist.dart';
 
 Map pf = {
@@ -13,7 +12,7 @@ Map pf = {
   'username': '',
   'password': '',
   'token': '',
-  'instance': '',
+  'instance': 'Set instance',
   'authInstance': '',
   'location': 'United States',
   //MORE
@@ -45,13 +44,13 @@ Map pf = {
     'Music playlists',
   ],
   'tags': 'Top',
-  'grid': 0,
+  //'grid': 0,
   'sortBy': 'Name',
   //DATA
   'indie': true,
   'bitrate': 180000,
   'thumbnails': true,
-  'songThumbnails': true,
+  //'songThumbnails': true,
   'timeLimit': 8,
   'searchHistory': <String>[],
   'instanceHistory': <String>[],
@@ -118,12 +117,10 @@ Map l = {};
 final navigatorKey = GlobalKey<NavigatorState>();
 
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
-final ValueNotifier<List<FileSystemEntity>> localMusic = ValueNotifier([]);
+final ValueNotifier<List<Media>> localMusic = ValueNotifier([]);
 final ValueNotifier<List<Playlist>> bookmarks = ValueNotifier([]);
-final ValueNotifier<List> userSubscriptions = ValueNotifier([]);
-final ValueNotifier<List> trendingVideos = ValueNotifier([]);
-final ValueNotifier<List> searchResults = ValueNotifier([]);
-final ValueNotifier<List> searchSuggestions = ValueNotifier([]);
+final ValueNotifier<List<Media>> userSubscriptions = ValueNotifier([]);
+final ValueNotifier<List<Media>> trendingVideos = ValueNotifier([]);
 final ValueNotifier<String> currentLyrics = ValueNotifier('');
 
 final ValueNotifier<bool> showTopDock = ValueNotifier(false);

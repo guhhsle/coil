@@ -5,30 +5,27 @@ import 'package:flutter/material.dart';
 
 import '../audio/float.dart';
 import '../audio/queue.dart';
+import '../functions/export.dart';
+import '../functions/generate.dart';
 import '../layer.dart';
 import '../playlist/http.dart';
 import '../audio/handler.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
-import '../functions/cache.dart';
-import '../functions/other.dart';
 import '../functions/prefs.dart';
-import '../http/export.dart';
-import '../http/generate.dart';
 import '../playlist/playlist.dart';
 import '../widgets/body.dart';
+import '../widgets/bookmarks.dart';
 import '../widgets/song_tile.dart';
 
 class PlaylistPage extends StatefulWidget {
   final String url;
-  final bool user;
   final List<int> path;
 
   const PlaylistPage({
     Key? key,
     required this.url,
     required this.path,
-    this.user = false,
   }) : super(key: key);
 
   @override
@@ -62,7 +59,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                 title: TextFormField(
                   maxLines: 1,
                   maxLength: 24,
-                  initialValue: widget.user ? list.name : formatList(list.name),
+                  initialValue: list.name,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

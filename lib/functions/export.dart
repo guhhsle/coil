@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../data.dart';
 import '../functions/other.dart';
 import '../playlist/playlist.dart';
-import 'playlist.dart';
+import '../widgets/user_playlists.dart';
 
 //BULK INDICATES ONE BIG FILE
 Future<void> exportUser(bool bulk) async {

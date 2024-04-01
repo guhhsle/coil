@@ -14,7 +14,7 @@ enum LoopMode { off, one, all }
 
 class Handler {
   static final Handler instance = Handler.internal();
-  late final SimpleAudio player;
+  late SimpleAudio player;
   late IOSink debugOutput = File('debug_output.txt').openWrite();
   LoopMode loop = LoopMode.off;
   List<Media> queuePlaying = [];
@@ -58,10 +58,12 @@ class Handler {
           onNetworkStreamError: (_, error) async {
             showSnack("Network Stream Error: $error", false);
             await player.stop();
+            await initHandler();
           },
           onDecodeError: (_, error) async {
             showSnack("Decode Error: $error", false);
             await player.stop();
+            await initHandler();
           },
         );
         setVolume();

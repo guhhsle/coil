@@ -12,70 +12,31 @@ class Float extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: Handler().refreshQueue,
-      builder: (context, snapIndex, widget) {
+      builder: (context, non, widget) {
         return ValueListenableBuilder<int>(
           valueListenable: Handler().current,
           builder: (context, snapIndex, widget) {
             return StreamBuilder<Object>(
               stream: Handler().player.playbackStateStream,
               builder: (context, snapshot) {
-                if (pf['player'] == 'Floating') {
-                  return Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: InkWell(
-                        onLongPress: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) => const SheetQueue(),
-                          );
-                        },
-                        onTap: () => Handler().swap(),
-                        borderRadius: BorderRadius.circular(12),
-                        child: (Handler().queuePlaying.isEmpty)
-                            ? Container()
-                            : Card(
-                                margin: EdgeInsets.zero,
-                                color: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: pf['songThumbnails'] && !Handler().queuePlaying[snapIndex].offline
-                                      ? ClipRRect(
-                                          borderRadius: BorderRadius.circular(14),
-                                          child: Image.network(
-                                            Handler().queuePlaying[snapIndex].artUri.toString(),
-                                            fit: BoxFit.cover,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                        )
-                                      : Container(
-                                          height: 24,
-                                          width: 24,
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                      ),
+                if (pf['player'] != 'Floating') return Container();
+                if (Handler().queuePlaying.isEmpty) return Container();
+                return SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: InkWell(
+                    onLongPress: () => showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => const SheetQueue(),
                     ),
-                  );
-                } else {
-                  return Container();
-                }
+                    onTap: () => Handler().swap(),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Handler().queuePlaying[snapIndex].image(
+                          padding: const EdgeInsets.all(12),
+                        ),
+                  ),
+                );
               },
             );
           },

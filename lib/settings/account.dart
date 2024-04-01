@@ -1,28 +1,23 @@
 import 'dart:io';
 
-import 'package:coil/functions/other.dart';
+import 'package:coil/settings/auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:path/path.dart';
 
+import '../functions/other.dart';
 import '../data.dart';
+import '../functions/export.dart';
 import '../functions/prefs.dart';
-import '../http/export.dart';
 import '../layer.dart';
 import '../other/countries.dart';
-import '../pages/page_log.dart';
 
 Future<Layer> accountSet(dynamic non) async => Layer(
       action: Setting(
         'Configure',
         Icons.person_rounded,
         '',
-        (c) => Navigator.of(c).push(
-          MaterialPageRoute(
-            builder: (context) => const PageLog(),
-          ),
-        ),
+        (c) => showSheet(func: authSet, hidePrev: c),
       ),
       list: [
         Setting(

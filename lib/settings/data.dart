@@ -21,16 +21,10 @@ Future<Layer> dataSet(dynamic non) async => Layer(
       ),
       list: [
         Setting(
-          'List thumbnail',
-          Icons.collections_rounded,
+          'Thumbnails',
+          Icons.image_rounded,
           '${pf['thumbnails']}',
           (c) => revPref('thumbnails', refresh: true),
-        ),
-        Setting(
-          'Song thumbnail',
-          Icons.image_rounded,
-          '${pf['songThumbnails']}',
-          (c) => revPref('songThumbnails', refresh: true),
         ),
         Setting(
           'Recommend less popular',

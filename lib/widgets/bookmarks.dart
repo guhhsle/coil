@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 
+import '../playlist/cache.dart';
 import '../data.dart';
-import '../functions/cache.dart';
-import '../functions/other.dart';
 import '../playlist/playlist.dart';
 import 'thumbnail.dart';
+
+Future<void> refreshBookmarks() async {
+  Playlist.load('Bookmarks', [2]).catchError(
+    (e) => Playlist.fromString('Bookmarks')..backup(),
+  );
+}
+
+Future<void> fetchBookmarks() async {
+  List<Playlist> tempBookmarks = [];
+  List<Future> futures = [];
+
+  refreshBookmarks();
+
+  for (int i = 0; i < pf['bookmarks'].length; i++) {
+    futures.add(Playlist.load(pf['bookmarks'][i], [2, 0, 1]).then(
+      (val) => tempBookmarks.add(val),
+    ));
+  }
+  await Future.wait(futures);
+  bookmarks.value = tempBookmarks;
+}
 
 class Bookmarks extends StatelessWidget {
   const Bookmarks({super.key});
@@ -27,12 +47,10 @@ class Bookmarks extends StatelessWidget {
                     future: Playlist.load('Bookmarks', [2]),
                     builder: (context, snap) {
                       if (snap.hasError) return Container();
-                      return Thumbnail(
-                        url: 'Bookmarks',
-                        thumbnail: '',
-                        title: t('Bookmarks'),
+                      return const PlaylistTile(
+                        info: {'url': 'Bookmarks'},
                         playlist: true,
-                        path: const [2],
+                        path: [2],
                       );
                     },
                   ),
@@ -40,20 +58,20 @@ class Bookmarks extends StatelessWidget {
                     future: Playlist.load('100', [2]),
                     builder: (context, snap) {
                       if (snap.hasError) return Container();
-                      return const Thumbnail(
-                        url: '100',
-                        thumbnail: '',
-                        title: '100',
+                      return const PlaylistTile(
+                        info: {'url': '100'},
                         playlist: true,
                         path: [2],
                       );
                     },
                   ),
-                  for (int i = 0; i < data.length; i++)
-                    Thumbnail(
-                      url: data[i].url,
-                      thumbnail: data[i].thumbnail,
-                      title: data[i].name,
+                  for (Playlist item in data)
+                    PlaylistTile(
+                      info: {
+                        'url': item.url,
+                        'thumbnail': item.thumbnail,
+                        'title': item.name,
+                      },
                       playlist: true,
                       path: const [2, 0, 1],
                     ),

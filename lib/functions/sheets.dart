@@ -7,17 +7,18 @@ import 'package:coil/media/audio.dart';
 import 'package:coil/media/cache.dart';
 import 'package:coil/media/http.dart';
 import 'package:coil/media/playlist.dart';
+import 'package:coil/playlist/http.dart';
 import 'package:flutter/material.dart';
 
 import '../audio/handler.dart';
 import '../data.dart';
 import '../functions/single_child.dart';
-import '../http/generate.dart';
-import '../http/playlist.dart';
 import '../layer.dart';
 import '../media/media.dart';
 import '../pages/page_artist.dart';
 import '../playlist/playlist.dart';
+import '../widgets/user_playlists.dart';
+import 'generate.dart';
 import 'other.dart';
 
 //																	USER PLAYLIST TO MAP
@@ -48,11 +49,11 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
     leading: (context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: IconButton(
-        icon: const Icon(Icons.add_rounded),
-        onPressed: () async => await createPlaylist().then((v) {
-          refreshLayer();
-        }),
-      ),
+          icon: const Icon(Icons.add_rounded),
+          onPressed: () async {
+            String name = await getInput('', hintText: 'Name');
+            Playlist.fromString(name).create();
+          }),
     ),
     action: bookmarked
         ? Setting(

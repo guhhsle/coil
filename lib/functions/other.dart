@@ -6,6 +6,7 @@ import 'package:coil/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../layer.dart';
@@ -96,6 +97,57 @@ Future<String> getInput(String? init, {String? hintText}) async {
       );
     },
   );
+  return completer.future;
+}
+
+Future<String> instanceHistory() async {
+  Completer<String> completer = Completer();
+  List<String> history = pf['instanceHistory'];
+  showSheet(
+    scroll: true,
+    func: (non) async => Layer(
+      action: Setting(
+        'Instances',
+        Icons.domain_rounded,
+        '',
+        (c) async => await launchUrl(
+          Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
+          mode: LaunchMode.externalApplication,
+        ),
+      ),
+      list: [
+        for (int i = 0; i < history.length; i++)
+          Setting(
+            history[i],
+            {
+                  pf['authInstance']: Icons.lock_rounded,
+                  pf['instance']: Icons.domain_rounded,
+                }[history[i]] ??
+                Icons.remove_rounded,
+            '',
+            (c) {
+              Navigator.of(c).pop();
+              completer.complete(history[i]);
+            },
+            secondary: (c) {
+              pf['instanceHistory'].removeAt(i);
+              setPref('instanceHistory', pf['instanceHistory']);
+            },
+          ),
+        Setting(
+          'New',
+          Icons.add_rounded,
+          '',
+          (c) async {
+            String newInstance = await getInput('');
+            pf['instanceHistory'].add(newInstance);
+            setPref('instanceHistory', pf['instanceHistory']);
+          },
+        ),
+      ],
+    ),
+  );
+
   return completer.future;
 }
 

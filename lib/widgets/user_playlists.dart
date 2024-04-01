@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+
+import '../layer.dart';
+import '../playlist/http.dart';
 import '../data.dart';
-import '../http/playlist.dart';
+import '../functions/other.dart';
+import '../playlist/playlist.dart';
 import 'thumbnail.dart';
 
 class UserPlaylists extends StatelessWidget {
@@ -17,21 +24,23 @@ class UserPlaylists extends StatelessWidget {
             physics: scrollPhysics,
             padding: const EdgeInsets.only(bottom: 32, top: 16),
             children: [
-              Wrap(
-                alignment: WrapAlignment.spaceEvenly,
-                children: [
-                  for (int i = 0; i < snap.length; i++)
-                    Thumbnail(
-                      url: snap[i]['id'],
-                      thumbnail: snap[i]['thumbnail'],
-                      title: snap[i]['name'],
-                      playlist: true,
-                      user: true,
-                      path: const [2, 1],
-                    ),
-                  const CreatePlaylist(),
-                ],
-              ),
+              for (Map map in snap)
+                PlaylistTile(
+                  info: map,
+                  playlist: true,
+                  path: const [2, 1],
+                ),
+              Padding(
+                padding: const EdgeInsets.all(2),
+                child: IconButton(
+                  icon: const Icon(Icons.add_rounded),
+                  tooltip: l['Create a playlist'],
+                  onPressed: () async {
+                    String name = await getInput('', hintText: 'Name');
+                    Playlist.fromString(name).create();
+                  },
+                ),
+              )
             ],
           );
         },
@@ -40,44 +49,37 @@ class UserPlaylists extends StatelessWidget {
   }
 }
 
-class CreatePlaylist extends StatelessWidget {
-  const CreatePlaylist({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    if (pf['grid'] == 0) {
-      return Padding(
-        padding: const EdgeInsets.all(2),
-        child: IconButton(
-          icon: const Icon(Icons.add_rounded),
-          tooltip: l['Create a playlist'],
-          onPressed: () async => createPlaylist(),
-        ),
+Future<void> fetchUserPlaylists(bool force) async {
+  try {
+    List list = [];
+    File file = File('${pf['appDirectory']}/playlists.json');
+    if (force && pf['token'] != '') {
+      Response response = await get(
+        Uri.https(pf['authInstance'], 'user/playlists'),
+        headers: {'Authorization': pf['token']},
       );
+      list = jsonDecode(utf8.decode(response.bodyBytes));
+      await file.writeAsBytes(response.bodyBytes);
     } else {
-      double width = MediaQuery.of(context).size.width / (pf['grid'] == 1 ? 1.2 : (pf['grid'] + 0.5));
-      return SizedBox(
-        height: pf['grid'] == 1 ? (width / (16 / 9)) : width,
-        width: width,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () async => createPlaylist(),
-          child: Card(
-            margin: EdgeInsets.zero,
-            color: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.playlist_add_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-        ),
+      list = jsonDecode(await file.readAsString());
+      if (list.isEmpty && !force) fetchUserPlaylists(true);
+    }
+    if (pf['sortBy'] == 'Default <') {
+      List r = List.from(list.reversed);
+      list = r.toList();
+    } else if (pf['sortBy'] != 'Default') {
+      list.sort(
+        (a, b) => {
+          'Name': a['name'].compareTo(b['name']),
+          'Name <': b['name'].compareTo(a['name']),
+          'Length': a['videos'].compareTo(b['videos']),
+          'Length <': b['videos'].compareTo(a['videos']),
+        }[pf['sortBy']]!,
       );
     }
+    userPlaylists.value = list;
+  } catch (e) {
+    if (force) fetchUserPlaylists(false);
   }
+  refreshLayer();
 }

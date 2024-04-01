@@ -1,19 +1,12 @@
 import 'dart:async';
-
-import 'package:coil/audio/float.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../audio/float.dart';
 import '../audio/top_icon.dart';
-import '../functions/cache.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
-import '../http/account.dart';
-import '../http/playlist.dart';
-import '../layer.dart';
 import '../widgets/animated_text.dart';
-import 'package:flutter/material.dart';
-
 import '../data.dart';
 import '../widgets/body.dart';
 import '../widgets/bookmarks.dart';
@@ -32,9 +25,8 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-Map<String, Widget> homeMap = {};
-
 String getInstanceName(String str) {
+  if (!str.contains('.')) return str;
   int i = 0;
   while (str[i] != '.') {
     i++;
@@ -42,6 +34,7 @@ String getInstanceName(String str) {
   return str.substring(i + 1);
 }
 
+Map<String, Widget> homeMap = {};
 String selectedHome = 'Playlists';
 ValueNotifier<String> barText = ValueNotifier(getInstanceName(pf['instance']));
 PageController pageController = PageController();
@@ -89,51 +82,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         title: Padding(
           padding: const EdgeInsets.only(left: 8),
           child: InkWell(
-            onTap: () {
-              List<String> history = pf['instanceHistory'];
-              showSheet(
-                scroll: true,
-                func: (non) async => Layer(
-                  action: Setting(
-                    pf['instance'],
-                    Icons.domain_rounded,
-                    '',
-                    (c) async => await launchUrl(
-                      Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-                      mode: LaunchMode.externalApplication,
-                    ),
-                  ),
-                  list: [
-                    for (int i = 0; i < history.length; i++)
-                      Setting(
-                        history[i],
-                        Icons.remove_rounded,
-                        '',
-                        (c) async {
-                          setPref('instance', history[i]);
-                          barText.value = getInstanceName(history[i]);
-                          Navigator.of(context).pop();
-                        },
-                        secondary: (c) {
-                          pf['instanceHistory'].removeAt(i);
-                          setPref('instanceHistory', pf['instanceHistory']);
-                        },
-                      ),
-                    Setting(
-                      'New',
-                      Icons.add_rounded,
-                      '',
-                      (c) async {
-                        String newInstance = await getInput('');
-                        pf['instanceHistory'].add(newInstance);
-                        setPref('instanceHistory', pf['instanceHistory']);
-                        setPref('instance', newInstance, refresh: true);
-                        barText.value = getInstanceName(newInstance);
-                      },
-                    ),
-                  ],
-                ),
-              );
+            onTap: () async {
+              String instance = await instanceHistory();
+              setPref('instance', instance);
+              barText.value = getInstanceName(instance);
             },
             child: ValueListenableBuilder(
               valueListenable: barText,
@@ -204,14 +156,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 }
 
-class HomeTags extends StatefulWidget {
+class HomeTags extends StatelessWidget {
   const HomeTags({super.key});
 
-  @override
-  State<HomeTags> createState() => _HomeTagsState();
-}
-
-class _HomeTagsState extends State<HomeTags> {
   @override
   Widget build(BuildContext context) {
     return Container(

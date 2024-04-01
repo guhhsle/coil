@@ -1,14 +1,18 @@
+/*
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:coil/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../data.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
-import '../http/account.dart';
-import '../layer.dart';
 import '../widgets/body.dart';
+import '../widgets/user_playlists.dart';
 
 class PageLog extends StatefulWidget {
   const PageLog({Key? key}) : super(key: key);
@@ -29,6 +33,31 @@ class _PageLogState extends State<PageLog> {
     for (int i = 0; i < 4; i++) TextEditingController(text: pf[initials[i]]),
   ];
 
+  Future<bool> login(
+    String username,
+    String password,
+    bool exists,
+  ) async {
+    setPref('token', '');
+    Response result = await post(
+      Uri.https(pf['authInstance'], exists ? 'login' : 'register'),
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+    );
+    if (jsonDecode(result.body)['token'] != null) {
+      setPref('token', jsonDecode(result.body)['token']);
+      setPref('username', username);
+      setPref('password', password);
+      unawaited(fetchUserPlaylists(true));
+      return true;
+    } else {
+      showSnack(jsonDecode(result.body)['error'], false);
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,39 +70,10 @@ class _PageLogState extends State<PageLog> {
           pf['instanceHistory'].isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.history_rounded),
-                  onPressed: () {
-                    List<String> history = pf['instanceHistory'];
-                    showSheet(
-                      scroll: true,
-                      func: (non) async => Layer(
-                        action: Setting(
-                          'Delete',
-                          Icons.clear_all_rounded,
-                          '',
-                          (c) {
-                            setPref('instanceHistory', <String>[]);
-                            Navigator.of(c).pop();
-                          },
-                        ),
-                        list: [
-                          for (int i = 0; i < history.length; i++)
-                            Setting(
-                              history[i],
-                              Icons.remove_rounded,
-                              '',
-                              (c) {
-                                Clipboard.setData(ClipboardData(text: history[i]));
-                                showSnack('Clipboard', true);
-                                Navigator.of(context).pop();
-                              },
-                              secondary: (c) {
-                                pf['instanceHistory'].removeAt(i);
-                                setPref('instanceHistory', pf['instanceHistory'], refresh: true);
-                              },
-                            ),
-                        ],
-                      ),
-                    );
+                  onPressed: () async {
+                    String instance = await instanceHistory();
+                    Clipboard.setData(ClipboardData(text: instance));
+                    showSnack('Clipboard', true);
                   },
                 )
               : Container(),
@@ -104,11 +104,11 @@ class _PageLogState extends State<PageLog> {
                     style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
                     controller: controllers[0],
                     decoration: InputDecoration(
-                      labelText: l['Instance']!,
+                      labelText: t('Instance'),
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       suffixIcon: IconButton(
-                        tooltip: l['Anonymous'],
+                        tooltip: t('Anonymous'),
                         icon: const Icon(Icons.navigate_next_rounded),
                         onPressed: () {
                           setPref('instance', trimUrl(controllers[0].text));
@@ -153,9 +153,7 @@ class _PageLogState extends State<PageLog> {
                       labelText: l['Password']!,
                     ),
                   ),
-                  const SizedBox(
-                    height: 32,
-                  ),
+                  const SizedBox(height: 32),
                   Row(
                     children: [
                       Expanded(
@@ -247,3 +245,4 @@ class _PageLogState extends State<PageLog> {
     );
   }
 }
+*/
