@@ -56,14 +56,12 @@ class Handler {
             }
           },
           onNetworkStreamError: (_, error) async {
-            showSnack('Instance error for this specific song', false);
+            showSnack('Instance error for this specific song, restart app', false);
             await player.stop();
-            await initHandler();
           },
           onDecodeError: (_, error) async {
             showSnack("Decode Error: $error", false);
             await player.stop();
-            await initHandler();
           },
         );
         setVolume();
