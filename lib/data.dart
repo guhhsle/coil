@@ -32,8 +32,9 @@ Map pf = {
     'Playlists',
     'Offline',
     'Bookmarks',
-    'Subscriptions',
+    'Feed',
     'Trending',
+    'Subscriptions',
   ],
   'searchOrder': [
     'Songs',
@@ -119,7 +120,8 @@ final navigatorKey = GlobalKey<NavigatorState>();
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
 final ValueNotifier<List<Media>> localMusic = ValueNotifier([]);
 final ValueNotifier<List<Playlist>> bookmarks = ValueNotifier([]);
-final ValueNotifier<List<Media>> userSubscriptions = ValueNotifier([]);
+final ValueNotifier<List<Media>> userFeed = ValueNotifier([]);
+final ValueNotifier<List> userSubscriptions = ValueNotifier([]);
 final ValueNotifier<List<Media>> trendingVideos = ValueNotifier([]);
 final ValueNotifier<String> currentLyrics = ValueNotifier('');
 

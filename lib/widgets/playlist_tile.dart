@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../data.dart';
 import '../functions/other.dart';
-import '../pages/page_artist.dart';
-import '../pages/playlist_page.dart';
+import '../pages/artist.dart';
+import '../pages/playlist.dart';
 
 class PlaylistTile extends StatelessWidget {
   final Map info;
@@ -30,7 +30,7 @@ class PlaylistTile extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: Image.network(
-                      info['thumbnail'] ?? '',
+                      info['thumbnail'] ?? info['avatar'] ?? '',
                       fit: BoxFit.cover,
                       errorBuilder: (c, o, s) => const Icon(Icons.clear_all_rounded),
                     ),

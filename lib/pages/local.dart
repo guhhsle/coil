@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../data.dart';
 import '../media/media.dart';
-import 'song_tile.dart';
+import '../widgets/song_tile.dart';
 
 class LocalSongs extends StatelessWidget {
   const LocalSongs({super.key});

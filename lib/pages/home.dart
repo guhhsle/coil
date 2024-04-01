@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:coil/pages/subscriptions.dart';
+import 'package:coil/pages/trending.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,14 +11,13 @@ import '../functions/prefs.dart';
 import '../widgets/animated_text.dart';
 import '../data.dart';
 import '../widgets/body.dart';
-import '../widgets/bookmarks.dart';
 import '../widgets/custom_chip.dart';
-import '../widgets/local.dart';
-import '../widgets/subscriptions.dart';
-import '../widgets/trending.dart';
-import '../widgets/user_playlists.dart';
+import 'bookmarks.dart';
+import 'feed.dart';
+import 'local.dart';
 import 'search.dart';
 import 'settings.dart';
+import 'user_playlists.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -38,14 +39,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   initState() {
     selectedHome = pf['homeOrder'][0];
     homeMap.clear();
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       homeMap.addAll({
         pf['homeOrder'][i]: {
           'Playlists': const UserPlaylists(),
           'Offline': const LocalSongs(),
           'Bookmarks': const Bookmarks(),
+          'Feed': const Feed(),
+          'Trending': const Trending(),
           'Subscriptions': const Subscriptions(),
-          'Trending': const Trending()
         }[pf['homeOrder'][i]]!
       });
     }
@@ -55,6 +57,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     unawaited(fetchBookmarks());
     unawaited(feed());
     unawaited(trending());
+    unawaited(fetchSubscriptions(false));
     super.initState();
     Future.delayed(
       const Duration(milliseconds: 32),
@@ -125,7 +128,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   controller: pageController,
                   onPageChanged: (index) {
                     selectedHome = homeMap.keys.elementAt(index);
-                    barText.value = l[selectedHome];
+                    barText.value = t(selectedHome);
                     if (calculateShift(context, index, homeMap) != null) {
                       scrollController.animateTo(
                         calculateShift(context, index, homeMap)!,
@@ -171,27 +174,5 @@ class HomeTags extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-double? calculateShift(BuildContext context, int index, Map map) {
-  double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
-  double wantedShift = index == 0 ? 0 : 28;
-  double word = pf['locale'] == 'ja' ? 14 : 8.45;
-  double width = MediaQuery.of(context).size.width;
-  for (int i = 0; i < homeMap.length; i++) {
-    tagsLength += 24 + (l[map.keys.elementAt(i)] as String).length * word;
-  }
-  for (int i = 0; i < index - 1; i++) {
-    wantedShift += 24 + (l[map.keys.elementAt(i)] as String).length * word;
-  }
-  double maxShift = 72 + tagsLength - width;
-
-  if (wantedShift < maxShift) {
-    return wantedShift;
-  } else if (tagsLength > width) {
-    return maxShift;
-  } else {
-    return null;
   }
 }

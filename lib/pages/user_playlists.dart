@@ -8,7 +8,7 @@ import '../playlist/http.dart';
 import '../data.dart';
 import '../functions/other.dart';
 import '../playlist/playlist.dart';
-import 'thumbnail.dart';
+import '../widgets/playlist_tile.dart';
 
 class UserPlaylists extends StatelessWidget {
   const UserPlaylists({super.key});

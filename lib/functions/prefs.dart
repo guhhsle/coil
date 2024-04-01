@@ -75,10 +75,7 @@ void setPref(
   bool refresh = false,
 }) {
   pf[pString] = value;
-  if (pString == 'instance' || pString == 'authInstance') {
-    value = trimUrl(value.replaceAll(' ', ''));
-    rememberInstance(value);
-  }
+  if (pString.contains('nstance')) rememberInstance(value);
   if (value is int) {
     prefs.setInt(pString, value);
   } else if (value is bool) {

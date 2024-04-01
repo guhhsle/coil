@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import '../widgets/user_playlists.dart';
+import '../pages/user_playlists.dart';
 import 'playlist.dart';
 import '../data.dart';
 import '../functions/other.dart';

@@ -15,8 +15,8 @@ import '../data.dart';
 import '../functions/prefs.dart';
 import '../playlist/playlist.dart';
 import '../widgets/body.dart';
-import '../widgets/bookmarks.dart';
 import '../widgets/song_tile.dart';
+import 'bookmarks.dart';
 
 class PlaylistPage extends StatefulWidget {
   final String url;

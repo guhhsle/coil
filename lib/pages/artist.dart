@@ -10,8 +10,8 @@ import '../data.dart';
 import '../media/media.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
+import '../widgets/playlist_tile.dart';
 import '../widgets/song_tile.dart';
-import '../widgets/thumbnail.dart';
 
 class PageArtist extends StatefulWidget {
   final String url;

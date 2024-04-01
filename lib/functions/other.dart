@@ -38,6 +38,28 @@ void showSnack(String text, bool good, {Function()? onTap}) {
   );
 }
 
+double? calculateShift(BuildContext context, int index, Map map) {
+  double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
+  double wantedShift = index == 0 ? 0 : 28;
+  double word = pf['locale'] == 'ja' ? 14 : 8.45;
+  double width = MediaQuery.of(context).size.width;
+  for (int i = 0; i < map.length; i++) {
+    tagsLength += 24 + t(map.keys.elementAt(i)).length * word;
+  }
+  for (int i = 0; i < index - 1; i++) {
+    wantedShift += 24 + t(map.keys.elementAt(i)).length * word;
+  }
+  double maxShift = 80 + tagsLength - width;
+
+  if (wantedShift < maxShift) {
+    return wantedShift;
+  } else if (tagsLength > width) {
+    return maxShift;
+  } else {
+    return null;
+  }
+}
+
 String formatInstanceName(String str) {
   if (!str.contains('.')) return str;
   int i = str.length - 1;
@@ -152,7 +174,8 @@ Future<String> instanceHistory() async {
           Icons.add_rounded,
           '',
           (c) async {
-            String newInstance = await getInput('');
+            String newInstance = await getInput('', hintText: 'Instance link');
+            newInstance = trimUrl(newInstance);
             pf['instanceHistory'].add(newInstance);
             setPref('instanceHistory', pf['instanceHistory']);
           },
@@ -205,7 +228,7 @@ Future<int> loadLocale() async {
 }
 
 String trimUrl(String raw) {
-  return raw.trim().replaceAll('https://', '').replaceAll('/', '');
+  return raw.trim().replaceAll('https://', '').replaceAll('/', '').replaceAll(' ', '');
 }
 
 String t(dynamic d) {

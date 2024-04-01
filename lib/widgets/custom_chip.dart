@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../data.dart';
+import '../functions/other.dart';
 
 class CustomChip extends StatefulWidget {
   final void Function(bool value) onSelected;
@@ -28,7 +27,7 @@ class _CustomChipState extends State<CustomChip> {
         showCheckmark: false,
         onSelected: widget.onSelected,
         label: Text(
-          l[widget.label] ?? widget.label,
+          t(widget.label),
           style: TextStyle(
             color: widget.selected ? Theme.of(context).colorScheme.background : Theme.of(context).primaryColor,
             fontWeight: FontWeight.bold,

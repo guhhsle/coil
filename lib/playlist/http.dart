@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 
 import '../data.dart';
 import '../functions/other.dart';
-import '../widgets/user_playlists.dart';
+import '../pages/user_playlists.dart';
 import 'cache.dart';
 import 'map.dart';
 import 'playlist.dart';

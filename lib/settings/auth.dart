@@ -7,7 +7,7 @@ import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../data.dart';
 import '../layer.dart';
-import '../widgets/user_playlists.dart';
+import '../pages/user_playlists.dart';
 
 Future<Layer> authSet(dynamic non) async => Layer(
       leading: (c) => Padding(

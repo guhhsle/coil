@@ -41,10 +41,16 @@ Future<Layer> accountSet(dynamic non) async => Layer(
                   (c) async {
                     File file = File('${pf['appDirectory']}/playlists.json');
                     await writeFile('playlists.json', await file.readAsString());
+
+                    file = File('${pf['appDirectory']}/subscriptions.json');
+                    await writeFile('subscriptions.json', await file.readAsString());
+
                     file = File('${pf['appDirectory']}/100raw.json');
                     await writeFile('100raw.json', await file.readAsString());
+
                     file = File('${pf['appDirectory']}/Bookmarks.json');
                     await writeFile('Bookmarks.json', await file.readAsString());
+
                     for (Map userPlaylist in userPlaylists.value) {
                       String name = '${formatUrl(userPlaylist['id'])}.json';
                       file = File('${pf['appDirectory']}/$name');

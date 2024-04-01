@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import '../data.dart';
 import '../media/media.dart';
 import '../other/countries.dart';
-import 'song_tile.dart';
+import '../widgets/song_tile.dart';
 
 class Trending extends StatelessWidget {
   const Trending({super.key});

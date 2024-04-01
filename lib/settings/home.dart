@@ -19,7 +19,7 @@ Future<Layer> homeSet(dynamic non) async => Layer(
               (c) {},
             ),
             list: [
-              for (int i = 0; i < 5; i++)
+              for (int i = 0; i < pf['homeOrder'].length; i++)
                 Setting(
                   pf['homeOrder'][i],
                   Icons.expand_less_rounded,

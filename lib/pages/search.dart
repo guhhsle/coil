@@ -14,8 +14,8 @@ import '../functions/prefs.dart';
 import '../media/media.dart';
 import '../widgets/body.dart';
 import '../widgets/custom_chip.dart';
+import '../widgets/playlist_tile.dart';
 import '../widgets/song_tile.dart';
-import '../widgets/thumbnail.dart';
 
 class Delegate extends SearchDelegate {
   @override
@@ -197,9 +197,9 @@ class SuggestionListState extends State<SuggestionList> {
                   itemBuilder: (context, i) => CustomChip(
                     onSelected: (val) {
                       filter = filters.values.toList()[i];
-                      if (calculateShift(context, i) != null) {
+                      if (calculateShift(context, i, filters) != null) {
                         scrollController.animateTo(
-                          calculateShift(context, i)!,
+                          calculateShift(context, i, filters)!,
                           duration: const Duration(milliseconds: 256),
                           curve: Curves.easeOutQuad,
                         );
@@ -263,27 +263,5 @@ class SuggestionListState extends State<SuggestionList> {
         ),
       ),
     );
-  }
-}
-
-double? calculateShift(BuildContext context, int index) {
-  double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
-  double wantedShift = index == 0 ? 0 : 28;
-  double word = pf['locale'] == 'ja' ? 14 : 8.45;
-  double width = MediaQuery.of(context).size.width;
-  for (int i = 0; i < filters.length; i++) {
-    tagsLength += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
-  }
-  for (int i = 0; i < index - 1; i++) {
-    wantedShift += 24 + (l[filters.keys.elementAt(i)] as String).length * word;
-  }
-  double maxShift = 80 + tagsLength - width;
-
-  if (wantedShift < maxShift) {
-    return wantedShift;
-  } else if (tagsLength > width) {
-    return maxShift;
-  } else {
-    return null;
   }
 }

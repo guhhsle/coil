@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../playlist/cache.dart';
 import '../data.dart';
 import '../playlist/playlist.dart';
-import 'thumbnail.dart';
+import '../widgets/playlist_tile.dart';
 
 Future<void> refreshBookmarks() async {
   Playlist.load('Bookmarks', [2]).catchError(

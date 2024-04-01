@@ -15,9 +15,9 @@ import '../data.dart';
 import '../functions/single_child.dart';
 import '../layer.dart';
 import '../media/media.dart';
-import '../pages/page_artist.dart';
+import '../pages/artist.dart';
+import '../pages/user_playlists.dart';
 import '../playlist/playlist.dart';
-import '../widgets/user_playlists.dart';
 import 'generate.dart';
 import 'other.dart';
 
