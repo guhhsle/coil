@@ -206,20 +206,6 @@ void rememberSearch(String str) {
   setPref('searchHistory', list);
 }
 
-void rememberInstance(String str) {
-  if (str == '') return;
-  str = trimUrl(str.replaceAll(' ', ''));
-  List<String> list = pf['instanceHistory'];
-  for (int i = 0; i < 10 && i < list.length; i++) {
-    if (list[i] == str) return;
-  }
-  list.insert(0, str);
-  if (list.length > pf['searchHistoryLimit']) {
-    list.removeLast();
-  }
-  setPref('instanceHistory', list);
-}
-
 Future<int> loadLocale() async {
   final String response = await rootBundle.loadString(
     'assets/translations/${pf['locale']}.json',

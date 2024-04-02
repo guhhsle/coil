@@ -57,7 +57,6 @@ void nextPref(String pref, List<String> list, {bool refresh = false}) {
 
 void setPref(String pString, var value, {bool refresh = false}) {
   pf[pString] = value;
-  if (pString.contains('nstance')) rememberInstance(value);
   if (value is int) {
     prefs.setInt(pString, value);
   } else if (value is bool) {
