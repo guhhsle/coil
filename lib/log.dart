@@ -7,6 +7,7 @@ String versions = """
 	Better memory usage
 	Added Linux support
 	Full anonimous mode
+	Subscriptions tab
 
 
 0.9.12						16.03.24
