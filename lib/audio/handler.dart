@@ -86,7 +86,7 @@ class Handler {
     unawaited(initHandler());
   }
 
-  bool tryLoadFromCache(Media media) {
+  bool tryLoad(Media media) {
     for (int q = 0; q < queuePlaying.length; q++) {
       if (queuePlaying[q].id == media.id && queuePlaying[q].audioUrl != null) {
         media.audioUrl = queuePlaying[q].audioUrl;

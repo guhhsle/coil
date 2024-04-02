@@ -47,33 +47,15 @@ Future<void> initPrefs() async {
   }
 }
 
-void revPref(
-  String pref, {
-  bool refresh = false,
-}) =>
-    setPref(
-      pref,
-      !pf[pref],
-      refresh: refresh,
-    );
-
-void nextPref(
-  String pref,
-  List<String> list, {
-  bool refresh = false,
-}) {
-  setPref(
-    pref,
-    list[(list.indexOf(pf[pref]) + 1) % list.length],
-    refresh: refresh,
-  );
+void revPref(String pref, {bool refresh = false}) {
+  setPref(pref, !pf[pref], refresh: refresh);
 }
 
-void setPref(
-  String pString,
-  var value, {
-  bool refresh = false,
-}) {
+void nextPref(String pref, List<String> list, {bool refresh = false}) {
+  setPref(pref, list[(list.indexOf(pf[pref]) + 1) % list.length], refresh: refresh);
+}
+
+void setPref(String pString, var value, {bool refresh = false}) {
   pf[pString] = value;
   if (pString.contains('nstance')) rememberInstance(value);
   if (value is int) {

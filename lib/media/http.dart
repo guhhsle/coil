@@ -44,7 +44,7 @@ extension MediaHTTP on Media {
   Future<String?> forceLoad() async {
     if (offline || audioUrl != null) return audioUrl;
     try {
-      if (Handler().tryLoadFromCache(this)) return audioUrl!;
+      if (Handler().tryLoad(this)) return audioUrl!;
 
       Response result = await get(Uri.https(pf['instance'], 'streams/$id'));
       Map raw = jsonDecode(result.body);

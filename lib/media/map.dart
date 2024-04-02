@@ -1,12 +1,14 @@
 import 'dart:math';
 
+import 'package:coil/functions/other.dart';
+
 import '../data.dart';
 import 'media.dart';
 
 extension MediaMap on Media {
   Map toMap() {
     return {
-      'url': id.replaceAll('/watch?v=', ''),
+      'url': formatUrl(id),
       'title': title,
       'thumbnail': artUri.toString(),
       'uploaderName': artist,
@@ -17,9 +19,9 @@ extension MediaMap on Media {
   static Media fromMap(Map json, {int i = 10, String? playlist}) {
     return Media(
       title: json['title'],
-      id: json['url'].replaceAll('/watch?v=', ''),
+      id: formatUrl(json['url']),
       artUri: json['thumbnail'] ?? '',
-      artist: (json['uploaderName'] ?? json['uploader']).replaceAll(' - Topic', ''),
+      artist: formatName(json['uploaderName'] ?? json['uploader']),
       uploaderUrl: json['uploaderUrl'] ?? '',
       quality: evaluateSong(json, i),
       index: i,

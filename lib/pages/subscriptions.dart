@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
 import '../data.dart';
 import '../widgets/playlist_tile.dart';
 
-Future<void> fetchSubscriptions(bool force) async {
+Future fetchSubscriptions(bool force) async {
   try {
     List list = [];
     File file = File('${pf['appDirectory']}/subscriptions.json');

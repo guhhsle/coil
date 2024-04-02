@@ -81,7 +81,7 @@ class SongTileChild extends StatelessWidget {
         ),
         leading: list[i].image(),
         title: Text(
-          !list[i].offline && pf['artist'] ? '${list[i].title ?? ''} - ${list[i].artist ?? ''}' : list[i].title ?? '',
+          '${list[i].title} - ${!list[i].offline && pf['artist'] ? list[i].artist : ''}',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
             color: selected ? Theme.of(context).colorScheme.background : null,

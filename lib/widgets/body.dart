@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../audio/handler.dart';
 import '../data.dart';
 import 'bottom_player.dart';
@@ -21,11 +20,9 @@ class Body extends StatelessWidget {
             Expanded(
               child: Card(
                 color: Theme.of(context).colorScheme.background,
-                margin: Handler().queuePlaying.isEmpty || !dock
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.symmetric(
-                        horizontal: 2,
-                      ),
+                margin: EdgeInsets.symmetric(
+                  horizontal: Handler().queuePlaying.isEmpty || !dock ? 0 : 2,
+                ),
                 shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(

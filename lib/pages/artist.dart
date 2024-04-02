@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
+import 'subscriptions.dart';
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
@@ -27,44 +28,47 @@ class PageArtist extends StatefulWidget {
 }
 
 class PageArtistState extends State<PageArtist> {
-  Future<bool> subscribed(String channelId) async {
-    Response result = await get(
-      Uri.https(pf['authInstance'], 'subscribed', {
-        'channelId': channelId,
-      }),
-      headers: {'Authorization': pf['token']},
-    );
-    return jsonDecode(result.body)['subscribed'];
+  bool isSubscribed = false;
+  String selectedHome = 'Videos';
+  Map videos = {};
+  Map playlists = {};
+  final options = ['Videos', 'Other'];
+
+  Future<void> unSubscribe() async {
+    if (pf['token'] == '') {
+      File file = File('${pf['appDirectory']}/subscriptions.json');
+      List list = jsonDecode(await file.readAsString());
+      if (isSubscribed) {
+        list.removeWhere((e) => e['url'].contains(widget.url));
+      } else {
+        list.add({
+          'url': videos['id'],
+          'name': videos['name'],
+          'avatar': videos['avatarUrl'],
+          'verified': true,
+        });
+      }
+      await file.writeAsString(jsonEncode(list));
+      await fetchSubscriptions(false);
+    } else {
+      await post(
+        Uri.https(pf['authInstance'], isSubscribed ? 'unsubscribe' : 'subscribe'),
+        headers: {
+          'Authorization': pf['token'],
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'channelId': videos['id']}),
+      );
+      await fetchSubscriptions(true);
+    }
+    setState(() {});
   }
 
-  Future<void> unSubscribe(String channelId, bool s) async {
-    await post(
-      Uri.https(pf['authInstance'], s ? 'unsubscribe' : 'subscribe'),
-      headers: {
-        'Authorization': pf['token'],
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'channelId': channelId}),
-    );
-  }
-
-  @override
-  void initState() {
-    unawaited(channelVideos(widget.url));
-    super.initState();
-  }
-
-  String selectedHome = 'Tabs';
-
-  final ValueNotifier<Map?> videos = ValueNotifier(null);
-  final ValueNotifier<Map?> playlists = ValueNotifier(null);
-
-  List<String> options = ['Videos', 'Tabs'];
-
-  Future<void> channelVideos(String url) async {
+  Future<void> loadContent() async {
     try {
-      Response result = await get(Uri.https(pf['instance'], url));
-      videos.value = jsonDecode(utf8.decode(result.bodyBytes));
+      Response result = await get(Uri.https(pf['instance'], widget.url));
+      videos = jsonDecode(utf8.decode(result.bodyBytes));
+      setState(() {});
       result = await get(
         Uri.https(
           pf['instance'],
@@ -72,22 +76,31 @@ class PageArtistState extends State<PageArtist> {
           {'data': (jsonDecode(result.body)['tabs'][0])['data']},
         ),
       );
-      playlists.value = jsonDecode(utf8.decode(result.bodyBytes));
+      playlists = jsonDecode(utf8.decode(result.bodyBytes));
     } catch (e) {
       //INVALID CHANNEL
     }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    unawaited(loadContent());
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    isSubscribed = userSubscriptions.value.indexWhere((e) => e['url'].contains(widget.url)) >= 0;
     return Scaffold(
       floatingActionButton: const Float(),
       appBar: AppBar(
-        title: Text(
-          widget.artist.replaceAll(' - Topic', '').replaceAll('Album - ', ''),
-        ),
+        title: Text(formatName(widget.artist)),
         actions: const [
-          Padding(padding: EdgeInsets.only(right: 8), child: TopIcon()),
+          Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: TopIcon(),
+          )
         ],
       ),
       body: Body(
@@ -96,82 +109,56 @@ class PageArtistState extends State<PageArtist> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               height: 64,
-              child: ListView.builder(
+              child: ListView(
                 physics: scrollPhysics,
                 scrollDirection: Axis.horizontal,
-                itemCount: options.length + 1,
-                itemBuilder: (context, i) {
-                  if (i < options.length) {
-                    return CustomChip(
-                      selected: selectedHome == options[i],
+                children: [
+                  for (String option in options)
+                    CustomChip(
+                      selected: selectedHome == option,
                       onSelected: (val) {
-                        selectedHome = options[i];
+                        selectedHome = option;
                         setState(() {});
                       },
-                      label: options[i],
-                    );
-                  } else {
-                    return ValueListenableBuilder(
-                      valueListenable: videos,
-                      builder: (context, data, child) {
-                        if (videos.value == null) return Container();
-                        return FutureBuilder<bool>(
-                          future: subscribed(videos.value!['id']),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) return Container();
-                            return CustomChip(
-                              selected: snapshot.data!,
-                              onSelected: (val) async {
-                                await unSubscribe(
-                                  videos.value!['id'],
-                                  snapshot.data!,
-                                );
-                                setState(() {});
-                              },
-                              label: 'Subscribe${snapshot.data! ? 'd' : ''} - ${videos.value!['subscriberCount']}',
-                            );
-                          },
-                        );
-                      },
-                    );
-                  }
-                },
+                      label: option,
+                    ),
+                  CustomChip(
+                    selected: isSubscribed,
+                    showCheckmark: true,
+                    onSelected: (val) => unSubscribe(),
+                    label: '${videos['subscriberCount']}',
+                  )
+                ],
               ),
             ),
             Expanded(
-              child: ValueListenableBuilder(
-                valueListenable: selectedHome == 'Videos' ? videos : playlists,
-                builder: (context, data, child) {
-                  if (data == null) return Container();
-                  List list = selectedHome == 'Videos' ? data['relatedStreams'] : data['content'];
+              child: Builder(
+                builder: (context) {
+                  late List list;
+                  if (selectedHome == 'Videos') {
+                    list = videos['relatedStreams'] ?? [];
+                  } else {
+                    list = playlists['content'] ?? [];
+                  }
                   List<Media> songList = [];
                   return RefreshIndicator(
-                    onRefresh: () async => await channelVideos(widget.url),
-                    child: ListView(
+                    onRefresh: () async => await loadContent(),
+                    child: ListView.builder(
                       padding: const EdgeInsets.only(bottom: 32, top: 16),
                       physics: scrollPhysics,
-                      children: [
-                        Wrap(
-                          alignment: WrapAlignment.spaceEvenly,
-                          children: [
-                            for (Map item in list)
-                              Builder(
-                                builder: (context) {
-                                  if (item['type'] == 'stream') {
-                                    songList.add(Media.from(item));
-                                    return SongTile(list: songList, i: songList.length - 1);
-                                  } else {
-                                    return PlaylistTile(
-                                      info: item,
-                                      path: const [0, 1],
-                                      playlist: true,
-                                    );
-                                  }
-                                },
-                              ),
-                          ],
-                        ),
-                      ],
+                      itemCount: list.length,
+                      itemBuilder: (context, i) {
+                        if (list[i]['type'] == 'stream') {
+                          songList.add(Media.from(list[i]));
+                          return SongTile(list: songList, i: songList.length - 1);
+                        } else {
+                          return PlaylistTile(
+                            info: list[i],
+                            path: const [0, 1],
+                            playlist: true,
+                          );
+                        }
+                      },
                     ),
                   );
                 },

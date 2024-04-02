@@ -24,8 +24,7 @@ Future<Layer> homeSet(dynamic non) async => Layer(
                   pf['homeOrder'][i],
                   Icons.expand_less_rounded,
                   '',
-                  (c) {},
-                  secondary: (c) {
+                  (c) {
                     if (i == 0) return;
                     List<String> l = pf['homeOrder'];
                     setPref(

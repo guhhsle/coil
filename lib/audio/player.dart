@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'handler.dart';
 import 'queue.dart';
 import 'remember.dart';
@@ -24,7 +23,7 @@ extension HandlerPlayer on Handler {
 
   Future<void> play(Media media) async {
     try {
-      unawaited(media.addTo100());
+      if (!media.offline) unawaited(media.addTo100());
       unawaited(player.setMetadata(media));
       await media.forceLoad();
       if (media.audioUrl == null) {

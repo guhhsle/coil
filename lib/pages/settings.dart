@@ -5,21 +5,16 @@ import 'package:coil/settings/home.dart';
 import 'package:coil/settings/interface.dart';
 import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
-
 import '../audio/top_icon.dart';
 import '../data.dart';
+import '../functions/other.dart';
 import '../layer.dart';
 import '../widgets/body.dart';
 
-class PageSettings extends StatefulWidget {
-  const PageSettings({Key? key}) : super(key: key);
+class PageSettings extends StatelessWidget {
+  PageSettings({Key? key}) : super(key: key);
 
-  @override
-  PageSettingsState createState() => PageSettingsState();
-}
-
-class PageSettingsState extends State<PageSettings> {
-  Map<String, Future<Layer> Function(dynamic)> map = {
+  final Map<String, Future<Layer> Function(dynamic)> map = {
     'More': moreSet,
     'Account': accountSet,
     'Data': dataSet,
@@ -29,7 +24,7 @@ class PageSettingsState extends State<PageSettings> {
     'Background': themeMap,
   };
 
-  Map<String, IconData> iconMap = {
+  final Map<String, IconData> iconMap = {
     'More': Icons.segment_rounded,
     'Account': Icons.person_rounded,
     'Data': Icons.cloud_rounded,
@@ -44,7 +39,7 @@ class PageSettingsState extends State<PageSettings> {
     return Scaffold(
       floatingActionButton: const Float(),
       appBar: AppBar(
-        title: Text(l['Settings']),
+        title: Text(t('Settings')),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 8),

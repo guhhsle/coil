@@ -58,8 +58,7 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
                     pf['searchOrder'][i],
                     Icons.expand_less_rounded,
                     '',
-                    (c) {},
-                    secondary: (c) {
+                    (c) {
                       if (i == 0) return;
                       List<String> l = pf['searchOrder'];
                       setPref(

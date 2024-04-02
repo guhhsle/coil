@@ -38,8 +38,4 @@ extension PlaylistMap on Playlist {
       raw: json,
     );
   }
-
-  String fromattedName() {
-    return name.contains('Album ') ? name.replaceRange(0, 8, '') : name;
-  }
 }

@@ -3,7 +3,6 @@ import 'package:coil/pages/subscriptions.dart';
 import 'package:coil/pages/trending.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
 import '../functions/other.dart';
@@ -95,16 +94,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         actions: [
           const TopIcon(),
           IconButton(
-            tooltip: l['Search'],
+            tooltip: t('Search'),
             icon: const Icon(Icons.fiber_manual_record_outlined),
             onPressed: () => showSearch(context: context, delegate: Delegate()),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: IconButton(
-              tooltip: l['Menu'],
+              tooltip: t('Menu'),
               icon: const Icon(Icons.menu_rounded),
-              onPressed: () => goToPage(const PageSettings()),
+              onPressed: () => goToPage(PageSettings()),
             ),
           ),
         ],

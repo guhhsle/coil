@@ -49,11 +49,11 @@ Future<Layer> userPlaylistsToMap(dynamic item) async {
     leading: (context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: IconButton(
-          icon: const Icon(Icons.add_rounded),
-          onPressed: () async {
-            String name = await getInput('', hintText: 'Name');
-            Playlist.fromString(name).create();
-          }),
+        icon: const Icon(Icons.add_rounded),
+        onPressed: () async => Playlist.fromString(
+          await getInput('', hintText: 'Name'),
+        ).create(),
+      ),
     ),
     action: bookmarked
         ? Setting(
@@ -184,9 +184,9 @@ Future<Layer> mediaToLayer(dynamic media) async {
         '',
         Icons.remove_rounded,
         'Dequeue',
-        (c) async {
-          Handler().removeItemAt(Handler().queuePlaying.indexOf(media));
-        },
+        (c) => Handler().removeItemAt(
+          Handler().queuePlaying.indexOf(media),
+        ),
       ),
     );
   } else if (media.playlist != null) {

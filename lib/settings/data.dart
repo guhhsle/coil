@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../data.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';

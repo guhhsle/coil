@@ -9,23 +9,21 @@ import '../playlist/playlist.dart';
 import 'media.dart';
 
 extension MediaPlaylist on Media {
-  Future addToPlaylist(
-    String playlistId,
-  ) async {
+  Future addToPlaylist(String playlistId) async {
     try {
       Playlist playlist = await Playlist.load(playlistId, [2]);
       if (playlist.list.indexWhere((e) => e.id == id) != -1) {
         showSnack(
           'Already saved, tap to add again',
           false,
-          onTap: () async => await forceAddToPlaylist(playlistId: playlistId),
+          onTap: () async => await forceAddToPlaylist(playlistId),
         );
         return;
       }
     } catch (e) {
       //Playlist not offline
     }
-    await forceAddToPlaylist(playlistId: playlistId);
+    await forceAddToPlaylist(playlistId);
   }
 
   Future removeFromPlaylist() async {
@@ -47,9 +45,7 @@ extension MediaPlaylist on Media {
     }
   }
 
-  Future forceAddToPlaylist({
-    required String playlistId,
-  }) async {
+  Future forceAddToPlaylist(String playlistId) async {
     if (playlistIsCacheOnly(playlistId)) {
       await forceAddBackup(playlistId);
     } else {

@@ -28,7 +28,7 @@ class LocalSongs extends StatelessWidget {
   }
 }
 
-Future<void> getLocal() async {
+Future getLocal() async {
   if (Platform.isAndroid) {
     await Permission.storage.request();
     await Permission.audio.request();

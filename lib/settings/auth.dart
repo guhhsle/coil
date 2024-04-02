@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
 import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../data.dart';

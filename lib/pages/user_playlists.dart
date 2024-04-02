@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
 import '../layer.dart';
 import '../playlist/http.dart';
 import '../data.dart';
@@ -17,7 +16,7 @@ class UserPlaylists extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () => fetchUserPlaylists(true),
-      child: ValueListenableBuilder<List>(
+      child: ValueListenableBuilder(
         valueListenable: userPlaylists,
         builder: (context, snap, child) {
           return ListView(
@@ -34,11 +33,10 @@ class UserPlaylists extends StatelessWidget {
                 padding: const EdgeInsets.all(2),
                 child: IconButton(
                   icon: const Icon(Icons.add_rounded),
-                  tooltip: l['Create a playlist'],
-                  onPressed: () async {
-                    String name = await getInput('', hintText: 'Name');
-                    Playlist.fromString(name).create();
-                  },
+                  tooltip: t('Create a playlist'),
+                  onPressed: () async => Playlist.fromString(
+                    await getInput('', hintText: 'Name'),
+                  ).create(),
                 ),
               )
             ],

@@ -29,9 +29,7 @@ class CustomCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(
-          onTap: () {
-            setting.onTap(context);
-          },
+          onTap: () => setting.onTap(context),
           customBorder: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),

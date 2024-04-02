@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart';
 
 import '../data.dart';
 import '../functions/other.dart';
@@ -42,14 +46,14 @@ Future<void> exportPlaylist(int i, Playlist? list) async {
     videos.add('https://youtube.com${list.list[j].id}');
   }
   playlists.add({
-    'name': formatList(list.name),
+    'name': formatName(list.name),
     'type': 'playlist',
     'visibility': 'private',
     'videos': videos,
   });
 }
 
-Future<void> exportOther(Playlist list) async {
+Future exportOther(Playlist list) async {
   playlists = [];
   await exportPlaylist(0, list);
   try {
@@ -61,6 +65,39 @@ Future<void> exportOther(Playlist list) async {
         'playlists': playlists,
       }),
     );
+  } catch (e) {
+    showSnack('$e', false);
+  }
+}
+
+Future exportCache() async {
+  File file = File('${pf['appDirectory']}/playlists.json');
+  await writeFile('playlists.json', await file.readAsString());
+
+  file = File('${pf['appDirectory']}/subscriptions.json');
+  await writeFile('subscriptions.json', await file.readAsString());
+
+  file = File('${pf['appDirectory']}/100raw.json');
+  await writeFile('100raw.json', await file.readAsString());
+
+  file = File('${pf['appDirectory']}/Bookmarks.json');
+  await writeFile('Bookmarks.json', await file.readAsString());
+
+  for (Map userPlaylist in userPlaylists.value) {
+    String name = '${formatUrl(userPlaylist['id'])}.json';
+    file = File('${pf['appDirectory']}/$name');
+    await writeFile(name, await file.readAsString());
+  }
+}
+
+Future importCache() async {
+  try {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    List<File> files = result!.paths.map((path) => File(path!)).toList();
+    for (File backedFile in files) {
+      File cacheFile = File('${pf['appDirectory']}/${basename(backedFile.path)}');
+      cacheFile.writeAsBytes(await backedFile.readAsBytes());
+    }
   } catch (e) {
     showSnack('$e', false);
   }

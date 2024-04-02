@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../data.dart';
 import '../layer.dart';
 import 'custom_card.dart';
@@ -33,7 +32,7 @@ class _SheetModelState extends State<SheetModel> {
               builder: (context, snap) {
                 if (!snap.hasData) return Container();
                 Layer layer = snap.data!;
-                List<Setting> list = layer.list;
+                final list = layer.list;
                 return ListView(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),

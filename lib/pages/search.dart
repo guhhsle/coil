@@ -224,7 +224,10 @@ class SuggestionListState extends State<SuggestionList> {
                     for (var q = 0; q < result.length; q++) {
                       Handler().queueLoading.add(Media.from(result[q]));
                     }
-                    unawaited(Handler().preload(range: 10));
+                    unawaited(Handler().preload(
+                      range: 10,
+                      queue: Handler().queueLoading,
+                    ));
                     return Expanded(
                       child: ListView.builder(
                         physics: scrollPhysics,

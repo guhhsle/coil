@@ -28,7 +28,7 @@ class _SheetQueueState extends State<SheetQueue> {
         initialChildSize: 0.6,
         minChildSize: 0.2,
         maxChildSize: 0.85,
-        builder: (_, controller) {
+        builder: (context, controller) {
           return ValueListenableBuilder(
             valueListenable: Handler().refreshQueue,
             builder: (context, snapshot, child) {
@@ -53,10 +53,7 @@ class _SheetQueueState extends State<SheetQueue> {
                               'Shuffle',
                               Icons.low_priority_rounded,
                               '',
-                              (c) {
-                                Handler().shuffle();
-                                setState(() {});
-                              },
+                              (c) => Handler().shuffle(),
                             ),
                             margin: const EdgeInsets.only(left: 16, right: 4, bottom: 12, top: 16),
                           ),

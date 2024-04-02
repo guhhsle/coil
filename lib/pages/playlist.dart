@@ -1,12 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
 import 'package:flutter/material.dart';
-
 import '../audio/float.dart';
 import '../audio/queue.dart';
 import '../functions/export.dart';
 import '../functions/generate.dart';
+import '../functions/other.dart';
 import '../layer.dart';
 import '../playlist/http.dart';
 import '../audio/handler.dart';
@@ -41,7 +40,7 @@ class PlaylistPageState extends State<PlaylistPage> {
     return ValueListenableBuilder(
       valueListenable: refreshPlaylist,
       builder: (context, snapshot, child) {
-        return FutureBuilder<Playlist>(
+        return FutureBuilder(
           future: Playlist.load(widget.url, widget.path),
           builder: (context, snap) {
             if (!snap.hasData) {
@@ -52,14 +51,17 @@ class PlaylistPageState extends State<PlaylistPage> {
             }
             list = snap.data!;
             Handler().queueLoading = list.list.toList();
-            unawaited(Handler().preload(range: 10));
+            unawaited(Handler().preload(
+              range: 10,
+              queue: Handler().queueLoading,
+            ));
             return Scaffold(
               floatingActionButton: const Float(),
               appBar: AppBar(
                 title: TextFormField(
                   maxLines: 1,
                   maxLength: 24,
-                  initialValue: list.name,
+                  initialValue: formatName(list.name),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -76,8 +78,8 @@ class PlaylistPageState extends State<PlaylistPage> {
                 actions: [
                   const TopIcon(),
                   IconButton(
-                    tooltip: l['Generate similar'],
-                    onPressed: () async {
+                    tooltip: t('Generate similar'),
+                    onPressed: () {
                       setState(() => generating = true);
                       generate(list.list).then((v) {
                         setState(() => generating = v);
@@ -101,7 +103,7 @@ class PlaylistPageState extends State<PlaylistPage> {
                     padding: const EdgeInsets.only(right: 8),
                     child: IconButton(
                       icon: const Icon(Icons.menu_rounded),
-                      tooltip: l['Menu'],
+                      tooltip: t('Menu'),
                       onPressed: () {
                         showSheet(
                           func: (non) async {

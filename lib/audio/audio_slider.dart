@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:simple_audio/simple_audio.dart';
-
 import 'handler.dart';
 
 class AudioSlider extends StatelessWidget {
@@ -8,7 +6,7 @@ class AudioSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<ProgressState>(
+    return StreamBuilder(
       stream: Handler().player.progressStateStream,
       builder: (context, position) {
         if (!position.hasData) return Container();

@@ -26,24 +26,14 @@ Future<void> singleChildSheet({
               margin: const EdgeInsets.all(8),
               color: Theme.of(context).colorScheme.background.withOpacity(0.8),
               shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 2,
-                ),
+                side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   children: [
-                    CustomCard(
-                      Setting(
-                        title,
-                        icon,
-                        '',
-                        (c) {},
-                      ),
-                    ),
+                    CustomCard(Setting(title, icon, '', (c) {})),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(

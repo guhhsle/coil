@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../functions/other.dart';
 
-class CustomChip extends StatefulWidget {
+class CustomChip extends StatelessWidget {
   final void Function(bool value) onSelected;
-  final bool selected;
+  final bool selected, showCheckmark;
   final String label;
 
   const CustomChip({
@@ -11,25 +11,21 @@ class CustomChip extends StatefulWidget {
     required this.onSelected,
     required this.selected,
     required this.label,
+    this.showCheckmark = false,
   }) : super(key: key);
 
-  @override
-  State<CustomChip> createState() => _CustomChipState();
-}
-
-class _CustomChipState extends State<CustomChip> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: InputChip(
-        selected: widget.selected,
-        showCheckmark: false,
-        onSelected: widget.onSelected,
+        selected: selected,
+        showCheckmark: showCheckmark,
+        onSelected: onSelected,
         label: Text(
-          t(widget.label),
+          t(label),
           style: TextStyle(
-            color: widget.selected ? Theme.of(context).colorScheme.background : Theme.of(context).primaryColor,
+            color: selected ? Theme.of(context).colorScheme.background : Theme.of(context).primaryColor,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'player.dart';
 import '../data.dart';
 import '../widgets/sheet_queue.dart';
@@ -32,9 +31,7 @@ class Float extends StatelessWidget {
                     ),
                     onTap: () => Handler().swap(),
                     borderRadius: BorderRadius.circular(12),
-                    child: Handler().queuePlaying[snapIndex].image(
-                          padding: const EdgeInsets.all(12),
-                        ),
+                    child: Handler().queuePlaying[snapIndex].image(padding: const EdgeInsets.all(12)),
                   ),
                 );
               },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../audio/queue.dart';
 import '../data.dart';
 import '../audio/handler.dart';

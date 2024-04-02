@@ -83,10 +83,11 @@ String formatUrl(String old) {
   return old.replaceAll('/playlist?list=', '');
 }
 
-String formatList(String name) {
+String formatName(String name) {
   if (name.startsWith('Album ')) {
     name = name.replaceRange(0, 8, '');
   }
+  name = name.replaceAll(' - Topic', '');
   return name;
 }
 

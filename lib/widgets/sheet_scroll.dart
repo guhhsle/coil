@@ -28,7 +28,7 @@ class SheetScrollModelState extends State<SheetScrollModel> {
           initialChildSize: 0.6,
           maxChildSize: 0.8,
           minChildSize: 0.2,
-          builder: (_, controller) => Card(
+          builder: (context, controller) => Card(
             margin: const EdgeInsets.all(8),
             color: Theme.of(context).colorScheme.background.withOpacity(0.8),
             child: Padding(

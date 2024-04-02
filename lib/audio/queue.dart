@@ -33,11 +33,7 @@ extension HandlerQueue on Handler {
     refreshQueue.value = !refreshQueue.value;
   }
 
-  void insertToQueue(
-    Media media,
-    int index, {
-    bool e = false,
-  }) {
+  void insertToQueue(Media media, int index, {bool e = false}) {
     if (queuePlaying.isEmpty) {
       addToQueue(media);
       return;
@@ -53,25 +49,18 @@ extension HandlerQueue on Handler {
     refreshQueue.value = !refreshQueue.value;
   }
 
-  Future<void> preload({int range = 5}) async {
+  Future preload({int range = 5, List<Media>? queue}) async {
     var futures = <Future>[];
-    if (range == 10) {
-      for (int i = 0; i < 10; i++) {
-        if (i >= 0 && i < queueLoading.length) {
-          futures.add(queueLoading[i].forceLoad());
-        }
-      }
-    } else {
-      for (int i = current.value - 2; i < current.value + range; i++) {
-        if (i >= 0 && i < queuePlaying.length) {
-          futures.add(queuePlaying[i].forceLoad());
-        }
+    queue ??= queuePlaying;
+    for (int i = current.value - 2; i < current.value + range; i++) {
+      if (i >= 0 && i < queue.length) {
+        futures.add(queue[i].forceLoad());
       }
     }
     await Future.wait(futures);
   }
 
-  Future<void> removeItemAt(int index) async {
+  void removeItemAt(int index) {
     queuePlaying.removeAt(index);
     unawaited(preload());
     if (index < current.value) current.value = current.value - 1;
