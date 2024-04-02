@@ -138,11 +138,11 @@ class PlaylistPageState extends State<PlaylistPage> {
                                   '',
                                   (c) async {
                                     if (b) {
-                                      pf['bookmarks'].cast<String>().remove(widget.url);
+                                      pf['bookmarks'].remove(widget.url);
                                     } else {
-                                      pf['bookmarks'].cast<String>().add(widget.url);
+                                      pf['bookmarks'].add(widget.url);
                                     }
-                                    await setPref('bookmarks', pf['bookmarks'].cast<String>());
+                                    await setPref('bookmarks', pf['bookmarks']);
                                     unawaited(fetchBookmarks());
                                   },
                                 ),

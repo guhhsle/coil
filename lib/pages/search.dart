@@ -42,7 +42,7 @@ class Delegate extends SearchDelegate {
         child: IconButton(
           icon: const Icon(Icons.history_rounded),
           onPressed: () {
-            List<String> history = pf['searchHistory'].cast<String>();
+            List<String> history = pf['searchHistory'];
             showSheet(
               scroll: true,
               func: (non) async => Layer(
@@ -156,17 +156,17 @@ class SuggestionListState extends State<SuggestionList> {
     filters.clear();
     for (int i = 0; i < 6; i++) {
       filters.addAll({
-        pf['searchOrder'].cast<String>()[i]: {
+        pf['searchOrder'][i]: {
           'Songs': 'music_songs',
           'Videos': 'videos',
           'Playlists': 'playlists',
           'Artists': 'channels',
           'Albums': 'music_albums',
           'Music playlists': 'music_playlists',
-        }[pf['searchOrder'].cast<String>()[i]]!
+        }[pf['searchOrder'][i]]!
       });
     }
-    filter ??= filters[pf['searchOrder'].cast<String>()[0]] ?? 'music_songs';
+    filter ??= filters[pf['searchOrder'][0]] ?? 'music_songs';
     query = widget.query;
     result = widget.result;
     super.initState();

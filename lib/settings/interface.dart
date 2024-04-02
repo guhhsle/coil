@@ -53,14 +53,14 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
                 (c) {},
               ),
               list: [
-                for (int i = 0; i < pf['searchOrder'].cast<String>().length; i++)
+                for (int i = 0; i < pf['searchOrder'].length; i++)
                   Setting(
-                    pf['searchOrder'].cast<String>()[i],
+                    pf['searchOrder'][i],
                     Icons.expand_less_rounded,
                     '',
                     (c) {
                       if (i == 0) return;
-                      List<String> l = pf['searchOrder'].cast<String>();
+                      List<String> l = pf['searchOrder'];
                       setPref(
                         'searchOrder',
                         l..insert(i - 1, l.removeAt(i)),
@@ -85,14 +85,14 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
                 (c) {},
               ),
               list: [
-                for (int i = 0; i < pf['homeOrder'].cast<String>().length; i++)
+                for (int i = 0; i < pf['homeOrder'].length; i++)
                   Setting(
-                    pf['homeOrder'].cast<String>()[i],
+                    pf['homeOrder'][i],
                     Icons.expand_less_rounded,
                     '',
                     (c) {
                       if (i == 0) return;
-                      List<String> l = pf['homeOrder'].cast<String>();
+                      List<String> l = pf['homeOrder'];
                       setPref(
                         'homeOrder',
                         l..insert(i - 1, l.removeAt(i)),

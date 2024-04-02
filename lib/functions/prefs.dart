@@ -9,8 +9,10 @@ Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();
 
   for (MapEntry entry in pf.entries) {
-    if (await setPref(entry.key, prefs.get(entry.key)) == null) {
+    if (getPref(entry.key) == null) {
       await setPref(entry.key, entry.value);
+    } else {
+      pf[entry.key] = getPref(entry.key);
     }
   }
   if (pf['appDirectory'] == '') {
@@ -26,6 +28,14 @@ Future<void> nextPref(String pref, List<String> list, {bool refresh = false}) as
   await setPref(pref, list[(list.indexOf(pf[pref]) + 1) % list.length], refresh: refresh);
 }
 
+dynamic getPref(pString) {
+  if (prefs.get(pString) is List) {
+    return prefs.getStringList(pString);
+  } else {
+    return prefs.get(pString);
+  }
+}
+
 Future setPref(String pString, var value, {bool refresh = false}) async {
   pf[pString] = value;
   if (value is int) {
@@ -35,7 +45,7 @@ Future setPref(String pString, var value, {bool refresh = false}) async {
   } else if (value is String) {
     await prefs.setString(pString, value);
   } else if (value is List<String>) {
-    await prefs.setStringList(pString, value);
+    await prefs.setStringList(pString, pf[pString]);
   }
   if (refresh) refreshInterface();
   refreshLayer();
