@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:coil/pages/subscriptions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import '../functions/other.dart';
@@ -64,6 +65,7 @@ Future<bool> login(bool exists) async {
   if (jsonDecode(result.body)['token'] != null) {
     setPref('token', jsonDecode(result.body)['token']);
     unawaited(fetchUserPlaylists(true));
+    unawaited(fetchSubscriptions(true));
     showSnack('Logged in', true);
     return true;
   } else {

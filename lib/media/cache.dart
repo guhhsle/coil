@@ -8,7 +8,7 @@ import '../functions/other.dart';
 import '../playlist/playlist.dart';
 
 extension MediaCache on Media {
-  Future forceAddBackup(String url, {bool top = false}) async {
+  Future<void> forceAddBackup(String url, {bool top = false}) async {
     Playlist local = await Playlist.load(url, [2]).onError(
       (err, stackTrace) => Playlist.fromString(url),
     );
@@ -21,7 +21,7 @@ extension MediaCache on Media {
     refreshList();
   }
 
-  Future forceRemoveBackup(String url, {bool first = true}) async {
+  Future<void> forceRemoveBackup(String url, {bool first = true}) async {
     Playlist local = await Playlist.load(url, [2]);
     late int index;
     if (first) {
@@ -37,7 +37,7 @@ extension MediaCache on Media {
     refreshList();
   }
 
-  Future addTo100() async {
+  Future<void> addTo100() async {
     await forceAddBackup('100raw', top: true);
     Playlist hundred = await Playlist.load('100raw', [2]);
     Map<String, int> map = {};

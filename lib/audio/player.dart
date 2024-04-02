@@ -13,7 +13,7 @@ extension HandlerPlayer on Handler {
     player.setVolume(pf['volume'] / 100);
   }
 
-  Future swap() async {
+  Future<void> swap() async {
     if (await player.isPlaying) {
       player.pause();
     } else {

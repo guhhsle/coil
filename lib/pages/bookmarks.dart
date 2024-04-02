@@ -4,7 +4,7 @@ import '../data.dart';
 import '../playlist/playlist.dart';
 import '../widgets/playlist_tile.dart';
 
-Future fetchBookmarks() async {
+Future<void> fetchBookmarks() async {
   List<Playlist> tempBookmarks = [];
   List<Future> futures = [];
   Playlist.load('Bookmarks', [2]).catchError(

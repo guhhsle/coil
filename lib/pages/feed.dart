@@ -5,7 +5,7 @@ import '../data.dart';
 import '../media/media.dart';
 import '../widgets/song_tile.dart';
 
-Future<void> feed() async {
+Future<void> fetchFeed() async {
   if (pf['token'] == '') return;
   Response response = await get(
     Uri.https(pf['authInstance'], 'feed', {'authToken': pf['token']}),
@@ -20,7 +20,7 @@ class Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: feed,
+      onRefresh: fetchFeed,
       child: ValueListenableBuilder(
         valueListenable: userFeed,
         builder: (context, snap, widget) => ListView.builder(

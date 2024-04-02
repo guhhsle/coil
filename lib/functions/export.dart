@@ -53,7 +53,7 @@ Future<void> exportPlaylist(int i, Playlist? list) async {
   });
 }
 
-Future exportOther(Playlist list) async {
+Future<void> exportOther(Playlist list) async {
   playlists = [];
   await exportPlaylist(0, list);
   try {
@@ -70,7 +70,7 @@ Future exportOther(Playlist list) async {
   }
 }
 
-Future exportCache() async {
+Future<void> exportCache() async {
   File file = File('${pf['appDirectory']}/playlists.json');
   await writeFile('playlists.json', await file.readAsString());
 
@@ -90,7 +90,7 @@ Future exportCache() async {
   }
 }
 
-Future importCache() async {
+Future<void> importCache() async {
   try {
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
     List<File> files = result!.paths.map((path) => File(path!)).toList();

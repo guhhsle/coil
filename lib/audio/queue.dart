@@ -49,7 +49,7 @@ extension HandlerQueue on Handler {
     refreshQueue.value = !refreshQueue.value;
   }
 
-  Future preload({int range = 5, List<Media>? queue}) async {
+  Future<void> preload({int range = 5, List<Media>? queue}) async {
     var futures = <Future>[];
     queue ??= queuePlaying;
     for (int i = current.value - 2; i < current.value + range; i++) {

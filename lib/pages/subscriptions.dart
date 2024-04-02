@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import '../data.dart';
 import '../widgets/playlist_tile.dart';
 
-Future fetchSubscriptions(bool force) async {
+Future<void> fetchSubscriptions(bool force) async {
   try {
     List list = [];
     File file = File('${pf['appDirectory']}/subscriptions.json');

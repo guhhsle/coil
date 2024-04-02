@@ -54,7 +54,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     unawaited(fetchUserPlaylists(false));
     unawaited(getLocal());
     unawaited(fetchBookmarks());
-    unawaited(feed());
+    unawaited(fetchFeed());
     unawaited(trending());
     unawaited(fetchSubscriptions(false));
     super.initState();
