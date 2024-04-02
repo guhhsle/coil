@@ -6,7 +6,7 @@ import 'playlist/playlist.dart';
 
 Map pf = {
   //APP
-  'firstBoot': true,
+  //'firstBoot': true,
   'bookmarks': <String>[],
   //ACCOUNT
   'username': '',

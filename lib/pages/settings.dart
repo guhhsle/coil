@@ -1,7 +1,6 @@
 import 'package:coil/audio/float.dart';
 import 'package:coil/settings/account.dart';
 import 'package:coil/settings/data.dart';
-import 'package:coil/settings/home.dart';
 import 'package:coil/settings/interface.dart';
 import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ class PageSettings extends StatelessWidget {
     'Account': accountSet,
     'Data': dataSet,
     'Interface': interfaceSet,
-    'Home': homeSet,
     'Primary': themeMap,
     'Background': themeMap,
   };
@@ -57,8 +55,8 @@ class PageSettings extends StatelessWidget {
             leading: Icon(iconMap.values.elementAt(index)),
             onTap: () => showSheet(
               func: map.values.elementAt(index),
-              param: index == 5,
-              scroll: index > 4,
+              param: index == 4,
+              scroll: index > 3,
             ),
           ),
         ),

@@ -136,13 +136,13 @@ class PlaylistPageState extends State<PlaylistPage> {
                                   b ? 'Remove from bookmarks' : 'Bookmark',
                                   b ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                                   '',
-                                  (c) {
+                                  (c) async {
                                     if (b) {
-                                      (pf['bookmarks'] as List<String>).remove(widget.url);
+                                      pf['bookmarks'].cast<String>().remove(widget.url);
                                     } else {
-                                      (pf['bookmarks'] as List<String>).add(widget.url);
+                                      pf['bookmarks'].cast<String>().add(widget.url);
                                     }
-                                    setPref('bookmarks', pf['bookmarks']);
+                                    await setPref('bookmarks', pf['bookmarks'].cast<String>());
                                     unawaited(fetchBookmarks());
                                   },
                                 ),

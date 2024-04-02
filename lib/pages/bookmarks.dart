@@ -10,8 +10,8 @@ Future<void> fetchBookmarks() async {
   Playlist.load('Bookmarks', [2]).catchError(
     (e) => Playlist.fromString('Bookmarks')..backup(),
   );
-  for (int i = 0; i < pf['bookmarks'].length; i++) {
-    futures.add(Playlist.load(pf['bookmarks'][i], [2, 0, 1]).then(
+  for (String bookmark in pf['bookmarks'].cast<String>()) {
+    futures.add(Playlist.load(bookmark, [2, 0, 1]).then(
       (val) => tempBookmarks.add(val),
     ));
   }

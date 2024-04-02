@@ -138,7 +138,7 @@ Future<String> getInput(String? init, {String? hintText}) async {
 
 Future<String> instanceHistory() async {
   Completer<String> completer = Completer();
-  List<String> history = pf['instanceHistory'];
+  List<String> history = pf['instanceHistory'].cast<String>();
   showSheet(
     scroll: true,
     func: (non) async => Layer(
@@ -165,10 +165,10 @@ Future<String> instanceHistory() async {
               Navigator.of(c).pop();
               completer.complete(history[i]);
             },
-            secondary: (c) {
-              pf['instanceHistory'].removeAt(i);
-              setPref('instanceHistory', pf['instanceHistory']);
-            },
+            secondary: (c) => setPref(
+              'instanceHistory',
+              pf['instanceHistory']..removeAt(i),
+            ),
           ),
         Setting(
           'New',
@@ -195,7 +195,7 @@ void refreshInterface() {
 
 void rememberSearch(String str) {
   if (str == '') return;
-  List<String> list = pf['searchHistory'];
+  List<String> list = pf['searchHistory'].cast<String>();
   for (int i = 0; i < 10 && i < list.length; i++) {
     if (list[i] == str) return;
   }

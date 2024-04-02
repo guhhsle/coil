@@ -79,7 +79,7 @@ Future<Layer> moreSet(dynamic non) async => Layer(
             if (input == null || (input > 100 || input < 0)) {
               showSnack('Invalid', false);
             } else {
-              setPref('volume', input);
+              await setPref('volume', input);
               Handler().setVolume();
             }
           },

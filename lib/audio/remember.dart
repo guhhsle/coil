@@ -12,7 +12,7 @@ extension HandlerRemember on Handler {
         if (!urls.contains(queuePlaying[current.value].id)) {
           if (urls.length > pf['rememberLimit']) {
             urls.removeLast();
-            pf['rememberTimes'].removeLast;
+            pf['rememberTimes'].cast<String>().removeLast;
           }
           urls.insert(0, queuePlaying[current.value].id);
           pf['rememberTimes'].insert(0, '0');
@@ -20,14 +20,14 @@ extension HandlerRemember on Handler {
         } else {
           pf['rememberTimes'][urls.indexOf(queuePlaying[current.value].id)] = '$position';
         }
-        setPref('rememberTimes', pf['rememberTimes']);
+        setPref('rememberTimes', pf['rememberTimes'].cast<String>());
       }
     });
   }
 
   int rememberedPosition(String url) {
-    if (!pf['rememberURLs'].contains(url)) return 0;
-    int i = pf['rememberURLs'].indexOf(url);
-    return int.tryParse(pf['rememberTimes'][i]) ?? 0;
+    if (!pf['rememberURLs'].cast<String>().contains(url)) return 0;
+    int i = pf['rememberURLs'].cast<String>().indexOf(url);
+    return int.tryParse(pf['rememberTimes'].cast<String>()[i]) ?? 0;
   }
 }

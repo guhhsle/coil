@@ -8,38 +8,9 @@ import 'other.dart';
 Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();
 
-  for (var i = 0; i < pf.length; i++) {
-    String key = pf.keys.elementAt(i);
-    if (pf[key] is String) {
-      if (prefs.getString(key) == null) {
-        prefs.setString(key, pf[key]);
-      } else {
-        pf[key] = prefs.getString(key)!;
-      }
-    } else if (pf[key] is int) {
-      if (prefs.getInt(key) == null) {
-        prefs.setInt(key, pf[key]);
-      } else {
-        pf[key] = prefs.getInt(key)!;
-      }
-    } else if (key == 'firstBoot') {
-      if (prefs.getBool('firstBoot') == null) {
-        prefs.setBool('firstBoot', false);
-      } else {
-        pf['firstBoot'] = false;
-      }
-    } else if (pf[key] is bool) {
-      if (prefs.getBool(key) == null) {
-        prefs.setBool(key, pf[key]);
-      } else {
-        pf[key] = prefs.getBool(key)!;
-      }
-    } else if (pf[key] is List<String>) {
-      if (prefs.getStringList(key) == null) {
-        prefs.setStringList(key, pf[key]);
-      } else {
-        pf[key] = prefs.getStringList(key)!;
-      }
+  for (MapEntry entry in pf.entries) {
+    if (await setPref(entry.key, prefs.get(entry.key)) == null) {
+      await setPref(entry.key, entry.value);
     }
   }
   if (pf['appDirectory'] == '') {
@@ -47,25 +18,26 @@ Future<void> initPrefs() async {
   }
 }
 
-void revPref(String pref, {bool refresh = false}) {
-  setPref(pref, !pf[pref], refresh: refresh);
+Future<void> revPref(String pref, {bool refresh = false}) async {
+  await setPref(pref, !pf[pref], refresh: refresh);
 }
 
-void nextPref(String pref, List<String> list, {bool refresh = false}) {
-  setPref(pref, list[(list.indexOf(pf[pref]) + 1) % list.length], refresh: refresh);
+Future<void> nextPref(String pref, List<String> list, {bool refresh = false}) async {
+  await setPref(pref, list[(list.indexOf(pf[pref]) + 1) % list.length], refresh: refresh);
 }
 
-void setPref(String pString, var value, {bool refresh = false}) {
+Future setPref(String pString, var value, {bool refresh = false}) async {
   pf[pString] = value;
   if (value is int) {
-    prefs.setInt(pString, value);
+    await prefs.setInt(pString, value);
   } else if (value is bool) {
-    prefs.setBool(pString, value);
+    await prefs.setBool(pString, value);
   } else if (value is String) {
-    prefs.setString(pString, value);
+    await prefs.setString(pString, value);
   } else if (value is List<String>) {
-    prefs.setStringList(pString, value);
+    await prefs.setStringList(pString, value);
   }
   if (refresh) refreshInterface();
   refreshLayer();
+  return value;
 }

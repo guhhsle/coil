@@ -36,18 +36,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   @override
   initState() {
-    selectedHome = pf['homeOrder'][0];
+    selectedHome = pf['homeOrder'].cast<String>()[0];
     homeMap.clear();
     for (int i = 0; i < 6; i++) {
       homeMap.addAll({
-        pf['homeOrder'][i]: {
+        pf['homeOrder'].cast<String>()[i]: {
           'Playlists': const UserPlaylists(),
           'Offline': const LocalSongs(),
           'Bookmarks': const Bookmarks(),
           'Feed': const Feed(),
           'Trending': const Trending(),
           'Subscriptions': const Subscriptions(),
-        }[pf['homeOrder'][i]]!
+        }[pf['homeOrder'].cast<String>()[i]]!
       });
     }
     animationController = AnimationController(vsync: this);

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:coil/pages/feed.dart';
 import 'package:coil/pages/subscriptions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -56,16 +57,17 @@ Future<Layer> authSet(dynamic non) async => Layer(
     );
 
 Future<bool> login(bool exists) async {
-  setPref('token', '');
+  await setPref('token', '');
   if (pf['authInstance'] == '') return false;
   Response result = await post(
     Uri.https(pf['authInstance'], exists ? 'login' : 'register'),
     body: jsonEncode({'username': pf['username'], 'password': pf['password']}),
   );
   if (jsonDecode(result.body)['token'] != null) {
-    setPref('token', jsonDecode(result.body)['token']);
+    await setPref('token', jsonDecode(result.body)['token']);
     unawaited(fetchUserPlaylists(true));
     unawaited(fetchSubscriptions(true));
+    unawaited(fetchFeed());
     showSnack('Logged in', true);
     return true;
   } else {
