@@ -28,7 +28,7 @@ extension HandlerQueue on Handler {
     if (i < 0 || i >= queuePlaying.length) return;
     current.value = i;
     refreshQueue.value = !refreshQueue.value;
-    unawaited(queuePlaying[i].play());
+    queuePlaying[i].play();
     controller.value = PageController(initialPage: i);
     refreshQueue.value = !refreshQueue.value;
   }
