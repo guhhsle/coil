@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:coil/functions/prefs.dart';
-import 'package:coil/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'prefs.dart';
+import '../theme.dart';
 import '../data.dart';
 import '../layer.dart';
 

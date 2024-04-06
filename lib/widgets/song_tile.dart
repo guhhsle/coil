@@ -1,9 +1,8 @@
+import 'package:coil/audio/queue.dart';
+import 'package:coil/media/sheet.dart';
 import 'package:flutter/material.dart';
-
-import '../audio/queue.dart';
 import '../audio/handler.dart';
 import '../data.dart';
-import '../functions/sheets.dart';
 import '../layer.dart';
 import '../media/media.dart';
 
@@ -22,9 +21,9 @@ class SongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     //if (haptic && i % 2 == 0) HapticFeedback.selectionClick();
     return ValueListenableBuilder(
-      valueListenable: Handler().refreshQueue,
+      valueListenable: MediaHandler.refreshQueue,
       builder: (context, val, child) {
-        bool selected = Handler().selected(list[i]);
+        bool selected = MediaHandler().selected(list[i]);
         Color primary = Theme.of(context).colorScheme.primary;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 256),
@@ -71,13 +70,13 @@ class SongTileChild extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         onTap: () {
-          Handler().load(list);
-          Handler().skipTo(i);
+          MediaHandler().load(list);
+          MediaHandler().skipTo(i);
         },
         onLongPress: () => showSheet(
           scroll: true,
-          func: mediaToLayer,
-          param: list[i],
+          func: list[i].layer,
+          param: null,
         ),
         leading: list[i].image(),
         title: Text(

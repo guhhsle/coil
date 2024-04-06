@@ -1,11 +1,10 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_audio/simple_audio.dart';
 
 import '../data.dart';
 import 'map.dart';
 
-class Media extends Metadata {
-  String id;
+class Media extends MediaItem {
   int quality, index, reps;
   bool offline;
   String? audioUrl, playlist, uploaderUrl, lyrics;
@@ -13,7 +12,7 @@ class Media extends Metadata {
   List<Map> videoUrls;
 
   Media({
-    required this.id,
+    required super.id,
     this.quality = 10,
     this.index = 0,
     this.playlist,
@@ -25,6 +24,7 @@ class Media extends Metadata {
     this.offline = false,
     this.reps = 1,
     required super.title,
+    super.duration,
     super.artUri,
     super.artist = '',
   });

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-
 import '../audio/handler.dart';
 import '../data.dart';
 import '../functions/other.dart';
@@ -19,7 +18,7 @@ Future<Layer> interfaceSet(dynamic non) async => Layer(
             ['Dock', 'Top', 'Top dock', 'Floating'],
             refresh: true,
           );
-          Handler().refreshQueue.value = !Handler().refreshQueue.value;
+          MediaHandler().refresh();
         },
       ),
       list: [

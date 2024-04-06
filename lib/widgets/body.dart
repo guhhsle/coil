@@ -11,7 +11,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: Handler().refreshQueue,
+      valueListenable: MediaHandler.refreshQueue,
       builder: (context, none, non) {
         bool dock = pf['player'] == 'Dock';
         return Column(
@@ -21,7 +21,7 @@ class Body extends StatelessWidget {
               child: Card(
                 color: Theme.of(context).colorScheme.background,
                 margin: EdgeInsets.symmetric(
-                  horizontal: Handler().queuePlaying.isEmpty || !dock ? 0 : 2,
+                  horizontal: MediaHandler().queuePlaying.isEmpty || !dock ? 0 : 2,
                 ),
                 shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(

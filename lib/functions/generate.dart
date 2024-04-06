@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
-
-import '../audio/queue.dart';
 import '../audio/handler.dart';
+import '../audio/queue.dart';
 import '../data.dart';
 import '../media/media.dart';
 import '../playlist/playlist.dart';
@@ -48,7 +46,7 @@ Future<bool> generate(List<Media> rawList) async {
   for (int i = 0; i < sorted.length; i++) {
     finalList += sorted.values.elementAt(i)..shuffle();
   }
-  Handler().load(finalList);
+  MediaHandler().load(finalList);
   generated.clear();
   return false;
 }

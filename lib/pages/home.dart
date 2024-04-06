@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:coil/pages/subscriptions.dart';
-import 'package:coil/pages/trending.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../audio/float.dart';
@@ -17,6 +15,8 @@ import 'local.dart';
 import 'search.dart';
 import 'settings.dart';
 import 'user_playlists.dart';
+import 'subscriptions.dart';
+import 'trending.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

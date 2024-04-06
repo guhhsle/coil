@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../threads/main_thread.dart';
 import 'handler.dart';
 
 class AudioSlider extends StatelessWidget {
@@ -7,9 +8,9 @@ class AudioSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Handler().player.progressStateStream,
-      builder: (context, position) {
-        if (!position.hasData) return Container();
+      stream: MediaHandler().position.stream,
+      builder: (context, snap) {
+        int position = snap.data ?? MediaHandler().lastPosition;
         return SizedBox(
           height: 24,
           child: Slider(
@@ -17,10 +18,10 @@ class AudioSlider extends StatelessWidget {
             activeColor: Theme.of(context).colorScheme.primary,
             inactiveColor: Theme.of(context).colorScheme.primary,
             secondaryActiveColor: Theme.of(context).colorScheme.primary,
-            value: (position.data?.position ?? 999).toDouble(),
+            value: position.toDouble(),
             min: 0,
-            onChanged: (d) => Handler().player.seek(d.toInt()),
-            max: (position.data?.duration ?? 999).toDouble(),
+            onChanged: (d) => MainThread.callFn({'seek': d.toInt()}),
+            max: MediaHandler().lastDuration.toDouble(),
           ),
         );
       },

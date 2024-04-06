@@ -1,89 +1,70 @@
 import 'dart:async';
-import 'dart:io';
-
-import 'package:coil/audio/queue.dart';
-import 'package:coil/audio/remember.dart';
-import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_audio/simple_audio.dart';
-
+import 'package:audio_service/audio_service.dart';
+import 'queue.dart';
+import 'streams.dart';
+import '../threads/main_thread.dart';
 import '../media/media.dart';
-import 'player.dart';
 
 enum LoopMode { off, one, all }
 
-class Handler {
-  static final Handler instance = Handler.internal();
-  late SimpleAudio player;
-  late IOSink debugOutput = File('debug_output.txt').openWrite();
+class MediaHandler extends BaseAudioHandler {
+  static final MediaHandler instance = MediaHandler.internal();
+  final StreamController<int> position = StreamController.broadcast();
+  final StreamController<bool> playing = StreamController.broadcast();
+  final StreamController<int> duration = StreamController.broadcast();
+  final StreamController<String> processing = StreamController.broadcast();
+  int lastDuration = 1000;
+  int lastPosition = 0;
+  bool lastPlaying = false;
   LoopMode loop = LoopMode.off;
   List<Media> queuePlaying = [];
-  List<Media> queueLoading = [];
   final ValueNotifier<int> current = ValueNotifier(0);
-  final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
+  static final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
 
-  factory Handler() {
+  factory MediaHandler() {
     return instance;
   }
 
-  Future<void> initHandler() async {
-    runZoned(
-      zoneSpecification: ZoneSpecification(
-        print: (self, parent, zone, line) => debugOutput.writeln(line),
-      ),
-      () async {
-        await SimpleAudio.init(
-          useMediaController: true,
-          shouldNormalizeVolume: false,
-          dbusName: "com.erikas.SimpleAudio",
-          actions: [
-            MediaControlAction.skipPrev,
-            MediaControlAction.playPause,
-            MediaControlAction.skipNext,
-          ],
-          androidNotificationIconPath: "mipmap/ic_launcher",
-          androidCompactActions: [1, 2, 3],
-          applePreferSkipButtons: true,
-        );
-
-        player = SimpleAudio(
-          onSkipNext: (_) => skipTo(current.value + 1),
-          onSkipPrevious: (_) async {
-            if ((await player.progressStateStream.first).position < 10) {
-              await skipTo(current.value - 1);
-            } else {
-              await player.seek(0);
-            }
-          },
-          onNetworkStreamError: (_, error) async {
-            showSnack('Instance error for this specific song, restart app', false);
-            await player.stop();
-          },
-          onDecodeError: (_, error) async {
-            showSnack("Decode Error: $error", false);
-            await player.stop();
-          },
-        );
-        setVolume();
-        player.playbackStateStream.listen((event) {
-          if (event == PlaybackState.done) {
-            bool isLast = current.value == queuePlaying.length - 1;
-            skipTo(
-              {
-                LoopMode.off: current.value + 1,
-                LoopMode.one: current.value,
-                LoopMode.all: isLast ? 0 : current.value + 1,
-              }[loop]!,
-            );
-          }
-        });
-        rememberStream();
-      },
-    );
+  MediaHandler.internal() {
+    AudioService.init(builder: () => this).then((value) {
+      value.initStreams();
+    });
   }
 
-  Handler.internal() {
-    unawaited(initHandler());
+  @override
+  Future<void> skipToNext() => skipTo(current.value + 1);
+
+  @override
+  Future<void> skipToPrevious() async {
+    if (lastPosition < 5) {
+      skipTo(current.value - 1);
+    } else {
+      MainThread.callFn({'seek': 0});
+    }
+  }
+
+  @override
+  Future<void> play() => MainThread.callFn({'swap': null});
+
+  @override
+  Future<void> pause() => MainThread.callFn({'swap': null});
+
+  @override
+  Future<void> stop() => MainThread.callFn({'swap': null});
+
+  @override
+  Future<void> seek(Duration position) => MainThread.callFn({
+        'seek': position.inSeconds,
+      });
+
+  bool selected(Media media) {
+    if (current.value >= queuePlaying.length) return false;
+    return media.id == queuePlaying[current.value].id;
+  }
+
+  void refresh() {
+    refreshQueue.value = !refreshQueue.value;
   }
 
   bool tryLoad(Media media) {
@@ -95,19 +76,10 @@ class Handler {
         return true;
       }
     }
-    for (int q = 0; q < queueLoading.length; q++) {
-      if (queueLoading[q].id == media.id && queueLoading[q].audioUrl != null) {
-        media.audioUrl = queueLoading[q].audioUrl;
-        media.audioUrls = queueLoading[q].audioUrls;
-        media.videoUrls = queueLoading[q].videoUrls;
-        return true;
-      }
-    }
     return false;
   }
 
-  bool selected(Media media) {
-    if (current.value >= queuePlaying.length) return false;
-    return media.id == queuePlaying[current.value].id;
+  Media get now {
+    return queuePlaying[current.value];
   }
 }

@@ -1,9 +1,9 @@
-import 'package:coil/audio/float.dart';
-import 'package:coil/settings/account.dart';
-import 'package:coil/settings/data.dart';
-import 'package:coil/settings/interface.dart';
-import 'package:coil/settings/more.dart';
 import 'package:flutter/material.dart';
+import '../audio/float.dart';
+import '../settings/account.dart';
+import '../settings/data.dart';
+import '../settings/interface.dart';
+import '../settings/more.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
 import '../functions/other.dart';
@@ -27,7 +27,6 @@ class PageSettings extends StatelessWidget {
     'Account': Icons.person_rounded,
     'Data': Icons.cloud_rounded,
     'Interface': Icons.toggle_on,
-    'Home': Icons.door_front_door_rounded,
     'Primary': Icons.colorize_rounded,
     'Background': Icons.colorize_rounded,
   };

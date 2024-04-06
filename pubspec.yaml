@@ -16,7 +16,10 @@ dependencies:
   flutter_file_saver: any
   file_picker: any
   #open_as_default: any
-  simple_audio: any
+  audio_service: any
+  just_audio: any
+  just_audio_mpv: any
+  flutter_isolate: any
 
 
   flutter:

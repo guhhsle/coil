@@ -20,7 +20,7 @@ extension MediaMap on Media {
     return Media(
       title: json['title'],
       id: formatUrl(json['url']),
-      artUri: json['thumbnail'] ?? '',
+      artUri: Uri.parse(json['thumbnail'] ?? ''),
       artist: formatName(json['uploaderName'] ?? json['uploader']),
       uploaderUrl: json['uploaderUrl'] ?? '',
       quality: evaluateSong(json, i),

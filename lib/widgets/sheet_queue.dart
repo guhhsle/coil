@@ -1,9 +1,8 @@
+import 'package:coil/audio/queue.dart';
 import 'package:flutter/material.dart';
-
-import '../audio/queue.dart';
+import '../audio/handler.dart';
 import '../media/audio.dart';
 import '../audio/audio_slider.dart';
-import '../audio/handler.dart';
 import '../audio/top_icon.dart';
 import '../data.dart';
 import '../layer.dart';
@@ -21,7 +20,6 @@ class SheetQueue extends StatefulWidget {
 class _SheetQueueState extends State<SheetQueue> {
   @override
   Widget build(BuildContext context) {
-    Handler().queueLoading = Handler().queuePlaying.toList();
     return Container(
       color: Colors.transparent,
       child: DraggableScrollableSheet(
@@ -30,7 +28,7 @@ class _SheetQueueState extends State<SheetQueue> {
         maxChildSize: 0.85,
         builder: (context, controller) {
           return ValueListenableBuilder(
-            valueListenable: Handler().refreshQueue,
+            valueListenable: MediaHandler.refreshQueue,
             builder: (context, snapshot, child) {
               return Card(
                 margin: const EdgeInsets.all(8),
@@ -53,7 +51,7 @@ class _SheetQueueState extends State<SheetQueue> {
                               'Shuffle',
                               Icons.low_priority_rounded,
                               '',
-                              (c) => Handler().shuffle(),
+                              (c) => MediaHandler().shuffle(),
                             ),
                             margin: const EdgeInsets.only(left: 16, right: 4, bottom: 12, top: 16),
                           ),
@@ -61,16 +59,16 @@ class _SheetQueueState extends State<SheetQueue> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12, top: 16),
                           child: IconButton(
-                            tooltip: l['Repeat ${Handler().loop.name}'],
+                            tooltip: l['Repeat ${MediaHandler().loop.name}'],
                             color: Theme.of(context).colorScheme.primary,
                             icon: Icon({
                               LoopMode.off: Icons.wrap_text_rounded,
                               LoopMode.one: Icons.repeat_one_rounded,
                               LoopMode.all: Icons.repeat,
-                            }[Handler().loop]!),
+                            }[MediaHandler().loop]!),
                             onPressed: () {
-                              Handler().loop =
-                                  LoopMode.values[(LoopMode.values.toList().indexOf(Handler().loop) + 1) % 3];
+                              int i = LoopMode.values.toList().indexOf(MediaHandler().loop);
+                              MediaHandler().loop = LoopMode.values[(i + 1) % 3];
                               setState(() {});
                             },
                           ),
@@ -87,7 +85,7 @@ class _SheetQueueState extends State<SheetQueue> {
                     const AudioSlider(),
                     Expanded(
                       child: ValueListenableBuilder<int>(
-                        valueListenable: Handler().current,
+                        valueListenable: MediaHandler().current,
                         builder: (context, data, child) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -97,7 +95,7 @@ class _SheetQueueState extends State<SheetQueue> {
                                 controller: controller,
                                 physics: scrollPhysics,
                                 padding: const EdgeInsets.only(top: 8, bottom: 16),
-                                itemCount: Handler().queuePlaying.length,
+                                itemCount: MediaHandler().queuePlaying.length,
                                 itemBuilder: (context, i) {
                                   return Dismissible(
                                     background: Container(
@@ -127,16 +125,16 @@ class _SheetQueueState extends State<SheetQueue> {
                                       ),
                                     ),
                                     onDismissed: (direction) {
-                                      Media item = Handler().queuePlaying[i];
-                                      bool e = i == Handler().current.value;
-                                      Handler().removeItemAt(i);
+                                      Media item = MediaHandler().queuePlaying[i];
+                                      bool e = i == MediaHandler().current.value;
+                                      MediaHandler().removeItemAt(i);
                                       if (direction == DismissDirection.startToEnd) {
                                         item.insertToQueue(i - 1, e: e);
                                       }
                                       setState(() {});
                                     },
-                                    key: Key(Handler().queuePlaying[i].id),
-                                    child: SongTile(list: Handler().queuePlaying, i: i),
+                                    key: Key(MediaHandler().queuePlaying[i].id),
+                                    child: SongTile(list: MediaHandler().queuePlaying, i: i),
                                   );
                                 },
                               ),

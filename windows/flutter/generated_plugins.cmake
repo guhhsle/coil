@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
-  simple_audio
   url_launcher_windows
 )
 

@@ -1,36 +1,28 @@
 import 'dart:async';
+
+import 'package:coil/media/audio.dart';
+import 'package:coil/media/http.dart';
 import 'package:flutter/material.dart';
 
-import 'handler.dart';
-import '../media/audio.dart';
-import '../media/http.dart';
 import '../data.dart';
 import '../media/media.dart';
+import 'handler.dart';
 
-extension HandlerQueue on Handler {
-  void load(List<Media> list) {
-    if (list == queuePlaying) return;
-    queuePlaying.clear();
-    for (Media media in list) {
-      queuePlaying.add(media..playlist = 'queue');
-    }
-  }
-
+extension QueueHandler on MediaHandler {
   void addToQueue(Media media) {
     queuePlaying.add(media);
-    unawaited(Handler().preload());
-    if (queuePlaying.length == 1) Handler().skipTo(0);
+    unawaited(preload());
+    if (queuePlaying.length == 1) skipTo(0);
     controller.value = PageController(initialPage: current.value);
-    refreshQueue.value = !refreshQueue.value;
+    refresh();
   }
 
   Future<void> skipTo(int i) async {
     if (i < 0 || i >= queuePlaying.length) return;
     current.value = i;
-    refreshQueue.value = !refreshQueue.value;
     queuePlaying[i].play();
     controller.value = PageController(initialPage: i);
-    refreshQueue.value = !refreshQueue.value;
+    refresh();
   }
 
   void insertToQueue(Media media, int index, {bool e = false}) {
@@ -39,14 +31,30 @@ extension HandlerQueue on Handler {
       return;
     }
     queuePlaying.insert(index, media);
-    unawaited(Handler().preload());
+    unawaited(preload());
     if (e) {
       current.value = current.value - 1;
     } else if (index <= current.value) {
       current.value = current.value + 1;
     }
     controller.value = PageController(initialPage: current.value);
-    refreshQueue.value = !refreshQueue.value;
+    refresh();
+  }
+
+  void removeItemAt(int index) {
+    queuePlaying.removeAt(index);
+    unawaited(preload());
+    if (index < current.value) current.value = current.value - 1;
+    controller.value = PageController(initialPage: current.value);
+    refresh();
+  }
+
+  void shuffle() {
+    Media media = queuePlaying[current.value];
+    queuePlaying.shuffle();
+    current.value = queuePlaying.indexOf(media);
+    controller.value = PageController(initialPage: current.value);
+    refresh();
   }
 
   Future<void> preload({int range = 5, List<Media>? queue}) async {
@@ -60,19 +68,11 @@ extension HandlerQueue on Handler {
     await Future.wait(futures);
   }
 
-  void removeItemAt(int index) {
-    queuePlaying.removeAt(index);
-    unawaited(preload());
-    if (index < current.value) current.value = current.value - 1;
-    controller.value = PageController(initialPage: current.value);
-    refreshQueue.value = !refreshQueue.value;
-  }
-
-  void shuffle() {
-    Media media = queuePlaying[current.value];
-    queuePlaying.shuffle();
-    current.value = queuePlaying.indexOf(media);
-    controller.value = PageController(initialPage: current.value);
-    refreshQueue.value = !refreshQueue.value;
+  void load(List<Media> list) {
+    if (list == queuePlaying) return;
+    queuePlaying.clear();
+    for (Media media in list) {
+      queuePlaying.add(media..playlist = 'queue');
+    }
   }
 }

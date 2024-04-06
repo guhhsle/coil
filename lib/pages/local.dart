@@ -49,7 +49,7 @@ Future<void> getLocal() async {
         );
       }
     }
-    list.sort((item1, item2) => item1.title!.compareTo(item2.title!));
+    list.sort((item1, item2) => item1.title.compareTo(item2.title));
     localMusic.value = list;
   }
 }
