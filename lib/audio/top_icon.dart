@@ -15,39 +15,54 @@ class TopIcon extends StatelessWidget {
       valueListenable: themeNotifier,
       builder: (context, non, child) {
         return StreamBuilder(
-          stream: MediaHandler().playing.stream,
-          builder: (context, snapshot) {
-            bool playing = snapshot.data ?? MediaHandler().lastPlaying;
-            if (MediaHandler().queuePlaying.isEmpty) {
-              return Container();
-            } else if (!top || pf['player'] == 'Top') {
-              return InkWell(
-                onLongPress: () => showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => const SheetQueue(),
-                ),
-                child: IconButton(
-                  onPressed: () => MainThread.callFn({'swap': null}),
-                  icon: Icon(
-                    playing ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                    color: color ?? Theme.of(context).appBarTheme.foregroundColor,
-                  ),
-                ),
-              );
-            } else if (pf['player'] == 'Top dock') {
-              return ValueListenableBuilder(
-                valueListenable: showTopDock,
-                builder: (context, data, ch) {
-                  return IconButton(
-                    icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
-                    onPressed: () => showTopDock.value = !showTopDock.value,
+          stream: MediaHandler().processing.stream,
+          builder: (context, processingSnapshot) {
+            String processing = processingSnapshot.data ?? MediaHandler().lastProcessing;
+            return StreamBuilder(
+              stream: MediaHandler().playing.stream,
+              builder: (context, playingSnapshot) {
+                bool playing = playingSnapshot.data ?? MediaHandler().lastPlaying;
+                if (MediaHandler().queuePlaying.isEmpty) {
+                  return Container();
+                } else if (!top || pf['player'] == 'Top') {
+                  late IconData status;
+                  if (processing == 'loading') {
+                    status = Icons.language_rounded;
+                  } else if (playing) {
+                    status = Icons.stop_rounded;
+                  } else {
+                    status = Icons.play_arrow_rounded;
+                  }
+
+                  return InkWell(
+                    onLongPress: () => showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => const SheetQueue(),
+                    ),
+                    child: IconButton(
+                      onPressed: () => MainThread.callFn({'swap': null}),
+                      icon: Icon(
+                        status,
+                        color: color ?? Theme.of(context).appBarTheme.foregroundColor,
+                      ),
+                    ),
                   );
-                },
-              );
-            } else {
-              return Container();
-            }
+                } else if (pf['player'] == 'Top dock') {
+                  return ValueListenableBuilder(
+                    valueListenable: showTopDock,
+                    builder: (context, data, ch) {
+                      return IconButton(
+                        icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
+                        onPressed: () => showTopDock.value = !showTopDock.value,
+                      );
+                    },
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            );
           },
         );
       },

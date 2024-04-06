@@ -1,12 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
 import 'package:coil/audio/handler.dart';
+import 'package:coil/functions/other.dart';
 import 'package:coil/threads/handler_thread.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 
 class MainThread {
   static final MainThread instance = MainThread.internal();
   static final ReceivePort receivePort = ReceivePort('mainFromHandler');
+
+  static final Map<String, StreamController> streamMap = {
+    'Processing': MediaHandler().processing,
+    'Position': MediaHandler().position,
+    'Playing': MediaHandler().playing,
+    'Duration': MediaHandler().duration,
+  };
 
   static late final SendPort sendPort;
   factory MainThread() {
@@ -21,19 +31,19 @@ class MainThread {
         MapEntry entry = jsonDecode(message).entries.first;
         final key = entry.key;
         final value = entry.value;
-        if (key == 'Processing') {
-          MediaHandler().processing.add(value);
-        } else if (key == 'Position') {
-          MediaHandler().position.sink.add(value);
-        } else if (key == 'Playing') {
-          MediaHandler().playing.sink.add(value);
-        } else if (key == 'Duration') {
-          MediaHandler().duration.sink.add(value);
+        if (key == 'Error') {
+          showSnack(value, false);
+        } else {
+          streamMap[key]?.sink.add(value);
         }
       }
     });
     //isolateData.token = RootIsolateToken.instance!;
-    FlutterIsolate.spawn(handlerThread, receivePort.sendPort);
+    if (Platform.isAndroid || Platform.isIOS) {
+      FlutterIsolate.spawn(handlerThread, receivePort.sendPort);
+    } else {
+      handlerThread(receivePort.sendPort);
+    }
   }
 
   static Future<void> callFn(Map map) async {

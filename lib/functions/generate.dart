@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../audio/handler.dart';
-import '../audio/queue.dart';
 import '../data.dart';
 import '../media/media.dart';
 import '../playlist/playlist.dart';
 
 Map<int, List<Media>> generated = {};
-Future<bool> generate(List<Media> rawList) async {
+Future<List<Media>> generate(List message) async {
+  List<Media> rawList = message[0];
+  pf['instance'] = message[1];
+  pf['indie'] = message[2];
   List<Media> list = rawList.toList()..shuffle();
   generated.clear();
   var futures = <Future>[];
@@ -46,9 +47,8 @@ Future<bool> generate(List<Media> rawList) async {
   for (int i = 0; i < sorted.length; i++) {
     finalList += sorted.values.elementAt(i)..shuffle();
   }
-  MediaHandler().load(finalList);
   generated.clear();
-  return false;
+  return finalList;
 }
 
 Future<void> generateFromId(String id) async {

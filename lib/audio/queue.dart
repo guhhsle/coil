@@ -57,16 +57,10 @@ extension QueueHandler on MediaHandler {
     refresh();
   }
 
-  Future<void> preload({int range = 5, List<Media>? queue}) async {
-    var futures = <Future>[];
-    queue ??= queuePlaying;
-    for (int i = current.value - 2; i < current.value + range; i++) {
-      if (i >= 0 && i < queue.length) {
-        futures.add(queue[i].forceLoad());
-      }
-    }
-    await Future.wait(futures);
-  }
+  Future<void> preload() => queuePlaying.preload(
+        current.value - 2,
+        current.value + 5,
+      );
 
   void load(List<Media> list) {
     if (list == queuePlaying) return;

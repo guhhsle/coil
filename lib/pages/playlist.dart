@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
-import 'package:coil/audio/queue.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../audio/float.dart';
+import '../audio/queue.dart';
+import '../media/http.dart';
 import '../audio/handler.dart';
 import '../functions/export.dart';
 import '../functions/generate.dart';
@@ -50,6 +52,7 @@ class PlaylistPageState extends State<PlaylistPage> {
               );
             }
             list = snap.data!;
+            unawaited(list.list.preload(0, 10));
             return Scaffold(
               floatingActionButton: const Float(),
               appBar: AppBar(
@@ -76,9 +79,14 @@ class PlaylistPageState extends State<PlaylistPage> {
                     tooltip: t('Generate similar'),
                     onPressed: () {
                       setState(() => generating = true);
-                      generate(list.list).then((v) {
-                        setState(() => generating = v);
-                        //Handler().skipTo(0);
+                      compute(generate, [
+                        list.list,
+                        pf['instance'],
+                        pf['indie'],
+                      ]).then((value) {
+                        MediaHandler().load(value);
+                        MediaHandler().skipTo(0);
+                        setState(() => generating = false);
                       });
                     },
                     icon: generating

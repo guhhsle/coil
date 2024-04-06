@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'package:coil/audio/remember.dart';
+import 'package:coil/functions/other.dart';
+
+import '../data.dart';
 import 'cache.dart';
 import 'http.dart';
 import '../audio/queue.dart';
@@ -10,7 +14,10 @@ extension MediaAudio on Media {
   Future<void> play() async {
     if (!offline) {
       unawaited(addTo100());
-      if (await forceLoad() == null) return;
+      if (await forceLoad() == null) {
+        showSnack("Can't load this media on this instance", false);
+        return;
+      }
     }
     MainThread.callFn({
       'play': {
@@ -18,6 +25,10 @@ extension MediaAudio on Media {
         'offline': offline,
       }
     });
+    int pos = MediaHandler().rememberedPosition(id);
+    if (pos / 60 > pf['rememberThreshold']) {
+      showSnack('Remembered on ${pos}s', true);
+    }
   }
 
   void addToQueue() => MediaHandler().addToQueue(this);

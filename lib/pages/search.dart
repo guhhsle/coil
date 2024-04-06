@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import '../media/http.dart';
 import '../layer.dart';
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
@@ -218,6 +219,7 @@ class SuggestionListState extends State<SuggestionList> {
                 if (filter == 'music_songs' || filter == 'videos') {
                   try {
                     List<Media> songs = result.map((e) => Media.from(e)).toList();
+                    unawaited(songs.preload(0, 10));
                     return Expanded(
                       child: ListView.builder(
                         physics: scrollPhysics,

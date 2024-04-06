@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/audio/handler.dart';
 import 'package:coil/audio/queue.dart';
+import 'package:coil/audio/remember.dart';
 
 extension StreamHandler on MediaHandler {
   void initStreams() {
@@ -22,21 +23,26 @@ extension StreamHandler on MediaHandler {
     ));
 
     position.stream.listen((event) {
-      lastPosition = event;
-      playbackState.add(playbackState.value.copyWith(
-        updatePosition: Duration(seconds: event),
-        bufferedPosition: Duration(seconds: event + 1),
-      ));
+      if (queuePlaying.isNotEmpty) {
+        lastPosition = event;
+        checkToRemember(event);
+        playbackState.add(playbackState.value.copyWith(
+          updatePosition: Duration(seconds: event),
+          bufferedPosition: Duration(seconds: event + 1),
+        ));
+      }
     });
 
     duration.stream.listen((event) {
-      lastDuration = event;
-      queue.add(queuePlaying);
-      mediaItem.add(
-        queuePlaying[current.value].copyWith(
-          duration: Duration(seconds: event),
-        ),
-      );
+      if (queuePlaying.isNotEmpty) {
+        lastDuration = event;
+        queue.add(queuePlaying);
+        mediaItem.add(
+          queuePlaying[current.value].copyWith(
+            duration: Duration(seconds: event),
+          ),
+        );
+      }
     });
 
     playing.stream.listen((event) {

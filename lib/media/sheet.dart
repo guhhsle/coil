@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'audio.dart';
 import 'http.dart';
@@ -23,10 +24,16 @@ extension MediaSheet on Media {
     unawaited(getLyrics());
     Layer layer = Layer(
       action: Setting(title, Icons.radio_outlined, '', (c) async {
-        await generate([this]);
-        insertToQueue(0);
-        await MediaHandler().skipTo(0);
-        Navigator.of(c).pop();
+        compute(generate, [
+          [this],
+          pf['instance'],
+          pf['indie'],
+        ]).then((value) {
+          MediaHandler().load(value);
+          insertToQueue(0);
+          MediaHandler().skipTo(0);
+          Navigator.of(c).pop();
+        });
       }),
       leading: (context) => SizedBox(
         height: 40,

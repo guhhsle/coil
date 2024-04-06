@@ -41,6 +41,7 @@ void handlerThread(SendPort answerPort) {
     } else {
       await player.setAudioSource(
         AudioSource.uri(Uri.parse(song['url'])),
+        //initialPosition: Duration(seconds: song['position']),
       );
     }
     await player.play();
@@ -69,7 +70,11 @@ void handlerThread(SendPort answerPort) {
   receivePort.listen((message) {
     if (message is String) {
       MapEntry entry = jsonDecode(message).entries.first;
-      funcMap[entry.key]?.call(entry.value);
+      try {
+        funcMap[entry.key]?.call(entry.value);
+      } catch (e) {
+        callFn({'Error': '$e'});
+      }
     }
   });
 }

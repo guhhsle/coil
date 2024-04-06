@@ -17,6 +17,7 @@ class MediaHandler extends BaseAudioHandler {
   int lastDuration = 1000;
   int lastPosition = 0;
   bool lastPlaying = false;
+  String lastProcessing = 'idle';
   LoopMode loop = LoopMode.off;
   List<Media> queuePlaying = [];
   final ValueNotifier<int> current = ValueNotifier(0);

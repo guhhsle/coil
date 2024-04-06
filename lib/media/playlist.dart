@@ -1,8 +1,6 @@
 import 'dart:convert';
-
-import 'package:coil/media/cache.dart';
 import 'package:http/http.dart';
-
+import '../media/cache.dart';
 import '../data.dart';
 import '../functions/other.dart';
 import '../playlist/playlist.dart';

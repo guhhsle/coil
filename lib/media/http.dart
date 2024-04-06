@@ -4,6 +4,18 @@ import '../audio/handler.dart';
 import '../data.dart';
 import 'media.dart';
 
+extension Preload on List<Media> {
+  Future<void> preload(int from, int to) async {
+    var futures = <Future>[];
+    for (int i = from; i < to; i++) {
+      if (i >= 0 && i < length) {
+        futures.add(this[i].forceLoad());
+      }
+    }
+    await Future.wait(futures);
+  }
+}
+
 extension MediaHTTP on Media {
   Future<String?> forceLoad() async {
     if (offline || audioUrl != null) return audioUrl;
