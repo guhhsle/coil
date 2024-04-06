@@ -21,6 +21,9 @@ extension QueueHandler on MediaHandler {
     if (i < 0 || i >= queuePlaying.length) return;
     current.value = i;
     queuePlaying[i].play();
+    if (lastProcessing != 'ready') {
+      processing.sink.add('loading');
+    }
     controller.value = PageController(initialPage: i);
     refresh();
   }
