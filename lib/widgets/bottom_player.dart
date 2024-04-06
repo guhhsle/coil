@@ -67,7 +67,7 @@ class BottomPlayer extends StatelessWidget {
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                MediaHandler().now.title,
+                                                MediaHandler().queuePlaying[i].title,
                                                 style: TextStyle(
                                                   color: Theme.of(context).appBarTheme.foregroundColor,
                                                   overflow: TextOverflow.ellipsis,

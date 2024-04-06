@@ -63,8 +63,8 @@ class Playlist {
 
 const List<String> userFiles = ['Bookmarks', '100', '100raw'];
 
-bool playlistIsCacheOnly(String name) {
+bool playlistIsCacheOnly(String url) {
   if (pf['token'] == '') return true;
-  if (userFiles.contains(name)) return true;
+  if (userFiles.contains(url)) return true;
   return false;
 }
