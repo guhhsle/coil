@@ -45,13 +45,17 @@ class MediaHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> play() => MainThread.callFn({'swap': null});
+  Future<void> play() => MainThread.callFn({'resume': null});
 
   @override
-  Future<void> pause() => MainThread.callFn({'swap': null});
+  Future<void> pause() => MainThread.callFn({'pause': null});
 
   @override
-  Future<void> stop() => MainThread.callFn({'swap': null});
+  Future<void> stop() async {
+    MainThread.callFn({'stop': null});
+    refresh();
+    queuePlaying.clear();
+  }
 
   @override
   Future<void> seek(Duration position) => MainThread.callFn({

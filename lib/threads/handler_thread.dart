@@ -19,6 +19,18 @@ void handlerThread(SendPort answerPort) {
     }
   }
 
+  void resume(dynamic non) {
+    player.play();
+  }
+
+  void pause(dynamic non) {
+    player.pause();
+  }
+
+  void stop(dynamic non) {
+    player.stop();
+  }
+
   void seek(int to) => player.seek(Duration(seconds: to));
 
   Future<void> play(dynamic song) async {
@@ -38,6 +50,9 @@ void handlerThread(SendPort answerPort) {
     'play': play,
     'swap': swap,
     'seek': seek,
+    'resume': resume,
+    'pause': pause,
+    'stop': stop,
   };
 
   player.durationStream.listen((event) {
