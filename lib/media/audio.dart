@@ -19,13 +19,13 @@ extension MediaAudio on Media {
         return;
       }
     }
+    int pos = MediaHandler().rememberedPosition(id);
     MainThread.callFn({
       'play': {
         'url': audioUrl,
         'offline': offline,
       }
     });
-    int pos = MediaHandler().rememberedPosition(id);
     if (pos / 60 > pf['rememberThreshold']) {
       showSnack('Remembered on ${pos}s', true);
     }

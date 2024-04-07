@@ -48,7 +48,7 @@ class BottomPlayer extends StatelessWidget {
                                 func: MediaHandler().current.layer,
                                 param: null,
                               ),
-                              child: MediaHandler().current.image(padding: EdgeInsets.zero),
+                              child: MediaHandler().current.image(padding: EdgeInsets.zero) ?? Container(),
                             ),
                           ),
                           Expanded(

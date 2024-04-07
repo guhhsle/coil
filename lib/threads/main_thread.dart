@@ -8,6 +8,8 @@ import 'package:coil/threads/handler_thread.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 
+import '../data.dart';
+
 class MainThread {
   static final MainThread instance = MainThread.internal();
   static final ReceivePort receivePort = ReceivePort('mainFromHandler');
@@ -28,6 +30,7 @@ class MainThread {
     receivePort.listen((message) {
       if (message is SendPort) {
         sendPort = message;
+        callFn({'volume': pf['volume']});
       } else if (message is String) {
         MapEntry entry = jsonDecode(message).entries.first;
         final key = entry.key;

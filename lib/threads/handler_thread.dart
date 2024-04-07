@@ -19,30 +19,21 @@ void handlerThread(SendPort answerPort) {
     }
   }
 
-  void resume(dynamic non) {
-    player.play();
-  }
+  void resume(dynamic non) => player.play();
 
-  void pause(dynamic non) {
-    player.pause();
-  }
+  void pause(dynamic non) => player.pause();
 
-  void stop(dynamic non) {
-    player.stop();
-  }
+  void stop(dynamic non) => player.stop();
+
+  void volume(int vol) => player.setVolume(vol / 100);
 
   void seek(int to) => player.seek(Duration(seconds: to));
 
   Future<void> play(dynamic song) async {
     if (song['offline']) {
-      await player.setAudioSource(
-        AudioSource.file(song['url']),
-      );
+      await player.setAudioSource(AudioSource.file(song['url']));
     } else {
-      await player.setAudioSource(
-        AudioSource.uri(Uri.parse(song['url'])),
-        //initialPosition: Duration(seconds: song['position']),
-      );
+      await player.setAudioSource(AudioSource.uri(Uri.parse(song['url'])));
     }
     await player.play();
   }
@@ -54,6 +45,7 @@ void handlerThread(SendPort answerPort) {
     'resume': resume,
     'pause': pause,
     'stop': stop,
+    'volume': volume,
   };
 
   player.durationStream.listen((event) {

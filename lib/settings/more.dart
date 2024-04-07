@@ -1,3 +1,4 @@
+import 'package:coil/threads/main_thread.dart';
 import 'package:flutter/material.dart';
 import '../functions/other.dart';
 import '../data.dart';
@@ -76,8 +77,8 @@ Future<Layer> moreSet(dynamic non) async => Layer(
             if (input == null || (input > 100 || input < 0)) {
               showSnack('Invalid', false);
             } else {
+              MainThread.callFn({'volume': input});
               await setPref('volume', input);
-              //Handler().setVolume();
             }
           },
         ),
