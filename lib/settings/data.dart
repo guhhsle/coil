@@ -44,5 +44,37 @@ Future<Layer> dataSet(dynamic non) async => Layer(
             }
           },
         ),
+        Setting(
+          'Search',
+          Icons.fiber_manual_record_outlined,
+          'Reorder',
+          (c) => showSheet(
+            hidePrev: c,
+            func: (non) async => Layer(
+              action: Setting(
+                'Search',
+                Icons.fiber_manual_record_outlined,
+                '',
+                (c) {},
+              ),
+              list: [
+                for (int i = 0; i < pf['searchOrder'].length; i++)
+                  Setting(
+                    pf['searchOrder'][i],
+                    Icons.expand_less_rounded,
+                    '',
+                    (c) {
+                      if (i == 0) return;
+                      List<String> l = pf['searchOrder'];
+                      setPref(
+                        'searchOrder',
+                        l..insert(i - 1, l.removeAt(i)),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ),
       ],
     );

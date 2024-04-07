@@ -1,6 +1,6 @@
-import 'package:coil/audio/handler.dart';
-import 'package:coil/threads/main_thread.dart';
 import 'package:flutter/material.dart';
+import 'handler.dart';
+import '../threads/main_thread.dart';
 import '../data.dart';
 import '../widgets/sheet_queue.dart';
 
@@ -14,14 +14,12 @@ class TopIcon extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: themeNotifier,
       builder: (context, non, child) {
-        return StreamBuilder(
-          stream: MediaHandler().processing.stream,
-          builder: (context, processingSnapshot) {
-            String processing = processingSnapshot.data ?? MediaHandler().lastProcessing;
-            return StreamBuilder(
-              stream: MediaHandler().playing.stream,
-              builder: (context, playingSnapshot) {
-                bool playing = playingSnapshot.data ?? MediaHandler().lastPlaying;
+        return ValueListenableBuilder(
+          valueListenable: MediaHandler().processing,
+          builder: (context, processing, child) {
+            return ValueListenableBuilder(
+              valueListenable: MediaHandler().playing,
+              builder: (context, playing, child) {
                 if (MediaHandler().queuePlaying.isEmpty) {
                   return Container();
                 } else if (!top || pf['player'] == 'Top') {

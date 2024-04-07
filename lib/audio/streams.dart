@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/audio/handler.dart';
 import 'package:coil/audio/queue.dart';
@@ -5,9 +7,6 @@ import 'package:coil/audio/remember.dart';
 
 extension StreamHandler on MediaHandler {
   void initStreams() {
-    position.sink.add(0);
-    playing.sink.add(false);
-    duration.sink.add(1000);
     playbackState.add(playbackState.value.copyWith(
       controls: [
         MediaControl.skipToPrevious,
@@ -22,9 +21,9 @@ extension StreamHandler on MediaHandler {
       queueIndex: 0,
     ));
 
-    position.stream.listen((event) {
+    position.addListener(() {
       if (queuePlaying.isNotEmpty) {
-        lastPosition = event;
+        int event = position.value;
         checkToRemember(event);
         playbackState.add(playbackState.value.copyWith(
           updatePosition: Duration(seconds: event),
@@ -33,20 +32,20 @@ extension StreamHandler on MediaHandler {
       }
     });
 
-    duration.stream.listen((event) {
+    duration.addListener(() {
       if (queuePlaying.isNotEmpty) {
-        lastDuration = event;
+        int event = duration.value;
         queue.add(queuePlaying);
         mediaItem.add(
-          queuePlaying[current.value].copyWith(
+          queuePlaying[index].copyWith(
             duration: Duration(seconds: event),
           ),
         );
       }
     });
 
-    playing.stream.listen((event) {
-      lastPlaying = event;
+    playing.addListener(() {
+      bool event = playing.value;
       playbackState.add(playbackState.value.copyWith(
         playing: event,
         controls: [
@@ -57,14 +56,11 @@ extension StreamHandler on MediaHandler {
       ));
     });
 
-    processing.stream.listen((event) {
+    processing.addListener(() {
+      String event = processing.value;
       if (event == 'completed') {
-        bool isLast = current.value == queuePlaying.length - 1;
-        skipTo({
-          LoopMode.off: current.value + 1,
-          LoopMode.one: current.value,
-          LoopMode.all: isLast ? 0 : current.value + 1,
-        }[loop]!);
+        bool isLast = index == queuePlaying.length - 1;
+        skipTo(loop ? index : (isLast ? 0 : index + 1));
       }
     });
   }

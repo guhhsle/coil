@@ -97,7 +97,7 @@ extension MediaSheet on Media {
           Icons.skip_next_rounded,
           'Play next',
           (c) {
-            insertToQueue(MediaHandler().current.value + 1);
+            insertToQueue(MediaHandler().index + 1);
             Navigator.of(c).pop();
           },
         ),

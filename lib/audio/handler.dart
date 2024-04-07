@@ -6,21 +6,18 @@ import 'streams.dart';
 import '../threads/main_thread.dart';
 import '../media/media.dart';
 
-enum LoopMode { off, one, all }
-
 class MediaHandler extends BaseAudioHandler {
   static final MediaHandler instance = MediaHandler.internal();
-  final StreamController<int> position = StreamController.broadcast();
-  final StreamController<bool> playing = StreamController.broadcast();
-  final StreamController<int> duration = StreamController.broadcast();
-  final StreamController<String> processing = StreamController.broadcast();
-  int lastDuration = 1000;
-  int lastPosition = 0;
-  bool lastPlaying = false;
-  String lastProcessing = 'idle';
-  LoopMode loop = LoopMode.off;
+
+  final ValueNotifier<int> position = ValueNotifier(0);
+  final ValueNotifier<bool> playing = ValueNotifier(false);
+  final ValueNotifier<int> duration = ValueNotifier(1000);
+  final ValueNotifier<String> processing = ValueNotifier('idle');
+
+  PageController bottomText = PageController();
+  bool loop = false;
   List<Media> queuePlaying = [];
-  final ValueNotifier<int> current = ValueNotifier(0);
+  int index = 0;
   static final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
 
   factory MediaHandler() {
@@ -34,12 +31,12 @@ class MediaHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> skipToNext() => skipTo(current.value + 1);
+  Future<void> skipToNext() => skipTo(index + 1);
 
   @override
   Future<void> skipToPrevious() async {
-    if (lastPosition < 5) {
-      skipTo(current.value - 1);
+    if (position.value < 5) {
+      skipTo(index - 1);
     } else {
       MainThread.callFn({'seek': 0});
     }
@@ -64,12 +61,16 @@ class MediaHandler extends BaseAudioHandler {
       });
 
   bool selected(Media media) {
-    if (current.value >= queuePlaying.length) return false;
-    return media.id == queuePlaying[current.value].id;
+    if (index >= queuePlaying.length) return false;
+    return media.id == queuePlaying[index].id;
   }
 
   void refresh() {
     refreshQueue.value = !refreshQueue.value;
+  }
+
+  bool get isEmpty {
+    return queuePlaying.isEmpty;
   }
 
   bool tryLoad(Media media) {
@@ -84,7 +85,7 @@ class MediaHandler extends BaseAudioHandler {
     return false;
   }
 
-  Media get now {
-    return queuePlaying[current.value];
+  Media get current {
+    return queuePlaying[index];
   }
 }

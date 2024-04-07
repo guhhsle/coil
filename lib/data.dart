@@ -127,5 +127,4 @@ final ValueNotifier<String> currentLyrics = ValueNotifier('');
 final ValueNotifier<bool> showTopDock = ValueNotifier(false);
 final ValueNotifier<bool> refreshLay = ValueNotifier(true);
 final ValueNotifier<ThemeData> themeNotifier = ValueNotifier(ThemeData());
-final ValueNotifier<PageController> controller = ValueNotifier(PageController());
 final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);

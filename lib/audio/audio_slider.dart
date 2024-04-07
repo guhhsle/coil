@@ -7,10 +7,9 @@ class AudioSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: MediaHandler().position.stream,
-      builder: (context, snap) {
-        int position = snap.data ?? MediaHandler().lastPosition;
+    return ValueListenableBuilder(
+      valueListenable: MediaHandler().position,
+      builder: (context, position, child) {
         return SizedBox(
           height: 24,
           child: Slider(
@@ -21,7 +20,7 @@ class AudioSlider extends StatelessWidget {
             value: position.toDouble(),
             min: 0,
             onChanged: (d) => MainThread.callFn({'seek': d.toInt()}),
-            max: MediaHandler().lastDuration.toDouble(),
+            max: MediaHandler().duration.value.toDouble(),
           ),
         );
       },

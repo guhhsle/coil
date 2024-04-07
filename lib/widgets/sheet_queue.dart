@@ -1,6 +1,7 @@
 import 'package:coil/audio/queue.dart';
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
+import '../functions/other.dart';
 import '../media/audio.dart';
 import '../audio/audio_slider.dart';
 import '../audio/top_icon.dart';
@@ -59,16 +60,13 @@ class _SheetQueueState extends State<SheetQueue> {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12, top: 16),
                           child: IconButton(
-                            tooltip: l['Repeat ${MediaHandler().loop.name}'],
+                            tooltip: t('Repeat'),
                             color: Theme.of(context).colorScheme.primary,
-                            icon: Icon({
-                              LoopMode.off: Icons.wrap_text_rounded,
-                              LoopMode.one: Icons.repeat_one_rounded,
-                              LoopMode.all: Icons.repeat,
-                            }[MediaHandler().loop]!),
+                            icon: Icon(
+                              MediaHandler().loop ? Icons.repeat_one_rounded : Icons.wrap_text_rounded,
+                            ),
                             onPressed: () {
-                              int i = LoopMode.values.toList().indexOf(MediaHandler().loop);
-                              MediaHandler().loop = LoopMode.values[(i + 1) % 3];
+                              MediaHandler().loop = !MediaHandler().loop;
                               setState(() {});
                             },
                           ),
@@ -84,63 +82,58 @@ class _SheetQueueState extends State<SheetQueue> {
                     ),
                     const AudioSlider(),
                     Expanded(
-                      child: ValueListenableBuilder<int>(
-                        valueListenable: MediaHandler().current,
-                        builder: (context, data, child) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: Scrollbar(
-                              controller: controller,
-                              child: ListView.builder(
-                                controller: controller,
-                                physics: scrollPhysics,
-                                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                                itemCount: MediaHandler().queuePlaying.length,
-                                itemBuilder: (context, i) {
-                                  return Dismissible(
-                                    background: Container(
-                                      color: Colors.blue,
-                                      child: const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 32),
-                                          child: Icon(
-                                            Icons.arrow_upward_rounded,
-                                            color: Color(0xFF282a36),
-                                          ),
-                                        ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Scrollbar(
+                          controller: controller,
+                          child: ListView.builder(
+                            controller: controller,
+                            physics: scrollPhysics,
+                            padding: const EdgeInsets.only(top: 8, bottom: 16),
+                            itemCount: MediaHandler().queuePlaying.length,
+                            itemBuilder: (context, i) {
+                              return Dismissible(
+                                background: Container(
+                                  color: Colors.blue,
+                                  child: const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 32),
+                                      child: Icon(
+                                        Icons.arrow_upward_rounded,
+                                        color: Color(0xFF282a36),
                                       ),
                                     ),
-                                    secondaryBackground: Container(
-                                      color: Colors.red,
-                                      child: const Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(right: 32),
-                                          child: Icon(
-                                            Icons.delete_rounded,
-                                            color: Color(0xFF282a36),
-                                          ),
-                                        ),
+                                  ),
+                                ),
+                                secondaryBackground: Container(
+                                  color: Colors.red,
+                                  child: const Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 32),
+                                      child: Icon(
+                                        Icons.delete_rounded,
+                                        color: Color(0xFF282a36),
                                       ),
                                     ),
-                                    onDismissed: (direction) {
-                                      Media item = MediaHandler().queuePlaying[i];
-                                      bool e = i == MediaHandler().current.value;
-                                      MediaHandler().removeItemAt(i);
-                                      if (direction == DismissDirection.startToEnd) {
-                                        item.insertToQueue(i - 1, e: e);
-                                      }
-                                      setState(() {});
-                                    },
-                                    key: Key(MediaHandler().queuePlaying[i].id),
-                                    child: SongTile(list: MediaHandler().queuePlaying, i: i),
-                                  );
+                                  ),
+                                ),
+                                onDismissed: (direction) {
+                                  Media item = MediaHandler().queuePlaying[i];
+                                  bool e = i == MediaHandler().index;
+                                  MediaHandler().removeItemAt(i);
+                                  if (direction == DismissDirection.startToEnd) {
+                                    item.insertToQueue(i - 1, e: e);
+                                  }
+                                  setState(() {});
                                 },
-                              ),
-                            ),
-                          );
-                        },
+                                key: Key(MediaHandler().queuePlaying[i].id),
+                                child: SongTile(list: MediaHandler().queuePlaying, i: i),
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ],

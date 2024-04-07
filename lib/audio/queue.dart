@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:coil/media/audio.dart';
 import 'package:coil/media/http.dart';
 import 'package:flutter/material.dart';
-
-import '../data.dart';
 import '../media/media.dart';
 import 'handler.dart';
 
@@ -13,57 +11,54 @@ extension QueueHandler on MediaHandler {
     queuePlaying.add(media);
     unawaited(preload());
     if (queuePlaying.length == 1) skipTo(0);
-    controller.value = PageController(initialPage: current.value);
+    bottomText = PageController(initialPage: index);
     refresh();
   }
 
   Future<void> skipTo(int i) async {
     if (i < 0 || i >= queuePlaying.length) return;
-    current.value = i;
+    index = i;
     queuePlaying[i].play();
-    if (lastProcessing != 'ready') {
-      processing.sink.add('loading');
+    if (processing.value != 'ready') {
+      processing.value = 'loading';
     }
-    controller.value = PageController(initialPage: i);
+    bottomText = PageController(initialPage: i);
     refresh();
   }
 
-  void insertToQueue(Media media, int index, {bool e = false}) {
+  void insertToQueue(Media media, int i, {bool e = false}) {
     if (queuePlaying.isEmpty) {
       addToQueue(media);
       return;
     }
-    queuePlaying.insert(index, media);
+    queuePlaying.insert(i, media);
     unawaited(preload());
     if (e) {
-      current.value = current.value - 1;
-    } else if (index <= current.value) {
-      current.value = current.value + 1;
+      index--;
+    } else if (i <= index) {
+      index++;
     }
-    controller.value = PageController(initialPage: current.value);
+    bottomText = PageController(initialPage: index);
     refresh();
   }
 
-  void removeItemAt(int index) {
-    queuePlaying.removeAt(index);
+  void removeItemAt(int i) {
+    queuePlaying.removeAt(i);
     unawaited(preload());
-    if (index < current.value) current.value = current.value - 1;
-    controller.value = PageController(initialPage: current.value);
+    if (i < index) index--;
+    bottomText = PageController(initialPage: index);
     refresh();
   }
 
   void shuffle() {
-    Media media = queuePlaying[current.value];
+    Media media = current;
     queuePlaying.shuffle();
-    current.value = queuePlaying.indexOf(media);
-    controller.value = PageController(initialPage: current.value);
+    index = queuePlaying.indexOf(media);
+    bottomText = PageController(initialPage: index);
     refresh();
   }
 
-  Future<void> preload() => queuePlaying.preload(
-        current.value - 2,
-        current.value + 5,
-      );
+  Future<void> preload() => queuePlaying.preload(index - 2, index + 5);
 
   void load(List<Media> list) {
     if (list == queuePlaying) return;

@@ -5,13 +5,14 @@ import 'dart:isolate';
 import 'package:coil/audio/handler.dart';
 import 'package:coil/functions/other.dart';
 import 'package:coil/threads/handler_thread.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 
 class MainThread {
   static final MainThread instance = MainThread.internal();
   static final ReceivePort receivePort = ReceivePort('mainFromHandler');
 
-  static final Map<String, StreamController> streamMap = {
+  static final Map<String, ValueNotifier> streamMap = {
     'Processing': MediaHandler().processing,
     'Position': MediaHandler().position,
     'Playing': MediaHandler().playing,
@@ -34,7 +35,7 @@ class MainThread {
         if (key == 'Error') {
           showSnack(value, false);
         } else {
-          streamMap[key]?.sink.add(value);
+          streamMap[key]?.value = value;
         }
       }
     });

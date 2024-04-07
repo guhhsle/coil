@@ -47,7 +47,7 @@ double? calculateShift(BuildContext context, int index, Map map) {
   for (int i = 0; i < index - 1; i++) {
     wantedShift += 24 + t(map.keys.elementAt(i)).length * word;
   }
-  double maxShift = 80 + tagsLength - width;
+  double maxShift = 86 + tagsLength - width;
 
   if (wantedShift < maxShift) {
     return wantedShift;

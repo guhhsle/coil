@@ -1,6 +1,13 @@
 String versions = """
 
 
+1.0.0						07.04.24
+
+	Seperate thread for recommending
+	Seperate thread for player
+	Simpler settings
+
+
 0.9.13						29.03.24
 
 	Changed the audio player
