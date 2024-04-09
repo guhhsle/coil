@@ -23,42 +23,23 @@ extension MediaHTTP on Media {
       if (MediaHandler().tryLoad(this)) return audioUrl!;
       Response result = await get(Uri.https(pf['instance'], 'streams/$id'));
       Map raw = jsonDecode(result.body);
-      List audios = raw['audioStreams'];
+      audioUrls = (raw['audioStreams'] as List).map((e) => MediaLink.from(e)).toList()
+        ..sort((a, b) => a.bitrate!.compareTo(b.bitrate!));
 
-      Map<String, int> bitrates = {};
-      for (int i = 0; i < audios.length; i++) {
-        bitrates.addAll({audios[i]['url']: audios[i]['bitrate']});
-      }
-      Map<String, int> sorted = Map.fromEntries(
-        bitrates.entries.toList()..sort((e1, e2) => e1.value.compareTo(e2.value)),
-      );
-      audioUrls = sorted;
-      String url = sorted.keys.first;
-      int diff = ((pf['bitrate'] as int) - sorted.values.first).abs();
-      if (pf['bitrate'] == 180000) {
-        url = sorted.keys.last;
-      } else if (pf['bitrate'] != 30000) {
-        for (int i = 1; i < sorted.length; i++) {
-          if (((pf['bitrate'] as int) - sorted.values.elementAt(i)).abs() < diff) {
-            url = sorted.keys.elementAt(i);
-            diff = ((pf['bitrate'] as int) - sorted.values.elementAt(i)).abs();
-          }
+      videoUrls = (raw['videoStreams'] as List).where((e) => !e['videoOnly']).map((e) => MediaLink.from(e)).toList()
+        ..sort((a, b) => b.quality!.compareTo(a.quality!));
+
+      String url = audioUrls[0].url;
+      int diff = (pf['bitrate'] - audioUrls[0].bitrate!).abs();
+      for (MediaLink link in audioUrls) {
+        int currDiff = (pf['bitrate'] - link.bitrate!).abs();
+        if (currDiff < diff) {
+          url = link.url;
+          diff = currDiff;
         }
       }
+
       audioUrl = url;
-      videoUrls = [];
-      for (int i = raw['videoStreams'].length - 1; i >= 0; i--) {
-        if (!raw['videoStreams'][i]['videoOnly']) {
-          Map video = raw['videoStreams'][i];
-          videoUrls.add(
-            {
-              'url': video['url'],
-              'format': video['format'],
-              'quality': video['quality'],
-            },
-          );
-        }
-      }
     } catch (e) {
       //FORMAT ERROR
     }

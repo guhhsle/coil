@@ -1,15 +1,36 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-
 import '../data.dart';
 import 'map.dart';
+
+class MediaLink {
+  String url;
+  int? bitrate;
+  String? format, quality;
+
+  MediaLink({
+    required this.url,
+    this.bitrate,
+    this.format,
+    this.quality,
+  });
+
+  static MediaLink from(Map e) {
+    return MediaLink(
+      url: e['url'],
+      format: e['format'],
+      quality: e['quality'],
+      bitrate: e['bitrate'],
+    );
+  }
+}
 
 class Media extends MediaItem {
   int quality, index, reps;
   bool offline;
   String? audioUrl, playlist, uploaderUrl, lyrics;
-  Map<String, int> audioUrls;
-  List<Map> videoUrls;
+  List<MediaLink> audioUrls;
+  List<MediaLink> videoUrls;
 
   Media({
     required super.id,
@@ -18,7 +39,7 @@ class Media extends MediaItem {
     this.playlist,
     this.audioUrl,
     this.uploaderUrl,
-    this.audioUrls = const {},
+    this.audioUrls = const [],
     this.lyrics,
     this.videoUrls = const [],
     this.offline = false,

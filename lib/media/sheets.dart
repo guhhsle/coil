@@ -33,17 +33,17 @@ extension MediaSheets on Media {
                   (c) {},
                 ),
                 list: [
-                  for (int i = audioUrls.length - 1; i >= 0; i--)
+                  for (MediaLink link in audioUrls)
                     Setting(
-                      '${audioUrls.keys.elementAt(i) == audioUrl ? '>   ' : ''}${audioUrls.values.elementAt(i)}',
+                      '${link.url == audioUrl ? '>   ' : ''}${link.bitrate}',
                       Icons.graphic_eq_rounded,
-                      '',
+                      link.format ?? '',
                       (c) async => await launchUrl(
-                        Uri.parse(audioUrls.keys.elementAt(i)),
+                        Uri.parse(link.url),
                         mode: LaunchMode.externalApplication,
                       ),
                     ),
-                ],
+                ].reversed.toList(),
               ),
             );
           },
@@ -57,13 +57,13 @@ extension MediaSheets on Media {
             mode: LaunchMode.externalApplication,
           ),
         ),
-        for (Map video in videoUrls)
+        for (MediaLink link in videoUrls)
           Setting(
-            video['quality'],
+            link.quality!,
             Icons.theaters_rounded,
-            video['format'],
+            link.format!,
             (c) => launchUrl(
-              Uri.parse(video['url']),
+              Uri.parse(link.url),
               mode: LaunchMode.externalApplication,
             ),
           ),
@@ -79,17 +79,17 @@ extension MediaSheets on Media {
     Playlist bookmarks = await Playlist.load('Bookmarks', [2]);
 
     bool bookmarked = bookmarks.list.indexWhere((e) => e.id == id) != -1;
-    Map<dynamic, bool?> playlists = {};
+    Map<dynamic, String> playlists = {};
 
     for (var map in userPlaylists.value) {
-      bool? has;
-      try {
-        var pl = await Playlist.load(map['id'], [2]);
-        has = pl.list.indexWhere((e) => e.id == id) != -1;
-      } catch (e) {
-        //NOT CACHED
+      var pl = await Playlist.load(map['id'], [2]);
+      if (pl.list.isEmpty) {
+        // NOT CACHED
+        playlists.addAll({map: '?'});
+      } else {
+        bool has = pl.list.indexWhere((e) => e.id == id) != -1;
+        playlists.addAll({map: has ? 'true' : 'false'});
       }
-      playlists.addAll({map: has});
     }
 
     return Layer(
@@ -126,7 +126,7 @@ extension MediaSheets on Media {
             (entry) => Setting(
               entry.key['name'],
               Icons.clear_all_rounded,
-              entry.value == null ? '?' : '${entry.value}',
+              entry.value,
               (c) => addToPlaylist(entry.key['id']),
             ),
           )
