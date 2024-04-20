@@ -47,6 +47,7 @@ extension MediaPlaylist on Media {
     if (playlistIsCacheOnly(playlistId)) {
       await forceAddBackup(playlistId);
     } else {
+      showSnack('Loading', true);
       Response response = await post(
         Uri.https(pf['authInstance'], 'user/playlists/add'),
         headers: {'Authorization': pf['token']},

@@ -21,6 +21,8 @@ dependencies:
   just_audio_mpv: any
   flutter_isolate: any
 
+  flashy_flushbar: any
+
 
   flutter:
     sdk: flutter

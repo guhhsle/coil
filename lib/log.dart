@@ -6,6 +6,7 @@ String versions = """
 	Seperate thread for recommending
 	Seperate thread for player
 	Simpler settings
+	Better snackbar
 
 
 0.9.13						29.03.24

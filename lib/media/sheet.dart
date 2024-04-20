@@ -23,8 +23,11 @@ extension MediaSheet on Media {
     unawaited(forceLoad().then((v) => loaded.value = true));
     unawaited(getLyrics());
     Layer layer = Layer(
-      action: Setting(title, Icons.radio_outlined, '', (c) async {
-        compute(generate, [
+      action: Setting(
+        title,
+        Icons.radio_outlined,
+        '',
+        (c) async => compute(generate, [
           [this],
           pf['instance'],
           pf['indie'],
@@ -33,8 +36,8 @@ extension MediaSheet on Media {
           insertToQueue(0);
           MediaHandler().skipTo(0);
           Navigator.of(c).pop();
-        });
-      }),
+        }),
+      ),
       leading: (context) => SizedBox(
         height: 40,
         child: image(

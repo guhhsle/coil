@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flashy_flushbar/flashy_flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
@@ -17,23 +18,24 @@ void goToPage(Widget page) {
 }
 
 void showSnack(String text, bool good, {Function()? onTap}) {
-  ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-    SnackBar(
-      backgroundColor: good ? Colors.green.shade200 : Colors.red.shade200,
-      content: Center(
-        child: TextButton(
-          onPressed: onTap ?? () {},
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
+  FlashyFlushbar(
+    leadingWidget: Icon(
+      good ? Icons.check_rounded : Icons.error_outline,
+      color: Colors.black,
+      size: 24,
     ),
-  );
+    backgroundColor: good ? Colors.green.shade100 : Colors.red.shade100,
+    animationDuration: const Duration(milliseconds: 128),
+    message: text,
+    duration: const Duration(seconds: 3),
+    isDismissible: true,
+    onTap: onTap ?? () {},
+    messageStyle: TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+      fontFamily: pf['font'],
+    ),
+  ).show();
 }
 
 double? calculateShift(BuildContext context, int index, Map map) {
