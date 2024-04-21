@@ -24,6 +24,7 @@ void showSnack(String text, bool good, {Function()? onTap}) {
       color: Colors.black,
       size: 24,
     ),
+    margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
     backgroundColor: good ? Colors.green.shade100 : Colors.red.shade100,
     animationDuration: const Duration(milliseconds: 128),
     message: text,
