@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:coil/pages/feed.dart';
-import 'package:coil/pages/subscriptions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import '../pages/feed.dart';
+import '../pages/subscriptions.dart';
+import '../widgets/custom_card.dart';
 import '../functions/other.dart';
 import '../functions/prefs.dart';
 import '../data.dart';
@@ -11,14 +12,17 @@ import '../layer.dart';
 import '../pages/user_playlists.dart';
 
 Future<Layer> authSet(dynamic non) async => Layer(
-      leading: (c) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: IconButton(
-          icon: const Icon(Icons.person_add_rounded),
-          onPressed: () => login(false),
+      leading: (c) => Expanded(
+        child: CustomCard(
+          Setting(
+            'Sign up',
+            Icons.person_add_rounded,
+            ' ',
+            (p0) => login(false),
+          ),
         ),
       ),
-      action: Setting('Login', Icons.person_rounded, '', (c) => login(true)),
+      action: Setting('', Icons.person_rounded, 'Login', (c) => login(true)),
       list: [
         Setting(
           pf['authInstance'] == '' ? 'Authentication Instance' : '',
