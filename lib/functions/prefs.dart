@@ -1,6 +1,5 @@
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../data.dart';
 import '../layer.dart';
 import 'other.dart';
@@ -9,11 +8,8 @@ Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();
 
   for (MapEntry entry in pf.entries) {
-    if (getPref(entry.key) == null) {
-      await setPref(entry.key, entry.value);
-    } else {
-      pf[entry.key] = getPref(entry.key);
-    }
+    final val = getPref(entry.key);
+    if (val != null) pf[entry.key] = val;
   }
   if (pf['appDirectory'] == '') {
     pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
