@@ -5,9 +5,10 @@ import '../settings/data.dart';
 import '../settings/interface.dart';
 import '../settings/more.dart';
 import '../audio/top_icon.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../layer.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
+import '../template/theme.dart';
 import '../widgets/body.dart';
 
 class PageSettings extends StatelessWidget {

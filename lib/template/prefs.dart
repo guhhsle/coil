@@ -1,8 +1,8 @@
+import 'package:coil/template/functions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data.dart';
-import '../layer.dart';
-import 'other.dart';
+import 'data.dart';
+import 'layer.dart';
 
 Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();

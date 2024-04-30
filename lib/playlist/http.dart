@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../functions/other.dart';
 import '../pages/user_playlists.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
 import 'cache.dart';
 import 'map.dart';
 import 'playlist.dart';
@@ -22,6 +22,8 @@ extension PlaylistHTTP on Playlist {
         }),
       );
     }
+    name = newName;
+    unawaited(backup());
 
     unawaited(fetchUserPlaylists(true));
   }

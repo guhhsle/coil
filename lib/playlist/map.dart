@@ -1,5 +1,4 @@
 import 'package:coil/playlist/playlist.dart';
-
 import '../data.dart';
 import '../media/media.dart';
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../playlist/cache.dart';
 import '../data.dart';
+import '../playlist/cache.dart';
 import '../playlist/playlist.dart';
+import '../template/data.dart';
 import '../widgets/playlist_tile.dart';
 
 Future<void> fetchBookmarks() async {

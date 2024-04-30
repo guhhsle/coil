@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:audio_service/audio_service.dart';
 import 'package:coil/audio/handler.dart';
 import 'package:coil/audio/queue.dart';

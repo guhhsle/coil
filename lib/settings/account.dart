@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../template/data.dart';
+import '../template/layer.dart';
+import '../template/prefs.dart';
 import 'auth.dart';
-import '../data.dart';
 import '../functions/export.dart';
-import '../functions/prefs.dart';
-import '../layer.dart';
 import '../other/countries.dart';
 
 Future<Layer> accountSet(dynamic non) async => Layer(

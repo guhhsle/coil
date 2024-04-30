@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:coil/template/layer.dart';
+
+import '../functions/other.dart';
+import '../template/data.dart';
 import 'map.dart';
 import 'media.dart';
-import '../data.dart';
 import '../playlist/cache.dart';
-import '../functions/other.dart';
 import '../playlist/playlist.dart';
 
 extension MediaCache on Media {
@@ -18,6 +20,7 @@ extension MediaCache on Media {
     }
     await local.backup();
     refreshList();
+    refreshLayer();
   }
 
   Future<void> forceRemoveBackup(String url, {bool first = true}) async {
@@ -34,6 +37,7 @@ extension MediaCache on Media {
     }
     await local.backup();
     refreshList();
+    refreshLayer();
   }
 
   Future<void> addTo100() async {

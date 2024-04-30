@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../functions/other.dart';
+import 'functions.dart';
 
 class CustomChip extends StatelessWidget {
   final void Function(bool value) onSelected;

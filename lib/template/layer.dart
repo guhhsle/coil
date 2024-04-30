@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'data.dart';
-import 'functions/other.dart';
-import 'theme.dart';
-import 'widgets/sheet_model.dart';
-import 'widgets/sheet_scroll.dart';
+import 'functions.dart';
+import 'sheet_model.dart';
+import 'sheet_scroll.dart';
 
 class Setting {
-  final String title, trailing;
+  String title, trailing;
   IconData icon;
-  final Color? iconColor;
+  Color? iconColor;
   void Function(BuildContext) onTap;
-  final void Function(BuildContext)? secondary;
+  void Function(BuildContext)? secondary;
   void Function(BuildContext)? onHold;
 
   Setting(
@@ -61,12 +59,13 @@ class Setting {
 class Layer {
   final Setting action;
   final List<Setting> list;
-  Widget Function(BuildContext)? leading;
+  List<Widget> Function(BuildContext)? leading, trailing;
 
   Layer({
     required this.action,
     required this.list,
     this.leading,
+    this.trailing,
   });
 }
 
@@ -90,11 +89,6 @@ void showSheet({
       return SheetModel(func: func, param: param);
     },
   );
-}
-
-void refreshAll() {
-  refreshLayer();
-  themeNotifier.value = theme(color(true), color(false));
 }
 
 void refreshLayer() {

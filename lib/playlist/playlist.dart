@@ -1,6 +1,7 @@
-import '../data.dart';
 import '../functions/other.dart';
 import '../media/media.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
 import 'cache.dart';
 import 'http.dart';
 

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
-
 import '../data.dart';
 import '../functions/other.dart';
 import '../pages/user_playlists.dart';
 import '../playlist/playlist.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
 
 //BULK INDICATES ONE BIG FILE
 Future<void> exportUser(bool bulk) async {

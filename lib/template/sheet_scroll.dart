@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../data.dart';
-import '../layer.dart';
 import 'custom_card.dart';
+import 'data.dart';
+import 'layer.dart';
 
 class SheetScrollModel extends StatefulWidget {
   final Future<Layer> Function(dynamic) func;
@@ -45,12 +44,13 @@ class SheetScrollModelState extends State<SheetScrollModel> {
                       return Column(
                         children: [
                           Row(
-                            children: [
-                              layer.leading == null ? Container() : layer.leading!(context),
-                              Expanded(
-                                child: CustomCard(layer.action),
-                              )
-                            ],
+                            children: (layer.leading == null ? <Widget>[] : layer.leading!(context)) +
+                                [
+                                  Expanded(
+                                    child: CustomCard(layer.action),
+                                  )
+                                ] +
+                                (layer.trailing == null ? [] : layer.trailing!(context)),
                           ),
                           Expanded(
                             child: Scrollbar(

@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../layer.dart';
-import '../playlist/http.dart';
 import '../data.dart';
-import '../functions/other.dart';
+import '../playlist/http.dart';
 import '../playlist/playlist.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
 import '../widgets/playlist_tile.dart';
 
 class UserPlaylists extends StatelessWidget {

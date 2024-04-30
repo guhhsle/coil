@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../template/data.dart';
+import '../template/layer.dart';
 import 'sheet_queue.dart';
 import '../audio/queue.dart';
 import '../data.dart';
 import '../media/sheet.dart';
 import '../audio/handler.dart';
 import '../audio/top_icon.dart';
-import '../layer.dart';
 
 class BottomPlayer extends StatelessWidget {
   final bool show;

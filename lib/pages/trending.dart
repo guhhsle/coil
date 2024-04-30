@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import '../data.dart';
 import '../media/media.dart';
 import '../other/countries.dart';
+import '../template/data.dart';
 import '../widgets/song_tile.dart';
 
 class Trending extends StatelessWidget {

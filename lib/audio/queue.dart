@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:coil/media/audio.dart';
 import 'package:coil/media/http.dart';
 import 'package:flutter/material.dart';

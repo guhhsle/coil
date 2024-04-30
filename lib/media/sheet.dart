@@ -2,6 +2,11 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../data.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
+import '../template/single_child.dart';
 import 'audio.dart';
 import 'http.dart';
 import 'lyrics.dart';
@@ -9,11 +14,7 @@ import 'playlist.dart';
 import 'sheets.dart';
 import '../audio/handler.dart';
 import '../audio/queue.dart';
-import '../data.dart';
 import '../functions/generate.dart';
-import '../functions/other.dart';
-import '../functions/single_child.dart';
-import '../layer.dart';
 import '../media/media.dart';
 import '../pages/artist.dart';
 
@@ -38,13 +39,15 @@ extension MediaSheet on Media {
           Navigator.of(c).pop();
         }),
       ),
-      leading: (context) => SizedBox(
-        height: 40,
-        child: image(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          force: true,
-        ),
-      ),
+      leading: (context) => [
+        SizedBox(
+          height: 40,
+          child: image(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            force: true,
+          ),
+        )
+      ],
       list: [
         Setting(
           '',

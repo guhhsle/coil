@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
-import '../pages/user_playlists.dart';
-import 'playlist.dart';
 import '../data.dart';
 import '../functions/other.dart';
+import '../pages/user_playlists.dart';
+import '../template/data.dart';
+import 'playlist.dart';
 import 'map.dart';
 
 extension PlaylistCache on Playlist {

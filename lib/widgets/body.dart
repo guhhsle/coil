@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
-import '../data.dart';
+import '../template/data.dart';
 import 'bottom_player.dart';
 
 class Body extends StatelessWidget {

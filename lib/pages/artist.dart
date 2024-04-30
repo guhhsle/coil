@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:coil/functions/other.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import '../data.dart';
+import '../functions/other.dart';
+import '../template/custom_chip.dart';
+import '../template/data.dart';
 import 'subscriptions.dart';
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
-import '../data.dart';
 import '../media/media.dart';
 import '../widgets/body.dart';
-import '../widgets/custom_chip.dart';
 import '../widgets/playlist_tile.dart';
 import '../widgets/song_tile.dart';
 

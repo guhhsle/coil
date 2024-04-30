@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../functions/prefs.dart';
-import '../layer.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
+import '../template/prefs.dart';
 
 Future<Layer> dataSet(dynamic non) async => Layer(
       action: Setting(

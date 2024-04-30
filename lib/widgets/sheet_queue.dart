@@ -1,14 +1,14 @@
 import 'package:coil/audio/queue.dart';
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
-import '../functions/other.dart';
 import '../media/audio.dart';
 import '../audio/audio_slider.dart';
 import '../audio/top_icon.dart';
-import '../data.dart';
-import '../layer.dart';
 import '../media/media.dart';
-import 'custom_card.dart';
+import '../template/custom_card.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
 import 'song_tile.dart';
 
 class SheetQueue extends StatefulWidget {

@@ -1,5 +1,5 @@
-import '../data.dart';
-import '../functions/prefs.dart';
+import '../template/data.dart';
+import '../template/prefs.dart';
 import 'handler.dart';
 
 extension HandlerRemember on MediaHandler {

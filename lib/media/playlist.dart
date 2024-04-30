@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:coil/template/layer.dart';
 import 'package:http/http.dart';
-import '../media/cache.dart';
-import '../data.dart';
 import '../functions/other.dart';
+import '../media/cache.dart';
 import '../playlist/playlist.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
 import 'media.dart';
 
 extension MediaPlaylist on Media {
@@ -40,6 +42,7 @@ extension MediaPlaylist on Media {
       }
       await Playlist.load(playlist!, [1, 2]);
       refreshList();
+      refreshLayer();
     }
   }
 
@@ -57,6 +60,7 @@ extension MediaPlaylist on Media {
       showSnack(error ?? '${l['Added']} $title', error == null);
       await Playlist.load(playlistId, [1, 2]);
       refreshList();
+      refreshLayer();
     }
   }
 }

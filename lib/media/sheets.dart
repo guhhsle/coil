@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data.dart';
-import '../functions/other.dart';
-import '../layer.dart';
 import '../pages/user_playlists.dart';
 import '../playlist/playlist.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
 import 'media.dart';
 import 'cache.dart';
 import 'http.dart';
@@ -93,15 +93,17 @@ extension MediaSheets on Media {
     }
 
     return Layer(
-      leading: (context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: IconButton(
-          icon: const Icon(Icons.add_rounded),
-          onPressed: () async => Playlist.fromString(
-            await getInput('', hintText: 'Name'),
-          ).create(),
-        ),
-      ),
+      leading: (context) => [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: IconButton(
+            icon: const Icon(Icons.add_rounded),
+            onPressed: () async => Playlist.fromString(
+              await getInput('', hintText: 'Name'),
+            ).create(),
+          ),
+        )
+      ],
       action: bookmarked
           ? Setting(
               'Bookmarked',

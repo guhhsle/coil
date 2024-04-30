@@ -1,13 +1,13 @@
 import 'package:coil/threads/main_thread.dart';
 import 'package:flutter/material.dart';
-import '../functions/other.dart';
-import '../data.dart';
-import '../functions/prefs.dart';
-import '../functions/single_child.dart';
-import '../layer.dart';
 import '../log.dart';
 import '../other/countries.dart';
-import '../other/license.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
+import '../template/layer.dart';
+import '../template/license.dart';
+import '../template/prefs.dart';
+import '../template/single_child.dart';
 
 Future<Layer> moreSet(dynamic non) async => Layer(
       action: Setting(

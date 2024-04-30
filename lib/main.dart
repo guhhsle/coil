@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:coil/audio/handler.dart';
-import 'package:coil/theme.dart';
 import 'package:coil/threads/main_thread.dart';
 import 'package:flashy_flushbar/flashy_flushbar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'data.dart';
-import 'functions/other.dart';
-import 'functions/prefs.dart';
 import 'pages/home.dart';
+import 'template/data.dart';
+import 'template/functions.dart';
+import 'template/prefs.dart';
+import 'template/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

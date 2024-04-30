@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
 import '../functions/other.dart';
 import '../pages/artist.dart';
 import '../pages/playlist.dart';
+import '../template/data.dart';
+import '../template/functions.dart';
 
 class PlaylistTile extends StatelessWidget {
   final Map info;
