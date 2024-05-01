@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../audio/float.dart';
 import '../audio/top_icon.dart';
+import '../data.dart';
 import '../functions/other.dart';
 import '../template/animated_text.dart';
 import '../template/custom_chip.dart';

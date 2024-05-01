@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../audio/handler.dart';
-import '../template/data.dart';
+import '../data.dart';
 import 'media.dart';
 
 extension Preload on List<Media> {

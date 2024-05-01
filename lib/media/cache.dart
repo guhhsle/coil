@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:coil/template/layer.dart';
-
+import '../data.dart';
 import '../functions/other.dart';
-import '../template/data.dart';
 import 'map.dart';
 import 'media.dart';
 import '../playlist/cache.dart';

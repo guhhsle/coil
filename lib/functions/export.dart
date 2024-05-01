@@ -6,7 +6,6 @@ import '../data.dart';
 import '../functions/other.dart';
 import '../pages/user_playlists.dart';
 import '../playlist/playlist.dart';
-import '../template/data.dart';
 import '../template/functions.dart';
 
 //BULK INDICATES ONE BIG FILE

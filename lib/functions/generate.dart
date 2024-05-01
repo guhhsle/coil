@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart';
+import '../data.dart';
 import '../media/media.dart';
 import '../playlist/playlist.dart';
-import '../template/data.dart';
 
 Map<int, List<Media>> generated = {};
 Future<List<Media>> generate(List message) async {

@@ -4,6 +4,8 @@ import 'package:coil/threads/main_thread.dart';
 import 'package:flashy_flushbar/flashy_flushbar_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'data.dart';
 import 'pages/home.dart';
 import 'template/data.dart';
 import 'template/functions.dart';
@@ -13,6 +15,9 @@ import 'template/theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initPrefs();
+  if (pf['appDirectory'] == '') {
+    pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
+  }
   MainThread();
   MediaHandler();
   runApp(const MyApp());

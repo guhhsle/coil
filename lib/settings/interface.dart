@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
-import '../template/data.dart';
+import '../data.dart';
 import '../template/layer.dart';
 import '../template/prefs.dart';
 

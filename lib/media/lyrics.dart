@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 import '../data.dart';
-import '../template/data.dart';
 import 'media.dart';
 
 extension MediaLyrics on Media {

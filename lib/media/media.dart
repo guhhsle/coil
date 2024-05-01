@@ -1,6 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import '../template/data.dart';
+import '../data.dart';
 import 'map.dart';
 
 class MediaLink {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:coil/template/layer.dart';
 import 'package:http/http.dart';
+import '../data.dart';
 import '../functions/other.dart';
 import '../media/cache.dart';
 import '../playlist/playlist.dart';

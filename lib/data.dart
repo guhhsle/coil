@@ -2,6 +2,72 @@ import 'package:flutter/material.dart';
 import 'media/media.dart';
 import 'playlist/playlist.dart';
 
+Map pf = {
+  //APP
+  //'firstBoot': true,
+  'bookmarks': <String>[],
+  //ACCOUNT
+  'username': '',
+  'password': '',
+  'token': '',
+  'instance': 'Set instance',
+  'authInstance': '',
+  'location': 'United States',
+  //MORE
+  'volume': 50,
+  'locale': 'en',
+  //INTERFACE
+  //'reverse': true,
+  'artist': false,
+  'appbar': 'Black',
+  'player': 'Dock',
+  'background': 'Ivory',
+  'backgroundDark': 'Ultramarine',
+  'primary': 'Black',
+  'primaryDark': 'Light Green',
+  //HOME
+  'homeOrder': [
+    'Playlists',
+    'Offline',
+    'Bookmarks',
+    'Feed',
+    'Trending',
+    'Subscriptions',
+  ],
+  'searchOrder': [
+    'Songs',
+    'Videos',
+    'Albums',
+    'Playlists',
+    'Artists',
+    'Music playlists',
+  ],
+  'tags': 'Top',
+  //'grid': 0,
+  'sortBy': 'Name',
+  //DATA
+  'indie': true,
+  'bitrate': 180000,
+  'thumbnails': true,
+  //'songThumbnails': true,
+  'timeLimit': 8,
+  'searchHistory': <String>[],
+  'instanceHistory': <String>[],
+  'searchHistoryLimit': 100,
+  //CONSTANTS
+  'lyricsApi': 'hyperpipeapi.onrender.com',
+  'watchOnPiped': 'https://piped.video/watch?v=',
+  'musicFolder': '/sdcard/Music',
+  'appDirectory': '',
+  'font': 'JetBrainsMono',
+  'requestLimit': 50,
+  //CONTINUE-LISTENING
+  'rememberThreshold': 10,
+  'rememberLimit': 100,
+  'rememberURLs': <String>[],
+  'rememberTimes': <String>[],
+};
+
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
 final ValueNotifier<List<Media>> localMusic = ValueNotifier([]);
 final ValueNotifier<List<Playlist>> bookmarks = ValueNotifier([]);

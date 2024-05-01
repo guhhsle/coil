@@ -2,8 +2,8 @@ import 'package:coil/audio/queue.dart';
 import 'package:coil/media/sheet.dart';
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
+import '../data.dart';
 import '../media/media.dart';
-import '../template/data.dart';
 import '../template/layer.dart';
 
 class SongTile extends StatelessWidget {

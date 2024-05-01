@@ -1,4 +1,4 @@
-import '../template/data.dart';
+import '../data.dart';
 import '../template/prefs.dart';
 import 'handler.dart';
 

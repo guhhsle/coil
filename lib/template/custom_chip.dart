@@ -3,30 +3,42 @@ import 'functions.dart';
 
 class CustomChip extends StatelessWidget {
   final void Function(bool value) onSelected;
+  final void Function()? onHold;
   final bool selected, showCheckmark;
   final String label;
+  final Color? primary, background;
 
   const CustomChip({
-    Key? key,
+    super.key,
     required this.onSelected,
     required this.selected,
     required this.label,
+    this.onHold,
     this.showCheckmark = false,
-  }) : super(key: key);
+    this.primary,
+    this.background,
+  });
 
   @override
   Widget build(BuildContext context) {
+    Color pr = primary ?? Theme.of(context).primaryColor;
+    Color bg = background ?? Theme.of(context).colorScheme.background;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: InputChip(
-        selected: selected,
-        showCheckmark: showCheckmark,
-        onSelected: onSelected,
-        label: Text(
-          t(label),
-          style: TextStyle(
-            color: selected ? Theme.of(context).colorScheme.background : Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
+      child: InkWell(
+        onLongPress: onHold,
+        child: InputChip(
+          showCheckmark: showCheckmark,
+          selected: selected,
+          onSelected: onSelected,
+          backgroundColor: bg,
+          selectedColor: pr,
+          label: Text(
+            t(label),
+            style: TextStyle(
+              color: selected ? bg : pr,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

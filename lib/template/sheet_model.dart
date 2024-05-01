@@ -28,7 +28,7 @@ class _SheetModelState extends State<SheetModel> {
           valueListenable: refreshLay,
           builder: (context, non, child) {
             return FutureBuilder(
-              future: widget.func.call(widget.func),
+              future: widget.func.call(widget.param),
               builder: (context, snap) {
                 if (!snap.hasData) return Container();
                 Layer layer = snap.data!;

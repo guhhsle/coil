@@ -1,6 +1,6 @@
 import 'dart:math';
+import '../data.dart';
 import '../functions/other.dart';
-import '../template/data.dart';
 import 'media.dart';
 
 extension MediaMap on Media {

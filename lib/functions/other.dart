@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data.dart';
-import '../template/data.dart';
 import '../template/functions.dart';
 import '../template/layer.dart';
 import '../template/prefs.dart';

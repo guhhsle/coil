@@ -1,8 +1,8 @@
 import 'package:coil/threads/main_thread.dart';
 import 'package:flutter/material.dart';
+import '../countries.dart';
+import '../data.dart';
 import '../log.dart';
-import '../other/countries.dart';
-import '../template/data.dart';
 import '../template/functions.dart';
 import '../template/layer.dart';
 import '../template/license.dart';

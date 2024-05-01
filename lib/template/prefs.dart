@@ -1,18 +1,14 @@
-import 'package:coil/template/functions.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../data.dart';
 import 'data.dart';
+import 'functions.dart';
 import 'layer.dart';
 
 Future<void> initPrefs() async {
   prefs = await SharedPreferences.getInstance();
-
   for (MapEntry entry in pf.entries) {
     final val = getPref(entry.key);
     if (val != null) pf[entry.key] = val;
-  }
-  if (pf['appDirectory'] == '') {
-    pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
   }
 }
 

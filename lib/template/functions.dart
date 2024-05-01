@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:coil/template/theme.dart';
 import 'package:flashy_flushbar/flashy_flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../data.dart';
 import '../template/data.dart';
+import 'theme.dart';
 
 void goToPage(Widget page) {
   if (navigatorKey.currentContext == null) return;

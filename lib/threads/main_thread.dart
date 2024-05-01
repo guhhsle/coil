@@ -6,8 +6,7 @@ import 'package:coil/audio/handler.dart';
 import 'package:coil/threads/handler_thread.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
-
-import '../template/data.dart';
+import '../data.dart';
 import '../template/functions.dart';
 
 class MainThread {

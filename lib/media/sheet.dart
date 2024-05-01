@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../data.dart';
-import '../template/data.dart';
 import '../template/functions.dart';
 import '../template/layer.dart';
 import '../template/single_child.dart';

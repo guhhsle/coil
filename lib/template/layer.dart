@@ -75,9 +75,7 @@ void showSheet({
   bool scroll = false,
   BuildContext? hidePrev,
 }) {
-  if (hidePrev != null) {
-    Navigator.of(hidePrev).pop();
-  }
+  if (hidePrev != null) Navigator.of(hidePrev).pop();
   showModalBottomSheet(
     context: navigatorKey.currentContext!,
     isScrollControlled: true,

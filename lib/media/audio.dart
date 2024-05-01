@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:coil/audio/remember.dart';
-import '../template/data.dart';
+import '../data.dart';
 import '../template/functions.dart';
 import 'cache.dart';
 import 'http.dart';
