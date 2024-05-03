@@ -1,6 +1,12 @@
+import 'package:coil/settings/account.dart';
+import 'package:coil/settings/data.dart';
+import 'package:coil/settings/interface.dart';
+import 'package:coil/template/theme.dart';
 import 'package:flutter/material.dart';
 import 'media/media.dart';
 import 'playlist/playlist.dart';
+import 'settings/more.dart';
+import 'template/layer.dart';
 
 Map pf = {
   //APP
@@ -67,6 +73,15 @@ Map pf = {
   'rememberURLs': <String>[],
   'rememberTimes': <String>[],
 };
+
+final List<Setting> settings = [
+  Setting('More', Icons.segment_rounded, '', (c) => showSheet(func: moreSet)),
+  Setting('Account', Icons.person_rounded, '', (c) => showSheet(func: accountSet)),
+  Setting('Data', Icons.cloud_rounded, '', (c) => showSheet(func: dataSet)),
+  Setting('Interface', Icons.toggle_on, '', (c) => showSheet(func: interfaceSet)),
+  Setting('Primary', Icons.colorize_rounded, '', (c) => showSheet(func: themeMap, param: true, scroll: true)),
+  Setting('Background', Icons.colorize_rounded, '', (c) => showSheet(func: themeMap, param: false, scroll: true)),
+];
 
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
 final ValueNotifier<List<Media>> localMusic = ValueNotifier([]);
