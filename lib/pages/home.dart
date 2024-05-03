@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../audio/float.dart';
-import '../audio/top_icon.dart';
 import '../data.dart';
 import '../functions/other.dart';
 import '../template/animated_text.dart';
@@ -10,12 +8,12 @@ import '../template/custom_chip.dart';
 import '../template/data.dart';
 import '../template/functions.dart';
 import '../template/prefs.dart';
-import '../widgets/body.dart';
+import '../template/settings.dart';
+import '../widgets/frame.dart';
 import 'bookmarks.dart';
 import 'feed.dart';
 import 'local.dart';
 import 'search.dart';
-import 'settings.dart';
 import 'user_playlists.dart';
 import 'subscriptions.dart';
 import 'trending.dart';
@@ -26,13 +24,6 @@ class Home extends StatefulWidget {
   @override
   State<Home> createState() => _HomeState();
 }
-
-Map<String, Widget> homeMap = {};
-String selectedHome = 'Playlists';
-ValueNotifier<String> barText = ValueNotifier(formatInstanceName(pf['instance']));
-PageController pageController = PageController();
-ScrollController scrollController = ScrollController();
-GlobalKey key = GlobalKey(debugLabel: 'Tags');
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
@@ -70,82 +61,73 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: const Float(),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 8),
-          child: InkWell(
-            onTap: () async {
-              String instance = await instanceHistory();
-              setPref('instance', instance);
-              barText.value = formatInstanceName(instance);
-            },
-            child: ValueListenableBuilder(
-              valueListenable: barText,
-              builder: (context, value, child) => AnimatedText(
-                text: value,
-                speed: const Duration(milliseconds: 48),
-                style: Theme.of(context).appBarTheme.titleTextStyle!,
-                key: ValueKey(value),
-              ),
+    return Frame(
+      automaticallyImplyLeading: false,
+      title: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: InkWell(
+          onTap: () async {
+            String instance = await instanceHistory();
+            setPref('instance', instance);
+            barText.value = formatInstanceName(instance);
+          },
+          child: ValueListenableBuilder(
+            valueListenable: barText,
+            builder: (context, value, child) => AnimatedText(
+              text: value,
+              speed: const Duration(milliseconds: 48),
+              style: Theme.of(context).appBarTheme.titleTextStyle!,
+              key: ValueKey(value),
             ),
           ),
         ),
-        actions: [
-          const TopIcon(),
-          IconButton(
-            tooltip: t('Search'),
-            icon: const Icon(Icons.fiber_manual_record_outlined),
-            onPressed: () => showSearch(context: context, delegate: Delegate()),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              tooltip: t('Menu'),
-              icon: const Icon(Icons.menu_rounded),
-              onPressed: () => goToPage(PageSettings()),
-            ),
-          ),
-        ],
       ),
-      body: Body(
-        child: Column(
-          children: [
-            pf['tags'] == 'Top'
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: HomeTags(key: key),
-                  )
-                : Container(),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: pf['tags'] != 'Top' ? 16 : 0,
-                ),
-                child: PageView(
-                  physics: scrollPhysics,
-                  controller: pageController,
-                  onPageChanged: (index) {
-                    selectedHome = homeMap.keys.elementAt(index);
-                    barText.value = t(selectedHome);
-                    if (calculateShift(context, index, homeMap) != null) {
-                      scrollController.animateTo(
-                        calculateShift(context, index, homeMap)!,
-                        duration: const Duration(milliseconds: 256),
-                        curve: Curves.easeOutQuad,
-                      );
-                    }
-                    setState(() {});
-                  },
-                  children: homeMap.values.toList(),
-                ),
+      actions: [
+        IconButton(
+          tooltip: t('Search'),
+          icon: const Icon(Icons.fiber_manual_record_outlined),
+          onPressed: () => goToPage(const Search()),
+        ),
+        IconButton(
+          tooltip: t('Menu'),
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: () => goToPage(const PageSettings()),
+        ),
+      ],
+      child: Column(
+        children: [
+          pf['tags'] == 'Top'
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: HomeTags(key: key),
+                )
+              : Container(),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: pf['tags'] != 'Top' ? 16 : 0,
+              ),
+              child: PageView(
+                physics: scrollPhysics,
+                controller: pageController,
+                onPageChanged: (index) {
+                  selectedHome = homeMap.keys.elementAt(index);
+                  barText.value = t(selectedHome);
+                  if (calculateShift(context, index, homeMap) != null) {
+                    scrollController.animateTo(
+                      calculateShift(context, index, homeMap)!,
+                      duration: const Duration(milliseconds: 256),
+                      curve: Curves.easeOutQuad,
+                    );
+                  }
+                  setState(() {});
+                },
+                children: homeMap.values.toList(),
               ),
             ),
-            pf['tags'] == 'Bottom' ? HomeTags(key: key) : Container(),
-          ],
-        ),
+          ),
+          pf['tags'] == 'Bottom' ? HomeTags(key: key) : Container(),
+        ],
       ),
     );
   }

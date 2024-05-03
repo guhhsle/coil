@@ -7,11 +7,9 @@ import '../data.dart';
 import '../functions/other.dart';
 import '../template/custom_chip.dart';
 import '../template/data.dart';
+import '../widgets/frame.dart';
 import 'subscriptions.dart';
-import '../audio/float.dart';
-import '../audio/top_icon.dart';
 import '../media/media.dart';
-import '../widgets/body.dart';
 import '../widgets/playlist_tile.dart';
 import '../widgets/song_tile.dart';
 
@@ -93,80 +91,69 @@ class PageArtistState extends State<PageArtist> {
   @override
   Widget build(BuildContext context) {
     isSubscribed = userSubscriptions.value.indexWhere((e) => e['url'].contains(widget.url)) >= 0;
-    return Scaffold(
-      floatingActionButton: const Float(),
-      appBar: AppBar(
-        title: Text(formatName(widget.artist)),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: TopIcon(),
+    return Frame(
+      title: Text(formatName(widget.artist)),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            height: 64,
+            child: ListView(
+              physics: scrollPhysics,
+              scrollDirection: Axis.horizontal,
+              children: [
+                for (String option in options)
+                  CustomChip(
+                    selected: selectedHome == option,
+                    onSelected: (val) {
+                      selectedHome = option;
+                      setState(() {});
+                    },
+                    label: option,
+                  ),
+                CustomChip(
+                  selected: isSubscribed,
+                  showCheckmark: true,
+                  onSelected: (val) => unSubscribe(),
+                  label: '${videos['subscriberCount']}',
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                late List list;
+                if (selectedHome == 'Videos') {
+                  list = videos['relatedStreams'] ?? [];
+                } else {
+                  list = playlists['content'] ?? [];
+                }
+                List<Media> songList = [];
+                return RefreshIndicator(
+                  onRefresh: () async => await loadContent(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 32, top: 16),
+                    physics: scrollPhysics,
+                    itemCount: list.length,
+                    itemBuilder: (context, i) {
+                      if (list[i]['type'] == 'stream') {
+                        songList.add(Media.from(list[i]));
+                        return SongTile(list: songList, i: songList.length - 1);
+                      } else {
+                        return PlaylistTile(
+                          info: list[i],
+                          path: const [0, 1],
+                          playlist: true,
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           )
         ],
-      ),
-      body: Body(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              height: 64,
-              child: ListView(
-                physics: scrollPhysics,
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (String option in options)
-                    CustomChip(
-                      selected: selectedHome == option,
-                      onSelected: (val) {
-                        selectedHome = option;
-                        setState(() {});
-                      },
-                      label: option,
-                    ),
-                  CustomChip(
-                    selected: isSubscribed,
-                    showCheckmark: true,
-                    onSelected: (val) => unSubscribe(),
-                    label: '${videos['subscriberCount']}',
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: Builder(
-                builder: (context) {
-                  late List list;
-                  if (selectedHome == 'Videos') {
-                    list = videos['relatedStreams'] ?? [];
-                  } else {
-                    list = playlists['content'] ?? [];
-                  }
-                  List<Media> songList = [];
-                  return RefreshIndicator(
-                    onRefresh: () async => await loadContent(),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 32, top: 16),
-                      physics: scrollPhysics,
-                      itemCount: list.length,
-                      itemBuilder: (context, i) {
-                        if (list[i]['type'] == 'stream') {
-                          songList.add(Media.from(list[i]));
-                          return SongTile(list: songList, i: songList.length - 1);
-                        } else {
-                          return PlaylistTile(
-                            info: list[i],
-                            path: const [0, 1],
-                            playlist: true,
-                          );
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

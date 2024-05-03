@@ -3,6 +3,7 @@ import 'package:coil/settings/data.dart';
 import 'package:coil/settings/interface.dart';
 import 'package:coil/template/theme.dart';
 import 'package:flutter/material.dart';
+import 'functions/other.dart';
 import 'media/media.dart';
 import 'playlist/playlist.dart';
 import 'settings/more.dart';
@@ -93,3 +94,10 @@ final ValueNotifier<String> currentLyrics = ValueNotifier('');
 
 final ValueNotifier<bool> showTopDock = ValueNotifier(false);
 final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
+
+Map<String, Widget> homeMap = {};
+String selectedHome = 'Playlists';
+ValueNotifier<String> barText = ValueNotifier(formatInstanceName(pf['instance']));
+PageController pageController = PageController();
+ScrollController scrollController = ScrollController();
+GlobalKey key = GlobalKey(debugLabel: 'Tags');
