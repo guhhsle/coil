@@ -1,5 +1,5 @@
-import 'package:coil/data.dart';
 import 'package:flutter/material.dart';
+import '../data.dart';
 import '../template/functions.dart';
 import '../widgets/frame.dart';
 
