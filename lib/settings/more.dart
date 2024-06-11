@@ -15,10 +15,13 @@ Future<Layer> moreSet(dynamic non) async => Layer(
         Icons.segment_rounded,
         '',
         (c) => singleChildSheet(
-          title: 'Versions',
-          icon: Icons.timeline_rounded,
+          action: Setting(
+            'Versions',
+            Icons.timeline_rounded,
+            '',
+            (c) {},
+          ),
           child: Text(versions),
-          context: c,
         ),
       ),
       list: [
@@ -27,9 +30,12 @@ Future<Layer> moreSet(dynamic non) async => Layer(
           Icons.format_align_center,
           'GPL3',
           (c) => singleChildSheet(
-            title: 'GPL3',
-            context: c,
-            icon: Icons.format_align_center_rounded,
+            action: Setting(
+              'GPL3',
+              Icons.format_align_center_rounded,
+              '',
+              (c) {},
+            ),
             child: Text(license),
           ),
         ),
@@ -87,7 +93,8 @@ Future<Layer> moreSet(dynamic non) async => Layer(
           Icons.timelapse_rounded,
           '${pf['rememberThreshold']} min',
           (c) async {
-            int? input = int.tryParse(await getInput('${pf['rememberThreshold']}'));
+            int? input =
+                int.tryParse(await getInput('${pf['rememberThreshold']}'));
             if (input == null || (input < 0)) {
               showSnack('Invalid', false);
             } else {

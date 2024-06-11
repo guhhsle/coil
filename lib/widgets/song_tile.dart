@@ -83,7 +83,7 @@ class SongTileChild extends StatelessWidget {
           '${list[i].title}${!list[i].offline && pf['artist'] ? ' - ${list[i].artist}' : ''}',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
-            color: selected ? Theme.of(context).colorScheme.background : null,
+            color: selected ? Theme.of(context).colorScheme.surface : null,
           ),
         ),
       ),

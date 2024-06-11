@@ -81,36 +81,35 @@ Future<String> instanceHistory() async {
           mode: LaunchMode.externalApplication,
         ),
       ),
-      list: [
-        for (int i = 0; i < history.length; i++)
-          Setting(
-            history[i],
-            {
-                  pf['authInstance']: Icons.lock_rounded,
-                  pf['instance']: Icons.domain_rounded,
-                }[history[i]] ??
-                Icons.remove_rounded,
-            '',
-            (c) {
-              Navigator.of(c).pop();
-              completer.complete(history[i]);
-            },
-            secondary: (c) => setPref(
-              'instanceHistory',
-              pf['instanceHistory']..removeAt(i),
-            ),
-          ),
-        Setting(
-          'New',
-          Icons.add_rounded,
-          '',
-          (c) async {
+      trailing: (c) => [
+        IconButton(
+          icon: const Icon(Icons.add_rounded),
+          onPressed: () async {
             String newInstance = await getInput('', hintText: 'Instance link');
             newInstance = trimUrl(newInstance);
             setPref('instanceHistory', pf['instanceHistory']..add(newInstance));
           },
         ),
       ],
+      list: history
+          .map((instance) => Setting(
+                instance,
+                {
+                      pf['authInstance']: Icons.lock_rounded,
+                      pf['instance']: Icons.domain_rounded,
+                    }[instance] ??
+                    Icons.remove_rounded,
+                '',
+                (c) {
+                  Navigator.of(c).pop();
+                  completer.complete(instance);
+                },
+                secondary: (c) => setPref(
+                  'instanceHistory',
+                  pf['instanceHistory']..remove(instance),
+                ),
+              ))
+          .toList(),
     ),
   );
 
@@ -131,5 +130,9 @@ void rememberSearch(String str) {
 }
 
 String trimUrl(String raw) {
-  return raw.trim().replaceAll('https://', '').replaceAll('/', '').replaceAll(' ', '');
+  return raw
+      .trim()
+      .replaceAll('https://', '')
+      .replaceAll('/', '')
+      .replaceAll(' ', '');
 }

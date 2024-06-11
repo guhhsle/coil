@@ -88,9 +88,8 @@ extension MediaSheet on Media {
           Icons.format_align_center,
           'Lyrics',
           (c) => singleChildSheet(
-            title: title,
-            context: c,
-            icon: Icons.format_align_center_rounded,
+            action:
+                Setting(title, Icons.format_align_center_rounded, '', (c) {}),
             child: ValueListenableBuilder<String>(
               valueListenable: currentLyrics,
               builder: (context, snap, child) => Text(snap),

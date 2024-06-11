@@ -38,8 +38,10 @@ class MyApp extends StatelessWidget {
               locale: Locale(pf['locale']),
               navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
-              theme: theme(color(true, lightTheme: true), color(false, lightTheme: true)),
-              darkTheme: theme(color(true, lightTheme: false), color(false, lightTheme: false)),
+              theme: theme(color(true, lightTheme: true),
+                  color(false, lightTheme: true)),
+              darkTheme: theme(color(true, lightTheme: false),
+                  color(false, lightTheme: false)),
               title: 'Coil',
               builder: FlashyFlushbarProvider.init(),
               home: Builder(
@@ -59,7 +61,8 @@ class MyApp extends StatelessWidget {
                     child: Builder(
                       builder: (context) {
                         SystemChrome.setSystemUIOverlayStyle(
-                          const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+                          const SystemUiOverlayStyle(
+                              statusBarColor: Colors.transparent),
                         );
                         return const Home();
                       },

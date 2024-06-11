@@ -33,7 +33,7 @@ class _SheetQueueState extends State<SheetQueue> {
             builder: (context, snapshot, child) {
               return Card(
                 margin: const EdgeInsets.all(8),
-                color: Theme.of(context).colorScheme.background.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.8),
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -54,7 +54,8 @@ class _SheetQueueState extends State<SheetQueue> {
                               '',
                               (c) => MediaHandler().shuffle(),
                             ),
-                            margin: const EdgeInsets.only(left: 16, right: 4, bottom: 12, top: 16),
+                            margin: const EdgeInsets.only(
+                                left: 16, right: 4, bottom: 12, top: 16),
                           ),
                         ),
                         Padding(
@@ -63,7 +64,9 @@ class _SheetQueueState extends State<SheetQueue> {
                             tooltip: t('Repeat'),
                             color: Theme.of(context).colorScheme.primary,
                             icon: Icon(
-                              MediaHandler().loop ? Icons.repeat_one_rounded : Icons.wrap_text_rounded,
+                              MediaHandler().loop
+                                  ? Icons.repeat_one_rounded
+                                  : Icons.wrap_text_rounded,
                             ),
                             onPressed: () {
                               MediaHandler().loop = !MediaHandler().loop;
@@ -72,7 +75,8 @@ class _SheetQueueState extends State<SheetQueue> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 12, top: 16, right: 8),
+                          padding: const EdgeInsets.only(
+                              bottom: 12, top: 16, right: 8),
                           child: TopIcon(
                             top: false,
                             color: Theme.of(context).colorScheme.primary,
@@ -123,13 +127,15 @@ class _SheetQueueState extends State<SheetQueue> {
                                   Media item = MediaHandler().queuePlaying[i];
                                   bool e = i == MediaHandler().index;
                                   MediaHandler().removeItemAt(i);
-                                  if (direction == DismissDirection.startToEnd) {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
                                     item.insertToQueue(i - 1, e: e);
                                   }
                                   setState(() {});
                                 },
                                 key: Key(MediaHandler().queuePlaying[i].id),
-                                child: SongTile(list: MediaHandler().queuePlaying, i: i),
+                                child: SongTile(
+                                    list: MediaHandler().queuePlaying, i: i),
                               );
                             },
                           ),

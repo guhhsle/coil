@@ -41,9 +41,10 @@ class Frame extends StatelessWidget {
               BottomPlayer(show: pf['player'] == 'Top dock'),
               Expanded(
                 child: Card(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   margin: EdgeInsets.symmetric(
-                    horizontal: MediaHandler().queuePlaying.isEmpty || !dock ? 0 : 2,
+                    horizontal:
+                        MediaHandler().queuePlaying.isEmpty || !dock ? 0 : 2,
                   ),
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(

@@ -7,25 +7,17 @@ import '../functions/other.dart';
 import '../pages/feed.dart';
 import '../pages/subscriptions.dart';
 import '../pages/user_playlists.dart';
-import '../template/custom_card.dart';
 import '../template/functions.dart';
 import '../template/layer.dart';
 import '../template/prefs.dart';
 
 Future<Layer> authSet(dynamic non) async => Layer(
-      leading: (c) => [
-        Expanded(
-          child: CustomCard(
-            Setting(
-              'Sign up',
-              Icons.person_add_rounded,
-              ' ',
-              (p0) => login(false),
-            ),
-          ),
-        )
-      ],
-      action: Setting('', Icons.person_rounded, 'Login', (c) => login(true)),
+      action: Setting(
+        'Confirm',
+        Icons.keyboard_return_rounded,
+        '',
+        (c) => login(),
+      ),
       list: [
         Setting(
           pf['authInstance'] == '' ? 'Authentication Instance' : '',
@@ -63,13 +55,28 @@ Future<Layer> authSet(dynamic non) async => Layer(
       ],
     );
 
-Future<bool> login(bool exists) async {
+Future<bool> login() async {
   await setPref('token', '');
   if (pf['authInstance'] == '') return false;
-  Response result = await post(
-    Uri.https(pf['authInstance'], exists ? 'login' : 'register'),
-    body: jsonEncode({'username': pf['username'], 'password': pf['password']}),
-  );
+  late Response result;
+  try {
+    result = await post(
+      Uri.https(pf['authInstance'], 'login'),
+      body: jsonEncode(
+        {'username': pf['username'], 'password': pf['password']},
+      ),
+    );
+    String? error = jsonDecode(result.body)['error'];
+    if (error != null) throw Exception(error);
+  } catch (e) {
+    debugPrint(e.toString());
+    result = await post(
+      Uri.https(pf['authInstance'], 'register'),
+      body: jsonEncode(
+        {'username': pf['username'], 'password': pf['password']},
+      ),
+    );
+  }
   if (jsonDecode(result.body)['token'] != null) {
     await setPref('token', jsonDecode(result.body)['token']);
     unawaited(fetchUserPlaylists(true));

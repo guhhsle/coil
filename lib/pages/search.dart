@@ -60,10 +60,13 @@ class SearchState extends State<Search> {
     super.initState();
   }
 
+  TextEditingController searchController = TextEditingController(text: query);
+
   @override
   Widget build(BuildContext context) {
     return Frame(
       title: TextFormField(
+        controller: searchController,
         maxLines: 1,
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -74,7 +77,8 @@ class SearchState extends State<Search> {
           counterText: "",
           hintText: t('Search'),
           hintStyle: TextStyle(
-            color: Theme.of(context).appBarTheme.foregroundColor!.withOpacity(0.5),
+            color:
+                Theme.of(context).appBarTheme.foregroundColor!.withOpacity(0.5),
           ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
@@ -111,6 +115,7 @@ class SearchState extends State<Search> {
                       '',
                       (c) {
                         query = history[i];
+                        searchController.text = query;
                         setState(() {});
                       },
                       secondary: (c) => setPref(
@@ -156,6 +161,7 @@ class SearchState extends State<Search> {
             ),
           ),
           FutureBuilder(
+            key: Key("RESULT-$query"),
             future: search(query, filter ?? 'music_songs'),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return Container();
@@ -186,7 +192,9 @@ class SearchState extends State<Search> {
                     itemCount: result.length,
                     itemBuilder: (context, i) {
                       Map item = result[i];
-                      if (item['uploaderName'] == 'YouTube Music') return Container();
+                      if (item['uploaderName'] == 'YouTube Music') {
+                        return Container();
+                      }
                       return PlaylistTile(
                         info: item,
                         playlist: filter != 'channels',
