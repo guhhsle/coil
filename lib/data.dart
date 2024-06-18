@@ -76,7 +76,7 @@ Map pf = {
 };
 
 final List<Setting> settings = [
-  Setting('More', Icons.segment_rounded, '', (c) => showSheet(func: moreSet)),
+  Setting('More', Icons.segment_rounded, '', (c) => showSheet(func: otherSet)),
   Setting(
       'Account', Icons.person_rounded, '', (c) => showSheet(func: accountSet)),
   Setting('Data', Icons.cloud_rounded, '', (c) => showSheet(func: dataSet)),
