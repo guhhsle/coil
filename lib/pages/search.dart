@@ -65,30 +65,52 @@ class SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Frame(
-      title: TextFormField(
-        controller: searchController,
-        maxLines: 1,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: Theme.of(context).appBarTheme.foregroundColor,
-        ),
-        decoration: InputDecoration(
-          counterText: "",
-          hintText: t('Search'),
-          hintStyle: TextStyle(
-            color:
-                Theme.of(context).appBarTheme.foregroundColor!.withOpacity(0.5),
+      automaticallyImplyLeading: query == '',
+      title: Row(
+        children: [
+          query != ''
+              ? IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    query = '';
+                    searchController.text = '';
+                    setState(() {});
+                  },
+                )
+              : Container(),
+          SizedBox(width: query == '' ? 0 : 16),
+          Expanded(
+            child: TextFormField(
+              controller: searchController,
+              maxLines: 1,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                color: Theme.of(context).appBarTheme.foregroundColor,
+              ),
+              decoration: InputDecoration(
+                counterText: "",
+                hintText: t('Search'),
+                hintStyle: TextStyle(
+                  color: Theme.of(context)
+                      .appBarTheme
+                      .foregroundColor!
+                      .withOpacity(0.5),
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+              ),
+              onChanged: (title) {
+                query = title;
+                setState(() {});
+              },
+              onFieldSubmitted: rememberSearch,
+            ),
           ),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-        ),
-        onChanged: (title) {
-          query = title;
-          setState(() {});
-        },
-        onFieldSubmitted: rememberSearch,
+        ],
       ),
       actions: [
         IconButton(

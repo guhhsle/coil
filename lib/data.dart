@@ -77,11 +77,15 @@ Map pf = {
 
 final List<Setting> settings = [
   Setting('More', Icons.segment_rounded, '', (c) => showSheet(func: moreSet)),
-  Setting('Account', Icons.person_rounded, '', (c) => showSheet(func: accountSet)),
+  Setting(
+      'Account', Icons.person_rounded, '', (c) => showSheet(func: accountSet)),
   Setting('Data', Icons.cloud_rounded, '', (c) => showSheet(func: dataSet)),
-  Setting('Interface', Icons.toggle_on, '', (c) => showSheet(func: interfaceSet)),
-  Setting('Primary', Icons.colorize_rounded, '', (c) => showSheet(func: themeMap, param: true, scroll: true)),
-  Setting('Background', Icons.colorize_rounded, '', (c) => showSheet(func: themeMap, param: false, scroll: true)),
+  Setting(
+      'Interface', Icons.toggle_on, '', (c) => showSheet(func: interfaceSet)),
+  Setting('Primary', Icons.colorize_rounded, '',
+      (c) => showSheet(func: themeMap, param: true, scroll: true)),
+  Setting('Background', Icons.colorize_rounded, '',
+      (c) => showSheet(func: themeMap, param: false, scroll: true)),
 ];
 
 final ValueNotifier<List> userPlaylists = ValueNotifier([]);
@@ -97,7 +101,8 @@ final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
 
 Map<String, Widget> homeMap = {};
 String selectedHome = 'Playlists';
-ValueNotifier<String> barText = ValueNotifier(formatInstanceName(pf['instance']));
+ValueNotifier<String> barText =
+    ValueNotifier(formatInstanceName(pf['instance']));
 PageController pageController = PageController();
 ScrollController scrollController = ScrollController();
 GlobalKey key = GlobalKey(debugLabel: 'Tags');

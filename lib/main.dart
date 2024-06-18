@@ -32,46 +32,47 @@ class MyApp extends StatelessWidget {
       builder: (context, data, widget) {
         return FutureBuilder(
           future: loadLocale(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Container();
-            return MaterialApp(
-              locale: Locale(pf['locale']),
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              theme: theme(color(true, lightTheme: true),
-                  color(false, lightTheme: true)),
-              darkTheme: theme(color(true, lightTheme: false),
-                  color(false, lightTheme: false)),
-              title: 'Coil',
-              builder: FlashyFlushbarProvider.init(),
-              home: Builder(
-                builder: (context) {
-                  return AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle(
-                      statusBarColor: Colors.transparent,
-                      systemNavigationBarColor: pf['player'] != 'Dock'
-                          ? color(false)
-                          : {
-                              'Black': Colors.black,
-                              'Primary': color(true),
-                              'Transparent': color(false),
-                            }[pf['appbar']],
-                      systemNavigationBarIconBrightness: Brightness.dark,
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        SystemChrome.setSystemUIOverlayStyle(
-                          const SystemUiOverlayStyle(
-                              statusBarColor: Colors.transparent),
-                        );
-                        return const Home();
-                      },
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+          builder: (context, snapshot) => MaterialApp(
+            locale: Locale(pf['locale']),
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            theme: theme(
+              color(true, lightTheme: true),
+              color(false, lightTheme: true),
+            ),
+            darkTheme: theme(
+              color(true, lightTheme: false),
+              color(false, lightTheme: false),
+            ),
+            title: 'Coil',
+            builder: FlashyFlushbarProvider.init(),
+            home: Builder(
+              builder: (context) {
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor: pf['player'] != 'Dock'
+                        ? color(false)
+                        : {
+                            'Black': Colors.black,
+                            'Primary': color(true),
+                            'Transparent': color(false),
+                          }[pf['appbar']],
+                    systemNavigationBarIconBrightness: Brightness.dark,
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                            statusBarColor: Colors.transparent),
+                      );
+                      return const Home();
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
     );
