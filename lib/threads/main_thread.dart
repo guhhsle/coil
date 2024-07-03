@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import '../data.dart';
 import '../template/functions.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MainThread {
   static final MainThread instance = MainThread.internal();
@@ -26,21 +27,25 @@ class MainThread {
   }
 
   MainThread.internal() {
-    receivePort.listen((message) {
-      if (message is SendPort) {
-        sendPort = message;
-        callFn({'volume': pf['volume']});
-      } else if (message is String) {
-        MapEntry entry = jsonDecode(message).entries.first;
-        final key = entry.key;
-        final value = entry.value;
-        if (key == 'Error') {
-          showSnack(value, false);
-        } else {
-          streamMap[key]?.value = value;
+    try {
+      receivePort.listen((message) {
+        if (message is SendPort) {
+          sendPort = message;
+          callFn({'volume': pf['volume']});
+        } else if (message is String) {
+          MapEntry entry = jsonDecode(message).entries.first;
+          final key = entry.key;
+          final value = entry.value;
+          if (key == 'Error') {
+            showSnack(value, false);
+          } else {
+            streamMap[key]?.value = value;
+          }
         }
-      }
-    });
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     //isolateData.token = RootIsolateToken.instance!;
     if (Platform.isAndroid || Platform.isIOS) {
       FlutterIsolate.spawn(handlerThread, receivePort.sendPort);
