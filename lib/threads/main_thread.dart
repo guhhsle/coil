@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import '../data.dart';
 import '../template/functions.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MainThread {
   static final MainThread instance = MainThread.internal();

@@ -36,7 +36,7 @@ class UserPlaylists extends StatelessWidget {
                   icon: const Icon(Icons.add_rounded),
                   tooltip: t('Create a playlist'),
                   onPressed: () async => Playlist.fromString(
-                    await getInput('', hintText: 'Name'),
+                    await getInput('', 'Playlist name'),
                   ).create(),
                 ),
               )

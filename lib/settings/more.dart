@@ -13,7 +13,8 @@ Future<Layer> otherSet(dynamic non) async => await moreSet(non)
       Icons.folder_outlined,
       pf['musicFolder'],
       (c) async {
-        setPref('musicFolder', await getInput(pf['musicFolder']));
+        setPref(
+            'musicFolder', await getInput(pf['musicFolder'], 'Folder link'));
       },
     ),
     Setting(
@@ -21,7 +22,7 @@ Future<Layer> otherSet(dynamic non) async => await moreSet(non)
       Icons.graphic_eq_rounded,
       '${pf['volume']}',
       (c) async {
-        int? input = int.tryParse(await getInput('${pf['volume']}'));
+        int? input = int.tryParse(await getInput(pf['volume'], 'Volume'));
         if (input == null || (input > 100 || input < 0)) {
           showSnack('Invalid', false);
         } else {
@@ -35,7 +36,10 @@ Future<Layer> otherSet(dynamic non) async => await moreSet(non)
       Icons.timelapse_rounded,
       '${pf['rememberThreshold']} min',
       (c) async {
-        int? input = int.tryParse(await getInput('${pf['rememberThreshold']}'));
+        int? input = int.tryParse(await getInput(
+          pf['rememberThreshold'],
+          'Remember threshold',
+        ));
         if (input == null || (input < 0)) {
           showSnack('Invalid', false);
         } else {

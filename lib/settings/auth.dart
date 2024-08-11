@@ -35,7 +35,7 @@ Future<Layer> authSet(dynamic non) async => Layer(
           (c) async {
             String newUsername = await getInput(
               pf['username'],
-              hintText: 'Username',
+              'Username',
             );
             setPref('username', newUsername);
           },
@@ -47,7 +47,7 @@ Future<Layer> authSet(dynamic non) async => Layer(
           (c) async {
             String newPassword = await getInput(
               pf['password'],
-              hintText: 'Password',
+              'Password',
             );
             setPref('password', newPassword);
           },

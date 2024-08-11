@@ -99,7 +99,7 @@ extension MediaSheets on Media {
           child: IconButton(
             icon: const Icon(Icons.add_rounded),
             onPressed: () async => Playlist.fromString(
-              await getInput('', hintText: 'Name'),
+              await getInput('', 'Playlist name'),
             ).create(),
           ),
         )

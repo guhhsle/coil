@@ -8,9 +8,9 @@ Future<Layer> dataSet(dynamic non) async => Layer(
       action: Setting(
         'Quality',
         Icons.cloud_rounded,
-        '${pf['bitrate']}',
+        pf['bitrate'],
         (c) async {
-          int? input = int.tryParse(await getInput('${pf['bitrate']}'));
+          int? input = int.tryParse(await getInput(pf['bitrate'], 'Bitrate'));
           if (input == null) {
             showSnack('Invalid', false);
           } else {
@@ -36,7 +36,10 @@ Future<Layer> dataSet(dynamic non) async => Layer(
           Icons.track_changes_rounded,
           '${pf['timeLimit']}',
           (c) async {
-            int? input = int.tryParse(await getInput('${pf['timeLimit']}'));
+            int? input = int.tryParse(await getInput(
+              pf['timeLimit'],
+              'Recommend timeout',
+            ));
             if (input == null) {
               showSnack('Invalid', false);
             } else {

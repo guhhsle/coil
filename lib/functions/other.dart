@@ -85,7 +85,7 @@ Future<String> instanceHistory() async {
         IconButton(
           icon: const Icon(Icons.add_rounded),
           onPressed: () async {
-            String newInstance = await getInput('', hintText: 'Instance link');
+            String newInstance = await getInput('', 'Instance link');
             newInstance = trimUrl(newInstance);
             setPref('instanceHistory', pf['instanceHistory']..add(newInstance));
           },
