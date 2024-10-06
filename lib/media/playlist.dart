@@ -1,13 +1,13 @@
-import 'dart:convert';
-import 'package:coil/template/layer.dart';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../media/cache.dart';
-import '../playlist/playlist.dart';
-import '../template/data.dart';
-import '../template/functions.dart';
+import 'dart:convert';
 import 'media.dart';
+import '../template/functions.dart';
+import '../playlist/playlist.dart';
+import '../functions/other.dart';
+import '../template/prefs.dart';
+import '../template/data.dart';
+import '../media/cache.dart';
+import '../data.dart';
 
 extension MediaPlaylist on Media {
   Future<void> addToPlaylist(String playlistId) async {
@@ -33,8 +33,8 @@ extension MediaPlaylist on Media {
       await forceRemoveBackup(playlist!, first: false);
     } else {
       Response response = await post(
-        Uri.https(pf['authInstance'], 'user/playlists/remove'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'user/playlists/remove'),
+        headers: {'Authorization': Pref.token.value},
         body: jsonEncode({'playlistId': playlist, 'index': index}),
       );
       String? error = jsonDecode(response.body)['error'];
@@ -43,7 +43,7 @@ extension MediaPlaylist on Media {
       }
       await Playlist.load(playlist!, [1, 2]);
       refreshList();
-      refreshLayer();
+      Preferences.notify();
     }
   }
 
@@ -53,15 +53,15 @@ extension MediaPlaylist on Media {
     } else {
       showSnack('Loading', true);
       Response response = await post(
-        Uri.https(pf['authInstance'], 'user/playlists/add'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'user/playlists/add'),
+        headers: {'Authorization': Pref.token.value},
         body: jsonEncode({'playlistId': playlistId, 'videoId': id}),
       );
       String? error = jsonDecode(response.body)['error'];
       showSnack(error ?? '${l['Added']} $title', error == null);
       await Playlist.load(playlistId, [1, 2]);
       refreshList();
-      refreshLayer();
+      Preferences.notify();
     }
   }
 }

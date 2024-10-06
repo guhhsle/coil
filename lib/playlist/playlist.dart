@@ -1,9 +1,9 @@
-import '../data.dart';
-import '../functions/other.dart';
-import '../media/media.dart';
-import '../template/functions.dart';
 import 'cache.dart';
 import 'http.dart';
+import '../template/functions.dart';
+import '../functions/other.dart';
+import '../media/media.dart';
+import '../data.dart';
 
 class Playlist {
   String url, thumbnail, name, uploader;
@@ -65,7 +65,7 @@ class Playlist {
 const List<String> userFiles = ['Bookmarks', '100', '100raw'];
 
 bool playlistIsCacheOnly(String url) {
-  if (pf['token'] == '') return true;
+  if (Pref.token.value == '') return true;
   if (userFiles.contains(url)) return true;
   return false;
 }

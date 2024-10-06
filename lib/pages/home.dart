@@ -1,22 +1,22 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../template/animated_text.dart';
-import '../template/custom_chip.dart';
-import '../template/data.dart';
-import '../template/functions.dart';
-import '../template/prefs.dart';
-import '../template/settings.dart';
-import '../widgets/frame.dart';
-import 'bookmarks.dart';
-import 'feed.dart';
-import 'local.dart';
-import 'search.dart';
 import 'user_playlists.dart';
 import 'subscriptions.dart';
+import 'bookmarks.dart';
 import 'trending.dart';
+import 'search.dart';
+import 'local.dart';
+import 'feed.dart';
+import '../template/animated_text.dart';
+import '../template/custom_chip.dart';
+import '../template/functions.dart';
+import '../template/settings.dart';
+import '../layers/instances.dart';
+import '../functions/other.dart';
+import '../template/data.dart';
+import '../template/tile.dart';
+import '../widgets/frame.dart';
+import '../data.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -29,27 +29,27 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   @override
   initState() {
-    selectedHome = pf['homeOrder'][0];
+    selectedHome = Pref.homeOrder.value[0];
     homeMap.clear();
     for (int i = 0; i < 6; i++) {
       homeMap.addAll({
-        pf['homeOrder'][i]: {
+        Pref.homeOrder.value[i]: {
           'Playlists': const UserPlaylists(),
           'Offline': const LocalSongs(),
           'Bookmarks': const Bookmarks(),
           'Feed': const Feed(),
           'Trending': const Trending(),
           'Subscriptions': const Subscriptions(),
-        }[pf['homeOrder'][i]]!
+        }[Pref.homeOrder.value[i]]!
       });
     }
     animationController = AnimationController(vsync: this);
-    unawaited(fetchUserPlaylists(false));
-    unawaited(getLocal());
-    unawaited(fetchBookmarks());
-    unawaited(fetchFeed());
-    unawaited(trending());
-    unawaited(fetchSubscriptions(false));
+    fetchUserPlaylists(false);
+    getLocal();
+    fetchBookmarks();
+    fetchFeed();
+    trending();
+    fetchSubscriptions(false);
     super.initState();
     Future.delayed(
       const Duration(milliseconds: 32),
@@ -67,8 +67,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         padding: const EdgeInsets.only(left: 8),
         child: InkWell(
           onTap: () async {
-            String instance = await instanceHistory();
-            setPref('instance', instance);
+            final instances = Instances()..show();
+            final instance = await instances.completer.future;
+
+            Pref.instance.set(instance);
             barText.value = formatInstanceName(instance);
           },
           child: ValueListenableBuilder(
@@ -96,16 +98,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ],
       child: Column(
         children: [
-          pf['tags'] == 'Top'
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: HomeTags(key: key),
-                )
-              : Container(),
+          if (Pref.tags.value == 'Top')
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: HomeTags(key: key),
+            ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(
-                top: pf['tags'] != 'Top' ? 16 : 0,
+                top: Pref.tags.value != 'Top' ? 16 : 0,
               ),
               child: PageView(
                 physics: scrollPhysics,
@@ -126,7 +127,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ),
             ),
           ),
-          pf['tags'] == 'Bottom' ? HomeTags(key: key) : Container(),
+          if (Pref.tags.value == 'Bottom') HomeTags(key: key),
         ],
       ),
     );
@@ -148,12 +149,14 @@ class HomeTags extends StatelessWidget {
         itemCount: homeMap.length,
         itemBuilder: (context, i) => CustomChip(
           selected: selectedHome == homeMap.keys.elementAt(i),
-          onSelected: (val) => pageController.animateToPage(
-            i,
-            duration: const Duration(milliseconds: 256),
-            curve: Curves.easeOutQuad,
-          ),
-          label: homeMap.keys.elementAt(i),
+          showAvatar: false,
+          tile: Tile(homeMap.keys.elementAt(i), Icons.home_rounded, '', () {
+            pageController.animateToPage(
+              i,
+              duration: const Duration(milliseconds: 256),
+              curve: Curves.easeOutQuad,
+            );
+          }),
         ),
       ),
     );

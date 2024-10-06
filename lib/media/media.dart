@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
-import '../data.dart';
 import 'map.dart';
+import '../data.dart';
 
 class MediaLink {
   String url;
@@ -56,7 +56,7 @@ class Media extends MediaItem {
 
   Widget? image({EdgeInsets? padding, force = false}) {
     if (!force) {
-      if (!pf['thumbnails']) return null;
+      if (!Pref.thumbnails.value) return null;
       if (offline) return null;
     }
     padding ??= const EdgeInsets.symmetric(vertical: 8);

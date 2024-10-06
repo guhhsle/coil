@@ -1,22 +1,24 @@
 import 'dart:async';
-import 'package:coil/audio/remember.dart';
-import '../data.dart';
-import '../template/functions.dart';
+import 'media.dart';
 import 'cache.dart';
 import 'http.dart';
-import '../audio/queue.dart';
 import '../threads/main_thread.dart';
+import '../template/functions.dart';
+import '../audio/remember.dart';
 import '../audio/handler.dart';
-import 'media.dart';
+import '../audio/queue.dart';
+import '../data.dart';
 
 extension MediaAudio on Media {
   Future<void> play() async {
     if (!offline) {
-      unawaited(addTo100());
-      if (await forceLoad() == null) {
-        showSnack("Can't load this media on this instance", false);
-        return;
+      addTo100();
+      for (int i = 0; i < 5 && await forceLoad() == null; i++) {}
+      for (int i = 1; i < 5 && await forceLoad() == null; i++) {
+        showSnack('Still trying to fetch...', false, debug: true);
+        await Future.delayed(Duration(seconds: i));
       }
+      if (await forceLoad(showError: true) == null) return;
     }
     int pos = MediaHandler().rememberedPosition(id);
     MainThread.callFn({
@@ -25,7 +27,7 @@ extension MediaAudio on Media {
         'offline': offline,
       }
     });
-    if (pos / 60 > pf['rememberThreshold']) {
+    if (pos / 60 > Pref.rememberThreshold.value) {
       showSnack('Remembered on ${pos}s', true);
     }
   }

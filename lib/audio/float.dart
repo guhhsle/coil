@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
+import 'handler.dart';
 import '../widgets/sheet_queue.dart';
 import '../threads/main_thread.dart';
-import 'handler.dart';
+import '../data.dart';
 
 class Float extends StatelessWidget {
   const Float({super.key});
@@ -12,7 +12,7 @@ class Float extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: MediaHandler.refreshQueue,
       builder: (context, non, widget) {
-        if (pf['player'] != 'Floating') return Container();
+        if (Pref.player.value != 'Floating') return Container();
         if (MediaHandler().queuePlaying.isEmpty) return Container();
         return SizedBox(
           width: 80,
@@ -25,7 +25,8 @@ class Float extends StatelessWidget {
             ),
             onTap: () => MainThread.callFn({'swap': null}),
             borderRadius: BorderRadius.circular(12),
-            child: MediaHandler().current.image(padding: const EdgeInsets.all(12)),
+            child:
+                MediaHandler().current.image(padding: const EdgeInsets.all(12)),
           ),
         );
       },

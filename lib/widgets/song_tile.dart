@@ -1,10 +1,9 @@
-import 'package:coil/audio/queue.dart';
-import 'package:coil/media/sheet.dart';
 import 'package:flutter/material.dart';
 import '../audio/handler.dart';
-import '../data.dart';
+import '../layers/media.dart';
+import '../audio/queue.dart';
 import '../media/media.dart';
-import '../template/layer.dart';
+import '../data.dart';
 
 class SongTile extends StatelessWidget {
   final List<Media> list;
@@ -73,14 +72,10 @@ class SongTileChild extends StatelessWidget {
           MediaHandler().load(list);
           MediaHandler().skipTo(i);
         },
-        onLongPress: () => showSheet(
-          scroll: true,
-          func: list[i].layer,
-          param: null,
-        ),
+        onLongPress: () => MediaLayer(list[i]).show(),
         leading: list[i].image(),
         title: Text(
-          '${list[i].title}${!list[i].offline && pf['artist'] ? ' - ${list[i].artist}' : ''}',
+          '${list[i].title}${!list[i].offline && Pref.artist.value ? ' - ${list[i].artist}' : ''}',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
             color: selected ? Theme.of(context).colorScheme.surface : null,

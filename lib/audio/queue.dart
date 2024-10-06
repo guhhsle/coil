@@ -1,9 +1,9 @@
-import 'dart:async';
-import 'package:coil/media/audio.dart';
-import 'package:coil/media/http.dart';
 import 'package:flutter/material.dart';
-import '../media/media.dart';
+import 'dart:async';
 import 'handler.dart';
+import '../media/audio.dart';
+import '../media/http.dart';
+import '../media/media.dart';
 
 extension QueueHandler on MediaHandler {
   void addToQueue(Media media) {

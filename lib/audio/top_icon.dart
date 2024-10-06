@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
-import '../template/data.dart';
 import 'handler.dart';
+import '../data.dart';
 import '../threads/main_thread.dart';
 import '../widgets/sheet_queue.dart';
+import '../template/theme.dart';
 
 class TopIcon extends StatelessWidget {
   final bool top;
@@ -12,9 +12,9 @@ class TopIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: themeNotifier,
-      builder: (context, non, child) {
+    return ListenableBuilder(
+      listenable: ThemePref(),
+      builder: (context, child) {
         return ValueListenableBuilder(
           valueListenable: MediaHandler().processing,
           builder: (context, processing, child) {
@@ -23,7 +23,7 @@ class TopIcon extends StatelessWidget {
               builder: (context, playing, child) {
                 if (MediaHandler().queuePlaying.isEmpty) {
                   return Container();
-                } else if (!top || pf['player'] == 'Top') {
+                } else if (!top || Pref.player.value == 'Top') {
                   late IconData status;
                   if (processing == 'loading') {
                     status = Icons.language_rounded;
@@ -43,16 +43,19 @@ class TopIcon extends StatelessWidget {
                       onPressed: () => MainThread.callFn({'swap': null}),
                       icon: Icon(
                         status,
-                        color: color ?? Theme.of(context).appBarTheme.foregroundColor,
+                        color: color ??
+                            Theme.of(context).appBarTheme.foregroundColor,
                       ),
                     ),
                   );
-                } else if (pf['player'] == 'Top dock') {
+                } else if (Pref.player.value == 'Top dock') {
                   return ValueListenableBuilder(
                     valueListenable: showTopDock,
                     builder: (context, data, ch) {
                       return IconButton(
-                        icon: Icon(data ? Icons.expand_less_rounded : Icons.expand_more_rounded),
+                        icon: Icon(data
+                            ? Icons.expand_less_rounded
+                            : Icons.expand_more_rounded),
                         onPressed: () => showTopDock.value = !showTopDock.value,
                       );
                     },

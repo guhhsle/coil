@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../audio/float.dart';
-import '../audio/handler.dart';
-import '../audio/top_icon.dart';
-import '../data.dart';
 import 'bottom_player.dart';
+import '../audio/top_icon.dart';
+import '../audio/handler.dart';
+import '../audio/float.dart';
+import '../data.dart';
 
 class Frame extends StatelessWidget {
   final Widget title;
@@ -35,10 +35,10 @@ class Frame extends StatelessWidget {
       body: ValueListenableBuilder(
         valueListenable: MediaHandler.refreshQueue,
         builder: (context, none, non) {
-          bool dock = pf['player'] == 'Dock';
+          bool dock = Pref.player.value == 'Dock';
           return Column(
             children: [
-              BottomPlayer(show: pf['player'] == 'Top dock'),
+              BottomPlayer(show: Pref.player.value == 'Top dock'),
               Expanded(
                 child: Card(
                   color: Theme.of(context).colorScheme.surface,

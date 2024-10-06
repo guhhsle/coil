@@ -1,7 +1,7 @@
 import 'dart:math';
-import '../data.dart';
-import '../functions/other.dart';
 import 'media.dart';
+import '../functions/other.dart';
+import '../data.dart';
 
 extension MediaMap on Media {
   Map toMap() {
@@ -30,18 +30,12 @@ extension MediaMap on Media {
   static int evaluateSong(Map m, int? i) {
     int eval = i == -10 ? 20 + Random().nextInt(16) : 0;
     String name = m['title'].toLowerCase() ?? '';
-    List<String> badWords = [
-      '-',
-      '|',
-      'lyrics',
-      'mix',
-      'video',
-      'playlist',
-      'hits',
-      'songs',
+    const badWords = [
+      ...['-', '|', 'lyrics', 'mix', 'video'],
+      ...['playlist', 'hits', 'songs'],
     ];
     for (String slur in badWords) {
-      if (name.contains(slur)) return pf['indie'] ? 1 : 5;
+      if (name.contains(slur)) return Pref.indie.value ? 1 : 5;
     }
     List<bool> parameters = [
       true, //m['views'] ?? -1 == -1 && m['uploaded'] ?? -1 == -1,
@@ -52,7 +46,7 @@ extension MediaMap on Media {
       if (parameters[i]) eval += i * i + 16;
     }
     if (eval > 40) eval = 40;
-    if (pf['indie']) eval ~/= 5;
+    if (Pref.indie.value) eval ~/= 5;
     return eval;
   }
 }

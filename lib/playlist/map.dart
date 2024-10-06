@@ -1,13 +1,14 @@
-import 'package:coil/playlist/playlist.dart';
-import '../data.dart';
+import 'playlist.dart';
 import '../media/media.dart';
+import '../data.dart';
 
 extension PlaylistMap on Playlist {
   static List<Media> listFromMap(Map json, String url) {
     List playlist = json['relatedStreams'] ?? [];
     List<Media> list = [];
     for (var i = 0; i < playlist.length; i++) {
-      bool userCreated = userPlaylists.value.indexWhere((el) => el['id'] == url) >= 0;
+      bool userCreated =
+          userPlaylists.value.indexWhere((el) => el['id'] == url) >= 0;
       if (url == 'Bookmarks') userCreated = true;
       if (userCreated) {
         list.insert(

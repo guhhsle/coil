@@ -1,18 +1,4 @@
-final Map<String, String> locales = {
-  'sr': 'Serbian',
-  'en': 'English',
-  'es': 'Spanish',
-  'de': 'German',
-  'fr': 'French',
-  'it': 'Italian',
-  'pl': 'Polish',
-  'pt': 'Portuguese',
-  'ru': 'Russian',
-  'sl': 'Slovenian',
-  'ja': 'Japanese',
-};
-
-Map<String, String> countries = {
+const countries = {
   "AF": "Afghanistan",
   "AX": "Aland Islands",
   "AL": "Albania",

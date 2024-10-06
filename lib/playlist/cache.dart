@@ -10,8 +10,8 @@ extension PlaylistCache on Playlist {
   Future<void> backup() async {
     if (!userFiles.contains(url) &&
         userPlaylists.value.indexWhere((el) => el['id'] == url) == -1 &&
-        !pf['bookmarks'].contains(url)) return;
-    File file = File('${pf['appDirectory']}/${formatUrl(url)}.json');
+        !Pref.bookmarks.value.contains(url)) return;
+    File file = File('${Pref.appDirectory.value}/${formatUrl(url)}.json');
     Map formatted = {
       'name': name,
       'thumbnailUrl': thumbnail,
@@ -32,7 +32,7 @@ extension PlaylistCache on Playlist {
   }
 
   static Future<Playlist> from(String url) async {
-    File file = File('${pf['appDirectory']}/${formatUrl(url)}.json');
+    File file = File('${Pref.appDirectory.value}/${formatUrl(url)}.json');
     if (!await file.exists()) throw Error();
     Map json = jsonDecode(await file.readAsString());
     return PlaylistMap.from(json, url);
@@ -46,14 +46,14 @@ extension PlaylistCache on Playlist {
   }
 
   Future<void> removeBackup() async {
-    File file = File('${pf['appDirectory']}/playlists.json');
+    File file = File('${Pref.appDirectory.value}/playlists.json');
     List list = jsonDecode(await file.readAsString());
     list.removeWhere((map) => map['id'] == url);
     await file.writeAsString(jsonEncode(list));
   }
 
   Future<void> addToCache() async {
-    File file = File('${pf['appDirectory']}/playlists.json');
+    File file = File('${Pref.appDirectory.value}/playlists.json');
     if (!await file.exists()) {
       await file.writeAsString('[]');
     }

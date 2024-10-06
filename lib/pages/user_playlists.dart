@@ -1,14 +1,14 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../playlist/http.dart';
-import '../playlist/playlist.dart';
-import '../template/data.dart';
-import '../template/functions.dart';
-import '../template/layer.dart';
+import 'dart:convert';
+import 'dart:io';
 import '../widgets/playlist_tile.dart';
+import '../template/functions.dart';
+import '../playlist/playlist.dart';
+import '../template/prefs.dart';
+import '../playlist/http.dart';
+import '../template/data.dart';
+import '../data.dart';
 
 class UserPlaylists extends StatelessWidget {
   const UserPlaylists({super.key});
@@ -51,11 +51,11 @@ class UserPlaylists extends StatelessWidget {
 Future<void> fetchUserPlaylists(bool force) async {
   try {
     List list = [];
-    File file = File('${pf['appDirectory']}/playlists.json');
-    if (force && pf['token'] != '') {
+    File file = File('${Pref.appDirectory.value}/playlists.json');
+    if (force && Pref.token.value != '') {
       Response response = await get(
-        Uri.https(pf['authInstance'], 'user/playlists'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'user/playlists'),
+        headers: {'Authorization': Pref.token.value},
       );
       list = jsonDecode(utf8.decode(response.bodyBytes));
       await file.writeAsBytes(response.bodyBytes);
@@ -63,22 +63,22 @@ Future<void> fetchUserPlaylists(bool force) async {
       list = jsonDecode(await file.readAsString());
       if (list.isEmpty && !force) fetchUserPlaylists(true);
     }
-    if (pf['sortBy'] == 'Default <') {
+    if (Pref.sortBy.value == 'Default <') {
       List r = List.from(list.reversed);
       list = r.toList();
-    } else if (pf['sortBy'] != 'Default') {
+    } else if (Pref.sortBy.value != 'Default') {
       list.sort(
         (a, b) => {
           'Name': a['name'].compareTo(b['name']),
           'Name <': b['name'].compareTo(a['name']),
           'Length': a['videos'].compareTo(b['videos']),
           'Length <': b['videos'].compareTo(a['videos']),
-        }[pf['sortBy']]!,
+        }[Pref.sortBy.value]!,
       );
     }
     userPlaylists.value = list;
   } catch (e) {
     if (force) fetchUserPlaylists(false);
   }
-  refreshLayer();
+  Preferences.notify();
 }

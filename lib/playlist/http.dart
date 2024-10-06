@@ -1,12 +1,12 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../pages/user_playlists.dart';
-import '../template/functions.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'playlist.dart';
 import 'cache.dart';
 import 'map.dart';
-import 'playlist.dart';
+import '../pages/user_playlists.dart';
+import '../template/functions.dart';
+import '../data.dart';
 
 extension PlaylistHTTP on Playlist {
   Future<void> rename(String newName) async {
@@ -14,8 +14,8 @@ extension PlaylistHTTP on Playlist {
       await renameBackupTo(newName);
     } else {
       await post(
-        Uri.https(pf['authInstance'], 'user/playlists/rename'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'user/playlists/rename'),
+        headers: {'Authorization': Pref.token.value},
         body: jsonEncode({
           'playlistId': url,
           'newName': newName,
@@ -33,8 +33,8 @@ extension PlaylistHTTP on Playlist {
       await removeBackup();
     } else {
       await post(
-        Uri.https(pf['authInstance'], 'user/playlists/delete'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'user/playlists/delete'),
+        headers: {'Authorization': Pref.token.value},
         body: jsonEncode({'playlistId': url}),
       );
     }
@@ -42,7 +42,10 @@ extension PlaylistHTTP on Playlist {
   }
 
   static Future<Playlist> from(String url, bool auth) async {
-    Uri u = Uri.https(pf[auth ? 'authInstance' : 'instance'], 'playlists/$url');
+    Uri u = Uri.https(Pref.instance.value, 'playlists/$url');
+    if (auth) {
+      u = Uri.https(Pref.authInstance.value, 'playlists/$url');
+    }
     return PlaylistMap.from(
       jsonDecode(utf8.decode((await get(u)).bodyBytes)),
       url,
@@ -50,16 +53,16 @@ extension PlaylistHTTP on Playlist {
   }
 
   Future<void> create() async {
-    if (pf['token'] == '') {
+    if (Pref.token.value == '') {
       url = '$name-${DateTime.now()}';
       await addToCache();
       await backup();
     } else {
       try {
         await post(
-          Uri.https(pf['authInstance'], 'user/playlists/create'),
+          Uri.https(Pref.authInstance.value, 'user/playlists/create'),
           body: jsonEncode({'name': name}),
-          headers: {'Authorization': pf['token']},
+          headers: {'Authorization': Pref.token.value},
         );
       } catch (e) {
         showSnack('$e', false);

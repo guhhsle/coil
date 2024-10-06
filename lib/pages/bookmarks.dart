@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
-import '../playlist/cache.dart';
-import '../playlist/playlist.dart';
-import '../template/data.dart';
 import '../widgets/playlist_tile.dart';
+import '../playlist/playlist.dart';
+import '../playlist/cache.dart';
+import '../template/data.dart';
+import '../data.dart';
 
 Future<void> fetchBookmarks() async {
   List<Playlist> tempBookmarks = [];
@@ -11,7 +11,7 @@ Future<void> fetchBookmarks() async {
   Playlist.load('Bookmarks', [2]).catchError(
     (e) => Playlist.fromString('Bookmarks')..backup(),
   );
-  for (String bookmark in pf['bookmarks']) {
+  for (String bookmark in Pref.bookmarks.value) {
     futures.add(Playlist.load(bookmark, [2, 0, 1]).then(
       (val) => tempBookmarks.add(val),
     ));

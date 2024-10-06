@@ -1,8 +1,10 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'dart:convert';
+import 'media.dart';
+import '../template/functions.dart';
 import '../audio/handler.dart';
 import '../data.dart';
-import 'media.dart';
 
 extension Preload on List<Media> {
   Future<void> preload(int from, int to) async {
@@ -17,22 +19,37 @@ extension Preload on List<Media> {
 }
 
 extension MediaHTTP on Media {
-  Future<String?> forceLoad() async {
+  Future<String?> forceLoad({bool showError = false}) async {
     if (offline || audioUrl != null) return audioUrl;
     try {
       if (MediaHandler().tryLoad(this)) return audioUrl!;
-      Response result = await get(Uri.https(pf['instance'], 'streams/$id'));
+      Response result = await get(
+        Uri.https(Pref.instance.value, 'streams/$id'),
+      );
       Map raw = jsonDecode(result.body);
-      audioUrls = (raw['audioStreams'] as List).map((e) => MediaLink.from(e)).toList()
+      if (raw['message'] != null) {
+        debugPrint(raw['message']);
+        if (showError) showSnack('Instance: ${raw['message']}', false);
+      }
+      audioUrls = (raw['audioStreams'] as List)
+          .map((e) => MediaLink.from(e))
+          .toList()
         ..sort((a, b) => a.bitrate!.compareTo(b.bitrate!));
 
-      videoUrls = (raw['videoStreams'] as List).where((e) => !e['videoOnly']).map((e) => MediaLink.from(e)).toList()
-        ..sort((a, b) => b.quality!.compareTo(a.quality!));
+      try {
+        videoUrls = (raw['videoStreams'] as List)
+            .where((e) => !e['videoOnly'])
+            .map((e) => MediaLink.from(e))
+            .toList()
+          ..sort((a, b) => b.quality!.compareTo(a.quality!));
+      } catch (e) {
+        debugPrint('Error fetching videos: $e');
+      }
 
       String url = audioUrls[0].url;
-      int diff = (pf['bitrate'] - audioUrls[0].bitrate!).abs();
+      int diff = (Pref.bitrate.value - audioUrls[0].bitrate!).abs();
       for (MediaLink link in audioUrls) {
-        int currDiff = (pf['bitrate'] - link.bitrate!).abs();
+        int currDiff = (Pref.bitrate.value - link.bitrate!).abs();
         if (currDiff < diff) {
           url = link.url;
           diff = currDiff;
@@ -41,6 +58,7 @@ extension MediaHTTP on Media {
 
       audioUrl = url;
     } catch (e) {
+      debugPrint('Error loading song: $e');
       //FORMAT ERROR
     }
     return audioUrl;

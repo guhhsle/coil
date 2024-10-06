@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../threads/main_thread.dart';
-import 'handler.dart';
+import '../audio/handler.dart';
 
 class AudioSlider extends StatelessWidget {
   const AudioSlider({Key? key}) : super(key: key);

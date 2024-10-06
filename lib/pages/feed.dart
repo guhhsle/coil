@@ -7,9 +7,9 @@ import '../template/data.dart';
 import '../widgets/song_tile.dart';
 
 Future<void> fetchFeed() async {
-  if (pf['token'] == '') return;
+  if (Pref.token.value == '') return;
   Response response = await get(
-    Uri.https(pf['authInstance'], 'feed', {'authToken': pf['token']}),
+    Uri.https(Pref.authInstance.value, 'feed', {'authToken': Pref.token.value}),
   );
   List result = jsonDecode(utf8.decode(response.bodyBytes));
   userFeed.value = result.map((map) => Media.from(map)).toList();

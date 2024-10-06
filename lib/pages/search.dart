@@ -1,19 +1,19 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../media/http.dart';
-import '../media/media.dart';
+import 'dart:convert';
+import 'dart:async';
 import '../template/custom_chip.dart';
-import '../template/data.dart';
-import '../template/functions.dart';
-import '../template/layer.dart';
-import '../template/prefs.dart';
-import '../widgets/frame.dart';
 import '../widgets/playlist_tile.dart';
+import '../template/functions.dart';
 import '../widgets/song_tile.dart';
+import '../functions/other.dart';
+import '../template/tile.dart';
+import '../template/data.dart';
+import '../widgets/frame.dart';
+import '../layers/search.dart';
+import '../media/media.dart';
+import '../media/http.dart';
+import '../data.dart';
 
 String query = '';
 Map<String, String> filters = {};
@@ -22,15 +22,11 @@ List suggestions = [];
 ScrollController searchScrollController = ScrollController();
 
 Future<List> search(String query, String filter) async {
-  Response response = await get(
-    Uri.https(
-      pf['instance'],
-      'search',
-      {'q': query, 'filter': filter},
-    ),
-  );
-  List? list = jsonDecode(utf8.decode(response.bodyBytes))['items'];
-  return list ?? [];
+  Response response = await get(Uri.https(Pref.instance.value, 'search', {
+    'q': query,
+    'filter': filter,
+  }));
+  return jsonDecode(utf8.decode(response.bodyBytes))['items'] ?? [];
 }
 
 class Search extends StatefulWidget {
@@ -46,17 +42,17 @@ class SearchState extends State<Search> {
     filters.clear();
     for (int i = 0; i < 6; i++) {
       filters.addAll({
-        pf['searchOrder'][i]: {
+        Pref.searchOrder.value[i]: {
           'Songs': 'music_songs',
           'Videos': 'videos',
           'Playlists': 'playlists',
           'Artists': 'channels',
           'Albums': 'music_albums',
           'Music playlists': 'music_playlists',
-        }[pf['searchOrder'][i]]!
+        }[Pref.searchOrder.value[i]]!
       });
     }
-    filter ??= filters[pf['searchOrder'][0]] ?? 'music_songs';
+    filter ??= filters[Pref.searchOrder.value[0]] ?? 'music_songs';
     super.initState();
   }
 
@@ -116,39 +112,11 @@ class SearchState extends State<Search> {
         IconButton(
           icon: const Icon(Icons.history_rounded),
           onPressed: () {
-            List<String> history = pf['searchHistory'];
-            showSheet(
-              scroll: true,
-              func: (non) async => Layer(
-                action: Setting(
-                  'Clear',
-                  Icons.clear_all_rounded,
-                  '',
-                  (c) {
-                    setPref('searchHistory', <String>[]);
-                    Navigator.of(c).pop();
-                  },
-                ),
-                list: [
-                  for (int i = 0; i < history.length; i++)
-                    Setting(
-                      history[i],
-                      Icons.remove_rounded,
-                      '',
-                      (c) {
-                        query = history[i];
-                        searchController.text = query;
-                        setState(() {});
-                      },
-                      secondary: (c) => setPref(
-                        'searchHistory',
-                        history..removeAt(i),
-                        refresh: true,
-                      ),
-                    ),
-                ],
-              ),
-            );
+            SearchLayer((oldQuery) {
+              query = oldQuery;
+              searchController.text = query;
+              setState(() {});
+            }).show();
           },
         ),
       ],
@@ -165,19 +133,23 @@ class SearchState extends State<Search> {
                 itemCount: filters.length,
                 controller: searchScrollController,
                 itemBuilder: (context, i) => CustomChip(
-                  onSelected: (val) {
-                    filter = filters.values.toList()[i];
-                    if (calculateShift(context, i, filters) != null) {
-                      searchScrollController.animateTo(
-                        calculateShift(context, i, filters)!,
-                        duration: const Duration(milliseconds: 256),
-                        curve: Curves.easeOutQuad,
-                      );
-                    }
-                    setState(() {});
-                  },
-                  label: filters.keys.toList()[i],
+                  showAvatar: false,
                   selected: filter == filters.values.toList()[i],
+                  tile: Tile(
+                    filters.keys.elementAt(i),
+                    Icons.history_rounded,
+                    '',
+                    () => setState(() {
+                      filter = filters.values.elementAt(i);
+                      if (calculateShift(context, i, filters) != null) {
+                        searchScrollController.animateTo(
+                          calculateShift(context, i, filters)!,
+                          duration: const Duration(milliseconds: 256),
+                          curve: Curves.easeOutQuad,
+                        );
+                      }
+                    }),
+                  ),
                 ),
               ),
             ),

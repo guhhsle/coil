@@ -1,28 +1,28 @@
-import 'dart:convert';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../media/media.dart';
+import 'dart:convert';
 import '../playlist/playlist.dart';
+import '../media/media.dart';
+import '../data.dart';
 
 Map<int, List<Media>> generated = {};
 Future<List<Media>> generate(List message) async {
   List<Media> rawList = message[0];
-  pf['instance'] = message[1];
-  pf['indie'] = message[2];
-  List<Media> list = rawList.toList()..shuffle();
+  Pref.instance.set(message[1]);
+  Pref.indie.set(message[2]);
+  final list = rawList.toList()..shuffle();
   generated.clear();
   var futures = <Future>[];
 
-  for (int i = 0; i < list.length && i < pf['requestLimit']; i++) {
+  for (int i = 0; i < list.length && i < Pref.requestLimit.value; i++) {
     futures.add(generateFromId(list[i].id));
   }
   try {
-    await Future.wait(futures).timeout(Duration(seconds: pf['timeLimit']));
+    await Future.wait(futures).timeout(Duration(seconds: Pref.timeLimit.value));
   } catch (e) {
     //ASYNCHRONOUS FUNCTION TIMED OUT
   }
 
-  if (!pf['indie']) {
+  if (!Pref.indie.value) {
     for (int i = 0; i < generated.length; i++) {
       int key = generated.keys.elementAt(i);
       for (int j = 0; j < generated[key]!.length; j++) {
@@ -52,7 +52,7 @@ Future<List<Media>> generate(List message) async {
 }
 
 Future<void> generateFromId(String id) async {
-  Response response = await get(Uri.https(pf['instance'], 'streams/$id'));
+  Response response = await get(Uri.https(Pref.instance.value, 'streams/$id'));
   late List related;
   try {
     related = jsonDecode(utf8.decode(response.bodyBytes))['relatedStreams'];

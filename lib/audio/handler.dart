@@ -9,20 +9,18 @@ import '../media/media.dart';
 class MediaHandler extends BaseAudioHandler {
   static final MediaHandler instance = MediaHandler.internal();
 
-  final ValueNotifier<int> position = ValueNotifier(0);
-  final ValueNotifier<bool> playing = ValueNotifier(false);
-  final ValueNotifier<int> duration = ValueNotifier(1000);
-  final ValueNotifier<String> processing = ValueNotifier('idle');
+  final position = ValueNotifier(0);
+  final playing = ValueNotifier(false);
+  final duration = ValueNotifier(1000);
+  final processing = ValueNotifier('idle');
 
-  PageController bottomText = PageController();
+  var bottomText = PageController();
   bool loop = false;
   List<Media> queuePlaying = [];
   int index = 0;
-  static final ValueNotifier<bool> refreshQueue = ValueNotifier(false);
+  static final refreshQueue = ValueNotifier(false);
 
-  factory MediaHandler() {
-    return instance;
-  }
+  factory MediaHandler() => instance;
 
   MediaHandler.internal() {
     AudioService.init(builder: () => this).then((value) {
@@ -69,9 +67,7 @@ class MediaHandler extends BaseAudioHandler {
     refreshQueue.value = !refreshQueue.value;
   }
 
-  bool get isEmpty {
-    return queuePlaying.isEmpty;
-  }
+  bool get isEmpty => queuePlaying.isEmpty;
 
   bool tryLoad(Media media) {
     for (int q = 0; q < queuePlaying.length; q++) {
@@ -85,7 +81,5 @@ class MediaHandler extends BaseAudioHandler {
     return false;
   }
 
-  Media get current {
-    return queuePlaying[index];
-  }
+  Media get current => queuePlaying[index];
 }

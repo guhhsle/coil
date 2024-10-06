@@ -7,6 +7,7 @@ import '../data.dart';
 import '../functions/other.dart';
 import '../template/custom_chip.dart';
 import '../template/data.dart';
+import '../template/tile.dart';
 import '../widgets/frame.dart';
 import 'subscriptions.dart';
 import '../media/media.dart';
@@ -26,16 +27,17 @@ class PageArtist extends StatefulWidget {
   PageArtistState createState() => PageArtistState();
 }
 
+const options = ['Videos', 'Other'];
+
 class PageArtistState extends State<PageArtist> {
   bool isSubscribed = false;
   String selectedHome = 'Videos';
   Map videos = {};
   Map playlists = {};
-  final options = ['Videos', 'Other'];
 
   Future<void> unSubscribe() async {
-    if (pf['token'] == '') {
-      File file = File('${pf['appDirectory']}/subscriptions.json');
+    if (Pref.token.value == '') {
+      File file = File('${Pref.appDirectory.value}/subscriptions.json');
       List list = jsonDecode(await file.readAsString());
       if (isSubscribed) {
         list.removeWhere((e) => e['url'].contains(widget.url));
@@ -51,9 +53,12 @@ class PageArtistState extends State<PageArtist> {
       await fetchSubscriptions(false);
     } else {
       await post(
-        Uri.https(pf['authInstance'], isSubscribed ? 'unsubscribe' : 'subscribe'),
+        Uri.https(
+          Pref.authInstance.value,
+          isSubscribed ? 'unsubscribe' : 'subscribe',
+        ),
         headers: {
-          'Authorization': pf['token'],
+          'Authorization': Pref.token.value,
           'Content-Type': 'application/json',
         },
         body: jsonEncode({'channelId': videos['id']}),
@@ -65,12 +70,12 @@ class PageArtistState extends State<PageArtist> {
 
   Future<void> loadContent() async {
     try {
-      Response result = await get(Uri.https(pf['instance'], widget.url));
+      Response result = await get(Uri.https(Pref.instance.value, widget.url));
       videos = jsonDecode(utf8.decode(result.bodyBytes));
       setState(() {});
       result = await get(
         Uri.https(
-          pf['instance'],
+          Pref.instance.value,
           'channels/tabs',
           {'data': (jsonDecode(result.body)['tabs'][0])['data']},
         ),
@@ -90,7 +95,9 @@ class PageArtistState extends State<PageArtist> {
 
   @override
   Widget build(BuildContext context) {
-    isSubscribed = userSubscriptions.value.indexWhere((e) => e['url'].contains(widget.url)) >= 0;
+    isSubscribed = userSubscriptions.value
+            .indexWhere((e) => e['url'].contains(widget.url)) >=
+        0;
     return Frame(
       title: Text(formatName(widget.artist)),
       child: Column(
@@ -105,17 +112,20 @@ class PageArtistState extends State<PageArtist> {
                 for (String option in options)
                   CustomChip(
                     selected: selectedHome == option,
-                    onSelected: (val) {
+                    tile: Tile(option, Icons.filter_rounded, '', () {
                       selectedHome = option;
                       setState(() {});
-                    },
-                    label: option,
+                    }),
                   ),
                 CustomChip(
                   selected: isSubscribed,
                   showCheckmark: true,
-                  onSelected: (val) => unSubscribe(),
-                  label: '${videos['subscriberCount']}',
+                  tile: Tile(
+                    videos['subscriberCount'],
+                    Icons.numbers_rounded,
+                    '',
+                    unSubscribe,
+                  ),
                 )
               ],
             ),

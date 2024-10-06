@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import '../pages/artist.dart';
-import '../pages/playlist.dart';
 import '../template/functions.dart';
+import '../functions/other.dart';
+import '../pages/playlist.dart';
+import '../pages/artist.dart';
+import '../data.dart';
 
 class PlaylistTile extends StatelessWidget {
   final Map info;
@@ -22,7 +22,7 @@ class PlaylistTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: pf['thumbnails']
+        leading: Pref.thumbnails.value
             ? Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: ClipRRect(
@@ -32,18 +32,21 @@ class PlaylistTile extends StatelessWidget {
                     child: Image.network(
                       info['thumbnail'] ?? info['avatar'] ?? '',
                       fit: BoxFit.cover,
-                      errorBuilder: (c, o, s) => const Icon(Icons.clear_all_rounded),
+                      errorBuilder: (c, o, s) =>
+                          const Icon(Icons.clear_all_rounded),
                     ),
                   ),
                 ),
               )
             : null,
-        title: Text(formatName(info['title'] ?? info['name'] ?? t(info['url']))),
+        title:
+            Text(formatName(info['title'] ?? info['name'] ?? t(info['url']))),
         onTap: () async => await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
               if (playlist) {
-                return PlaylistPage(url: formatUrl(info['id'] ?? info['url']), path: path);
+                return PlaylistPage(
+                    url: formatUrl(info['id'] ?? info['url']), path: path);
               } else {
                 return PageArtist(url: info['url'], artist: info['name']);
               }

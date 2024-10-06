@@ -1,20 +1,20 @@
-import 'dart:async';
-import 'package:coil/audio/handler.dart';
-import 'package:coil/threads/main_thread.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path_provider/path_provider.dart';
-import 'data.dart';
-import 'pages/home.dart';
-import 'template/app.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'threads/main_thread.dart';
 import 'template/functions.dart';
 import 'template/prefs.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'audio/handler.dart';
+import 'template/app.dart';
+import 'pages/home.dart';
+import 'data.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initPrefs();
-  if (pf['appDirectory'] == '' && !kIsWeb) {
-    pf['appDirectory'] = (await getApplicationCacheDirectory()).path;
+  await Preferences().init();
+  if (Pref.appDirectory.value == '' && !kIsWeb) {
+    Pref.appDirectory.set((await getApplicationCacheDirectory()).path);
   }
   try {
     MainThread();

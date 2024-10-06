@@ -1,108 +1,142 @@
-import 'package:coil/settings/account.dart';
-import 'package:coil/settings/data.dart';
-import 'package:coil/settings/interface.dart';
-import 'package:coil/template/theme.dart';
+import 'layers/settings/interface.dart';
 import 'package:flutter/material.dart';
-import 'functions/other.dart';
-import 'media/media.dart';
+import 'layers/settings/account.dart';
+import 'layers/settings/other.dart';
+import 'layers/settings/data.dart';
 import 'playlist/playlist.dart';
-import 'settings/more.dart';
-import 'template/layer.dart';
+import 'functions/other.dart';
+import 'template/theme.dart';
+import 'template/prefs.dart';
+import 'template/tile.dart';
+import 'media/media.dart';
 
-Map pf = {
-  //APP
-  //'firstBoot': true,
-  'bookmarks': <String>[],
-  //ACCOUNT
-  'username': '',
-  'password': '',
-  'token': '',
-  'instance': 'Set instance',
-  'authInstance': '',
-  'location': 'United States',
-  //MORE
-  'volume': 50,
-  'locale': 'en',
-  //INTERFACE
-  //'reverse': true,
-  'artist': false,
-  'appbar': 'Black',
-  'player': 'Dock',
-  'background': 'Ivory',
-  'backgroundDark': 'Ultramarine',
-  'primary': 'Black',
-  'primaryDark': 'Light Green',
-  //HOME
-  'homeOrder': [
-    'Playlists',
-    'Offline',
-    'Bookmarks',
-    'Feed',
-    'Trending',
-    'Subscriptions',
-  ],
-  'searchOrder': [
-    'Songs',
-    'Videos',
-    'Albums',
-    'Playlists',
-    'Artists',
-    'Music playlists',
-  ],
-  'tags': 'Top',
-  //'grid': 0,
-  'sortBy': 'Name',
-  //DATA
-  'indie': true,
-  'bitrate': 180000,
-  'thumbnails': true,
-  //'songThumbnails': true,
-  'timeLimit': 8,
-  'searchHistory': <String>[],
-  'instanceHistory': <String>[],
-  'searchHistoryLimit': 100,
-  //CONSTANTS
-  'lyricsApi': 'hyperpipeapi.onrender.com',
-  'watchOnPiped': 'https://piped.video/watch?v=',
-  'musicFolder': '/sdcard/Music',
-  'appDirectory': '',
-  'font': 'JetBrainsMono',
-  'requestLimit': 50,
-  //CONTINUE-LISTENING
-  'rememberThreshold': 10,
-  'rememberLimit': 100,
-  'rememberURLs': <String>[],
-  'rememberTimes': <String>[],
-};
-
-final List<Setting> settings = [
-  Setting('More', Icons.segment_rounded, '', (c) => showSheet(func: otherSet)),
-  Setting(
-      'Account', Icons.person_rounded, '', (c) => showSheet(func: accountSet)),
-  Setting('Data', Icons.cloud_rounded, '', (c) => showSheet(func: dataSet)),
-  Setting(
-      'Interface', Icons.toggle_on, '', (c) => showSheet(func: interfaceSet)),
-  Setting('Primary', Icons.colorize_rounded, '',
-      (c) => showSheet(func: themeMap, param: true, scroll: true)),
-  Setting('Background', Icons.colorize_rounded, '',
-      (c) => showSheet(func: themeMap, param: false, scroll: true)),
+const locales = [
+  ...['Serbian', 'English', 'Spanish', 'German', 'French', 'Italian'],
+  ...['Polish', 'Portuguese', 'Russian', 'Slovenian', 'Japanese'],
+];
+const tops = ['Primary', 'Black', 'Transparent'];
+const playerPos = ['Dock', 'Top', 'Top dock', 'Floating'];
+const initHome = [
+  ...['Playlists', 'Offline', 'Bookmarks'],
+  ...['Feed', 'Trending', 'Subscriptions'],
+];
+const allTags = ['Hide', 'Top', 'Bottom'];
+const allSortBy = [
+  ...['Name', 'Name <', 'Length'],
+  ...['Length <', 'Default', 'Default <'],
+];
+const initSearchOrder = [
+  ...['Songs', 'Videos', ' Albums'],
+  ...['Playlists', 'Artists', 'Music playlists'],
 ];
 
-final ValueNotifier<List> userPlaylists = ValueNotifier([]);
-final ValueNotifier<List<Media>> localMusic = ValueNotifier([]);
-final ValueNotifier<List<Playlist>> bookmarks = ValueNotifier([]);
-final ValueNotifier<List<Media>> userFeed = ValueNotifier([]);
-final ValueNotifier<List> userSubscriptions = ValueNotifier([]);
-final ValueNotifier<List<Media>> trendingVideos = ValueNotifier([]);
-final ValueNotifier<String> currentLyrics = ValueNotifier('');
+enum Pref {
+  //TEMPLATE
+  font('Font', 'JetBrainsMono', Icons.format_italic_rounded, ui: true),
+  locale('Language', 'English', Icons.language_rounded, ui: true, all: locales),
+  appbar('Top', 'Black', Icons.gradient_rounded, all: tops, ui: true),
+  background('Background', 'F0F8FF', Icons.tonality_rounded, ui: true),
+  primary('Primary', '000000', Icons.colorize_rounded, ui: true),
+  backgroundDark('Dark background', '0F0A0A', Icons.tonality_rounded, ui: true),
+  primaryDark('Dark primary', 'FEDBD0', Icons.colorize_rounded, ui: true),
+  debug('Developer', false, Icons.code_rounded),
+  //ACCOUNT
+  bookmarks('Bookmarks', <String>[], Icons.bookmarks_rounded, ui: true),
+  username('Username', '', Icons.person_rounded),
+  password('Password', '', Icons.password_rounded),
+  token('Token', '', Icons.token_rounded),
+  instance('Instance', 'Set instance', Icons.domain_rounded, ui: true),
+  authInstance('Auth instance', '', Icons.domain_rounded, ui: true),
+  location('Country', 'United States', Icons.language_rounded),
+  //MORE
+  volume('Volume', 50, Icons.graphic_eq_rounded),
+  artist('Show artist', false, Icons.person_rounded),
+  player('Player', 'Dock', Icons.toggle_on, ui: true, all: playerPos),
+  homeOrder('Home', initHome, Icons.door_front_door_rounded, ui: true),
+  tags('Tags', 'Top', Icons.label_rounded, all: allTags, ui: true),
+  sortBy('Sort', 'Name', Icons.sort_rounded, all: allSortBy, ui: true),
+  bitrate('Quality', 180000, Icons.cloud_rounded),
+  thumbnails('Thumbnails', true, Icons.image_rounded, ui: true),
+  indie('Recommend less popular', true, Icons.track_changes_rounded),
+  timeLimit('Recommend timeout (s)', 8, Icons.track_changes_rounded),
+  searchOrder('Seach', initSearchOrder, Icons.fiber_manual_record_outlined),
+  musicFolder('Music folder', '/sdcard/Music', Icons.folder_rounded, ui: true),
+  rememberThreshold('Remember threshold', 10, Icons.timelapse_rounded),
+  rememberTimes('Remember times', <String>[], Icons.timelapse_rounded,
+      backend: true),
+  remeberURLs('Remember URLs', <String>[], Icons.timelapse_rounded,
+      backend: true),
+  rememberLimit('Remember limit', 100, Icons.timelapse_rounded, backend: true),
+  requestLimit('Recommending', 50, Icons.https_rounded, backend: true),
+  appDirectory('Cache', '', Icons.cached_rounded, backend: true),
+  alternative('Alternative', 'piped.video', Icons.tv_rounded),
+  lyricsAPI('Hyperpipe', 'hyperpipeapi.onrender.com', Icons.https_rounded,
+      backend: true),
+  searchHistoryLimit('Limit', 100, Icons.history_rounded, backend: true),
+  instanceHistory('Instances', <String>[], Icons.domain_rounded),
+  searchHistory('Search history', <String>[], Icons.history_rounded, ui: true),
+  ;
 
-final ValueNotifier<bool> showTopDock = ValueNotifier(false);
-final ValueNotifier<bool> refreshPlaylist = ValueNotifier(false);
+  final dynamic initial;
+  final List? all;
+  final String title;
+  final IconData icon;
+  final bool ui, backend; //Changing it leads to UI rebuild
 
-Map<String, Widget> homeMap = {};
+  const Pref(this.title, this.initial, this.icon,
+      {this.all, this.ui = false, this.backend = false});
+
+  dynamic get value => Preferences.get(this);
+
+  Future set(dynamic val) => Preferences.set(this, val);
+
+  Future rev() => Preferences.rev(this);
+
+  Future next() => Preferences.next(this);
+
+  void nextByLayer({String suffix = ''}) {
+    NextByLayer(this, suffix: suffix).show();
+  }
+
+  void listRemove(String element) {
+    List list = value.toList();
+    set(list..remove(element));
+  }
+
+  void listAdd(String element) {
+    List list = value.toList();
+    set(list..add(element));
+  }
+
+  @override
+  String toString() => name;
+}
+
+List<Tile> get settings {
+  return [
+    Tile('More', Icons.segment_rounded, '', OtherLayer().show),
+    Tile('Account', Icons.person_rounded, '', AccountLayer().show),
+    Tile('Data', Icons.cloud_rounded, '', DataLayer().show),
+    Tile('Interface', Icons.toggle_on, '', InterfaceLayer().show),
+    Tile('Primary', Icons.colorize_rounded, '', ThemeLayer(true).show),
+    Tile('Background', Icons.tonality_rounded, '', ThemeLayer(false).show),
+  ];
+}
+
+final userPlaylists = ValueNotifier([]);
+final localMusic = ValueNotifier(<Media>[]);
+final bookmarks = ValueNotifier(<Playlist>[]);
+final userFeed = ValueNotifier(<Media>[]);
+final userSubscriptions = ValueNotifier([]);
+final trendingVideos = ValueNotifier(<Media>[]);
+final currentLyrics = ValueNotifier('');
+
+final showTopDock = ValueNotifier(false);
+final refreshPlaylist = ValueNotifier(false);
+
+final homeMap = <String, Widget>{};
 String selectedHome = 'Playlists';
-ValueNotifier<String> barText =
-    ValueNotifier(formatInstanceName(pf['instance']));
-PageController pageController = PageController();
-ScrollController scrollController = ScrollController();
-GlobalKey key = GlobalKey(debugLabel: 'Tags');
+final barText = ValueNotifier(formatInstanceName(Pref.instance.value));
+final pageController = PageController();
+final scrollController = ScrollController();
+final key = GlobalKey(debugLabel: 'Tags');

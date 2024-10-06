@@ -1,11 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import '../widgets/song_tile.dart';
+import '../template/data.dart';
+import '../media/media.dart';
 import '../countries.dart';
 import '../data.dart';
-import '../media/media.dart';
-import '../template/data.dart';
-import '../widgets/song_tile.dart';
+import 'dart:convert';
 
 class Trending extends StatelessWidget {
   const Trending({super.key});
@@ -28,10 +28,10 @@ class Trending extends StatelessWidget {
 }
 
 Future<void> trending() async {
-  if (!pf['instance'].contains('.')) return;
-  Response response = await get(Uri.https(pf['instance'], 'trending', {
+  if (!Pref.instance.value.contains('.')) return;
+  Response response = await get(Uri.https(Pref.instance.value, 'trending', {
     'region': countries.keys.elementAt(
-      countries.values.toList().indexOf(pf['location']),
+      countries.values.toList().indexOf(Pref.location.value),
     ),
   }));
   List result = jsonDecode(utf8.decode(response.bodyBytes));

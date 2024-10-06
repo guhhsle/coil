@@ -33,8 +33,8 @@ Future<void> getLocal() async {
     await Permission.storage.request();
     await Permission.audio.request();
   }
-  if (await Directory(pf['musicFolder']).exists()) {
-    final files = Directory(pf['musicFolder']).listSync();
+  if (await Directory(Pref.musicFolder.value).exists()) {
+    final files = Directory(Pref.musicFolder.value).listSync();
     List<Media> list = [];
     for (var file in files) {
       String songPath = file.path.replaceAll('.m4a', '').replaceAll('.mp3', '');

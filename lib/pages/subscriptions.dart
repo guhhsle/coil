@@ -1,19 +1,19 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../template/data.dart';
+import 'dart:convert';
+import 'dart:io';
 import '../widgets/playlist_tile.dart';
+import '../template/data.dart';
+import '../data.dart';
 
 Future<void> fetchSubscriptions(bool force) async {
   try {
     List list = [];
-    File file = File('${pf['appDirectory']}/subscriptions.json');
-    if (force && pf['token'] != '') {
+    File file = File('${Pref.appDirectory.value}/subscriptions.json');
+    if (force && Pref.token.value != '') {
       Response response = await get(
-        Uri.https(pf['authInstance'], 'subscriptions'),
-        headers: {'Authorization': pf['token']},
+        Uri.https(Pref.authInstance.value, 'subscriptions'),
+        headers: {'Authorization': Pref.token.value},
       );
       list = jsonDecode(utf8.decode(response.bodyBytes));
       await file.writeAsBytes(response.bodyBytes);

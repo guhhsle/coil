@@ -1,16 +1,13 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../data.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 import '../template/functions.dart';
-import '../template/layer.dart';
-import '../template/prefs.dart';
+import '../data.dart';
 
 double? calculateShift(BuildContext context, int index, Map map) {
-  double tagsLength = pf['locale'] == 'ja' ? 28 : 22;
+  double tagsLength = Pref.locale.value == 'ja' ? 28 : 22;
   double wantedShift = index == 0 ? 0 : 28;
-  double word = pf['locale'] == 'ja' ? 14 : 8.45;
+  double word = Pref.locale.value == 'ja' ? 14 : 8.45;
   double width = MediaQuery.of(context).size.width;
   for (int i = 0; i < map.length; i++) {
     tagsLength += 24 + t(map.keys.elementAt(i)).length * word;
@@ -66,67 +63,17 @@ Future<String> writeFile(String name, String content) async {
   );
 }
 
-Future<String> instanceHistory() async {
-  Completer<String> completer = Completer();
-  List<String> history = pf['instanceHistory'];
-  showSheet(
-    scroll: true,
-    func: (non) async => Layer(
-      action: Setting(
-        'Instances',
-        Icons.domain_rounded,
-        '',
-        (c) async => await launchUrl(
-          Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),
-          mode: LaunchMode.externalApplication,
-        ),
-      ),
-      trailing: (c) => [
-        IconButton(
-          icon: const Icon(Icons.add_rounded),
-          onPressed: () async {
-            String newInstance = await getInput('', 'Instance link');
-            newInstance = trimUrl(newInstance);
-            setPref('instanceHistory', pf['instanceHistory']..add(newInstance));
-          },
-        ),
-      ],
-      list: history
-          .map((instance) => Setting(
-                instance,
-                {
-                      pf['authInstance']: Icons.lock_rounded,
-                      pf['instance']: Icons.domain_rounded,
-                    }[instance] ??
-                    Icons.remove_rounded,
-                '',
-                (c) {
-                  Navigator.of(c).pop();
-                  completer.complete(instance);
-                },
-                secondary: (c) => setPref(
-                  'instanceHistory',
-                  pf['instanceHistory']..remove(instance),
-                ),
-              ))
-          .toList(),
-    ),
-  );
-
-  return completer.future;
-}
-
 void rememberSearch(String str) {
   if (str == '') return;
-  List<String> list = pf['searchHistory'];
+  List<String> list = Pref.searchHistory.value;
   for (int i = 0; i < 10 && i < list.length; i++) {
     if (list[i] == str) return;
   }
   list.insert(0, str);
-  if (list.length > pf['searchHistoryLimit']) {
+  if (list.length > Pref.searchHistoryLimit.value) {
     list.removeLast();
   }
-  setPref('searchHistory', list);
+  Pref.searchHistory.set(list);
 }
 
 String trimUrl(String raw) {

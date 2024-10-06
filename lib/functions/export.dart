@@ -1,12 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
-import '../data.dart';
-import '../functions/other.dart';
+import 'dart:convert';
+import 'dart:io';
 import '../pages/user_playlists.dart';
-import '../playlist/playlist.dart';
 import '../template/functions.dart';
+import '../playlist/playlist.dart';
+import '../functions/other.dart';
+import '../data.dart';
 
 //BULK INDICATES ONE BIG FILE
 Future<void> exportUser(bool bulk) async {
@@ -70,31 +70,32 @@ Future<void> exportOther(Playlist list) async {
 }
 
 Future<void> exportCache() async {
-  File file = File('${pf['appDirectory']}/playlists.json');
+  File file = File('${Pref.appDirectory.value}/playlists.json');
   await writeFile('playlists.json', await file.readAsString());
 
-  file = File('${pf['appDirectory']}/subscriptions.json');
+  file = File('${Pref.appDirectory.value}/subscriptions.json');
   await writeFile('subscriptions.json', await file.readAsString());
 
-  file = File('${pf['appDirectory']}/100raw.json');
+  file = File('${Pref.appDirectory.value}/100raw.json');
   await writeFile('100raw.json', await file.readAsString());
 
-  file = File('${pf['appDirectory']}/Bookmarks.json');
+  file = File('${Pref.appDirectory.value}/Bookmarks.json');
   await writeFile('Bookmarks.json', await file.readAsString());
 
   for (Map userPlaylist in userPlaylists.value) {
     String name = '${formatUrl(userPlaylist['id'])}.json';
-    file = File('${pf['appDirectory']}/$name');
+    file = File('${Pref.appDirectory.value}/$name');
     await writeFile(name, await file.readAsString());
   }
 }
 
 Future<void> importCache() async {
   try {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
-    List<File> files = result!.paths.map((path) => File(path!)).toList();
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    final files = result!.paths.map((path) => File(path!)).toList();
     for (File backedFile in files) {
-      File cacheFile = File('${pf['appDirectory']}/${basename(backedFile.path)}');
+      File cacheFile =
+          File('${Pref.appDirectory.value}/${basename(backedFile.path)}');
       cacheFile.writeAsBytes(await backedFile.readAsBytes());
     }
   } catch (e) {

@@ -1,15 +1,15 @@
-import 'package:coil/audio/queue.dart';
 import 'package:flutter/material.dart';
-import '../audio/handler.dart';
-import '../media/audio.dart';
-import '../audio/audio_slider.dart';
-import '../audio/top_icon.dart';
-import '../media/media.dart';
-import '../template/custom_card.dart';
-import '../template/data.dart';
-import '../template/functions.dart';
-import '../template/layer.dart';
+import 'audio_slider.dart';
 import 'song_tile.dart';
+import '../template/custom_card.dart';
+import '../template/functions.dart';
+import '../audio/top_icon.dart';
+import '../audio/handler.dart';
+import '../template/data.dart';
+import '../template/tile.dart';
+import '../media/audio.dart';
+import '../media/media.dart';
+import '../audio/queue.dart';
 
 class SheetQueue extends StatefulWidget {
   const SheetQueue({super.key});
@@ -48,12 +48,9 @@ class _SheetQueueState extends State<SheetQueue> {
                       children: [
                         Expanded(
                           child: CustomCard(
-                            Setting(
-                              'Shuffle',
-                              Icons.low_priority_rounded,
-                              '',
-                              (c) => MediaHandler().shuffle(),
-                            ),
+                            Tile('Shuffle', Icons.low_priority_rounded, '', () {
+                              MediaHandler().shuffle();
+                            }),
                             margin: const EdgeInsets.only(
                                 left: 16, right: 4, bottom: 12, top: 16),
                           ),

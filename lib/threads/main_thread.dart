@@ -1,13 +1,13 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
-import 'package:coil/audio/handler.dart';
-import 'package:coil/threads/handler_thread.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
-import '../data.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:isolate';
+import 'dart:async';
+import 'dart:io';
+import 'handler_thread.dart';
 import '../template/functions.dart';
+import '../audio/handler.dart';
+import '../data.dart';
 
 class MainThread {
   static final MainThread instance = MainThread.internal();
@@ -30,7 +30,7 @@ class MainThread {
       receivePort.listen((message) {
         if (message is SendPort) {
           sendPort = message;
-          callFn({'volume': pf['volume']});
+          callFn({'volume': Pref.volume.value});
         } else if (message is String) {
           MapEntry entry = jsonDecode(message).entries.first;
           final key = entry.key;

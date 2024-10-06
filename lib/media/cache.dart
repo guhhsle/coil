@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:coil/template/layer.dart';
-import '../data.dart';
-import '../functions/other.dart';
-import 'map.dart';
 import 'media.dart';
-import '../playlist/cache.dart';
+import 'map.dart';
 import '../playlist/playlist.dart';
+import '../functions/other.dart';
+import '../template/prefs.dart';
+import '../playlist/cache.dart';
+import '../data.dart';
 
 extension MediaCache on Media {
   Future<void> forceAddBackup(String url, {bool top = false}) async {
@@ -19,7 +19,7 @@ extension MediaCache on Media {
     }
     await local.backup();
     refreshList();
-    refreshLayer();
+    Preferences.notify();
   }
 
   Future<void> forceRemoveBackup(String url, {bool first = true}) async {
@@ -32,11 +32,11 @@ extension MediaCache on Media {
     }
     if (index != -1) local.raw['relatedStreams'].removeAt(index);
     if ((local.raw['relatedStreams'] as List).isEmpty) {
-      await File('${pf['appDirectory']}/$url.json').delete();
+      await File('${Pref.appDirectory.value}/$url.json').delete();
     }
     await local.backup();
     refreshList();
-    refreshLayer();
+    Preferences.notify();
   }
 
   Future<void> addTo100() async {
@@ -50,7 +50,8 @@ extension MediaCache on Media {
     Playlist formatted = await Playlist.load('100', [2]).onError(
       (err, stackTrace) => Playlist.fromString('100'),
     );
-    List list = formatted.raw['relatedStreams'] = hundred.raw['relatedStreams'].toList();
+    List list = formatted.raw['relatedStreams'] =
+        hundred.raw['relatedStreams'].toList();
 
     for (Map item in list) {
       if (map.containsKey(item['url'])) {
