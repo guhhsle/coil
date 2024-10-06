@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'audio_slider.dart';
 import 'song_tile.dart';
-import '../template/custom_card.dart';
+import '../template/tile_card.dart';
 import '../template/functions.dart';
 import '../audio/top_icon.dart';
 import '../audio/handler.dart';
@@ -47,7 +47,7 @@ class _SheetQueueState extends State<SheetQueue> {
                     Row(
                       children: [
                         Expanded(
-                          child: CustomCard(
+                          child: TileCard(
                             Tile('Shuffle', Icons.low_priority_rounded, '', () {
                               MediaHandler().shuffle();
                             }),

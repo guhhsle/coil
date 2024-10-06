@@ -8,7 +8,7 @@ import 'search.dart';
 import 'local.dart';
 import 'feed.dart';
 import '../template/animated_text.dart';
-import '../template/custom_chip.dart';
+import '../template/tile_chip.dart';
 import '../template/functions.dart';
 import '../template/settings.dart';
 import '../layers/instances.dart';
@@ -147,7 +147,7 @@ class HomeTags extends StatelessWidget {
         physics: scrollPhysics,
         scrollDirection: Axis.horizontal,
         itemCount: homeMap.length,
-        itemBuilder: (context, i) => CustomChip(
+        itemBuilder: (context, i) => TileChip(
           selected: selectedHome == homeMap.keys.elementAt(i),
           showAvatar: false,
           tile: Tile(homeMap.keys.elementAt(i), Icons.home_rounded, '', () {

@@ -1,18 +1,18 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../data.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
+import 'subscriptions.dart';
+import '../widgets/playlist_tile.dart';
+import '../template/tile_chip.dart';
+import '../widgets/song_tile.dart';
 import '../functions/other.dart';
-import '../template/custom_chip.dart';
 import '../template/data.dart';
 import '../template/tile.dart';
 import '../widgets/frame.dart';
-import 'subscriptions.dart';
 import '../media/media.dart';
-import '../widgets/playlist_tile.dart';
-import '../widgets/song_tile.dart';
+import '../data.dart';
 
 class PageArtist extends StatefulWidget {
   final String url;
@@ -110,14 +110,14 @@ class PageArtistState extends State<PageArtist> {
               scrollDirection: Axis.horizontal,
               children: [
                 for (String option in options)
-                  CustomChip(
+                  TileChip(
                     selected: selectedHome == option,
                     tile: Tile(option, Icons.filter_rounded, '', () {
                       selectedHome = option;
                       setState(() {});
                     }),
                   ),
-                CustomChip(
+                TileChip(
                   selected: isSubscribed,
                   showCheckmark: true,
                   tile: Tile(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:async';
-import '../template/custom_chip.dart';
+import '../template/tile_chip.dart';
 import '../widgets/playlist_tile.dart';
 import '../template/functions.dart';
 import '../widgets/song_tile.dart';
@@ -132,7 +132,7 @@ class SearchState extends State<Search> {
                 scrollDirection: Axis.horizontal,
                 itemCount: filters.length,
                 controller: searchScrollController,
-                itemBuilder: (context, i) => CustomChip(
+                itemBuilder: (context, i) => TileChip(
                   showAvatar: false,
                   selected: filter == filters.values.toList()[i],
                   tile: Tile(
