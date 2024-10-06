@@ -7,7 +7,6 @@ class InterfaceLayer extends Layer {
   @override
   void construct() {
     action = Tile.fromPref(Pref.player);
-    //TODO MEDIAHANDLER.REFRESH();
     list = [
       Tile.fromPref(Pref.appbar),
       Tile.fromPref(Pref.artist),

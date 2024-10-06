@@ -3,7 +3,7 @@ import 'handler.dart';
 import '../data.dart';
 import '../threads/main_thread.dart';
 import '../widgets/sheet_queue.dart';
-import '../template/theme.dart';
+import '../template/prefs.dart';
 
 class TopIcon extends StatelessWidget {
   final bool top;
@@ -13,7 +13,7 @@ class TopIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: ThemePref(),
+      listenable: Preferences(),
       builder: (context, child) {
         return ValueListenableBuilder(
           valueListenable: MediaHandler().processing,
