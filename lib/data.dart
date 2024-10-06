@@ -30,7 +30,7 @@ const initSearchOrder = [
   ...['Playlists', 'Artists', 'Music playlists'],
 ];
 
-enum Pref {
+enum Pref<T> {
   //TEMPLATE
   font('Font', 'JetBrainsMono', Icons.format_italic_rounded, ui: true),
   locale('Language', 'English', Icons.language_rounded, ui: true, all: locales),
@@ -77,8 +77,8 @@ enum Pref {
   searchHistory('Search history', <String>[], Icons.history_rounded, ui: true),
   ;
 
-  final dynamic initial;
-  final List? all;
+  final T initial;
+  final List<T>? all;
   final String title;
   final IconData icon;
   final bool ui, backend; //Changing it leads to UI rebuild
@@ -86,9 +86,9 @@ enum Pref {
   const Pref(this.title, this.initial, this.icon,
       {this.all, this.ui = false, this.backend = false});
 
-  dynamic get value => Preferences.get(this);
+  T get value => Preferences.get(this);
 
-  Future set(dynamic val) => Preferences.set(this, val);
+  Future set(T val) => Preferences.set(this, val);
 
   Future rev() => Preferences.rev(this);
 
@@ -96,16 +96,6 @@ enum Pref {
 
   void nextByLayer({String suffix = ''}) {
     NextByLayer(this, suffix: suffix).show();
-  }
-
-  void listRemove(String element) {
-    List list = value.toList();
-    set(list..remove(element));
-  }
-
-  void listAdd(String element) {
-    List list = value.toList();
-    set(list..add(element));
   }
 
   @override

@@ -5,7 +5,7 @@ extension HandlerRemember on MediaHandler {
   void checkToRemember(int position) {
     if (position / 60 >= Pref.rememberThreshold.value && position % 5 == 0) {
       List<String> urls = Pref.remeberURLs.value.toList();
-      List times = Pref.rememberTimes.value.toList();
+      List<String> times = Pref.rememberTimes.value.toList();
       if (!urls.contains(current.id)) {
         if (urls.length > Pref.rememberLimit.value) {
           urls.removeLast();

@@ -17,7 +17,7 @@ class OtherLayer extends Layer {
         MainThread.callFn({'volume': volume});
       }),
       Tile.fromPref(Pref.rememberThreshold, suffix: 'min', onPrefInput: (t) {
-        Pref.rememberThreshold.set(t);
+        Pref.rememberThreshold.set(int.parse(t));
       }),
     ];
   }

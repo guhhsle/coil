@@ -20,7 +20,11 @@ class SearchLayer extends Layer {
         Icons.remove_rounded,
         '',
         () => onSelected(query),
-        secondary: () => Pref.searchHistory.listRemove(query),
+        secondary: () {
+          Pref.searchHistory.set(
+            Pref.searchHistory.value.toList()..remove(query),
+          );
+        },
       );
     });
   }
