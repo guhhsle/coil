@@ -74,6 +74,7 @@ class MediaLayer extends Layer {
         ListedLayer(media).show();
       }),
       Tile('', Icons.format_align_center, 'Lyrics', () {
+        Navigator.of(context).pop();
         singleChildSheet(
           action: Tile(media.title, Icons.format_align_center_rounded),
           child: ValueListenableBuilder<String>(
