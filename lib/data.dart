@@ -62,29 +62,25 @@ enum Pref<T> {
   searchOrder('Seach', initSearchOrder, Icons.fiber_manual_record_outlined),
   musicFolder('Music folder', '/sdcard/Music', Icons.folder_rounded, ui: true),
   rememberThreshold('Remember threshold', 10, Icons.timelapse_rounded),
-  rememberTimes('Remember times', <String>[], Icons.timelapse_rounded,
-      backend: true),
-  remeberURLs('Remember URLs', <String>[], Icons.timelapse_rounded,
-      backend: true),
-  rememberLimit('Remember limit', 100, Icons.timelapse_rounded, backend: true),
-  requestLimit('Recommending', 50, Icons.https_rounded, backend: true),
-  appDirectory('Cache', '', Icons.cached_rounded, backend: true),
+  rememberTimes(null, <String>[], null),
+  rememberURLs(null, <String>[], null),
+  rememberLimit(null, 100, null),
+  requestLimit(null, 50, null),
+  appDirectory(null, '', null),
   alternative('Alternative', 'piped.video', Icons.tv_rounded),
-  lyricsAPI('Hyperpipe', 'hyperpipeapi.onrender.com', Icons.https_rounded,
-      backend: true),
-  searchHistoryLimit('Limit', 100, Icons.history_rounded, backend: true),
+  lyricsAPI(null, 'hyperpipeapi.onrender.com', null),
+  searchHistoryLimit(null, 100, null),
   instanceHistory('Instances', <String>[], Icons.domain_rounded),
   searchHistory('Search history', <String>[], Icons.history_rounded, ui: true),
   ;
 
   final T initial;
   final List<T>? all;
-  final String title;
-  final IconData icon;
-  final bool ui, backend; //Changing it leads to UI rebuild
+  final String? title;
+  final IconData? icon;
+  final bool ui; //Changing it leads to UI rebuild
 
-  const Pref(this.title, this.initial, this.icon,
-      {this.all, this.ui = false, this.backend = false});
+  const Pref(this.title, this.initial, this.icon, {this.all, this.ui = false});
 
   T get value => Preferences.get(this);
 

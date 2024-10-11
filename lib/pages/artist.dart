@@ -112,6 +112,7 @@ class PageArtistState extends State<PageArtist> {
                 for (String option in options)
                   TileChip(
                     selected: selectedHome == option,
+                    showAvatar: false,
                     tile: Tile(option, Icons.filter_rounded, '', () {
                       selectedHome = option;
                       setState(() {});
@@ -120,6 +121,7 @@ class PageArtistState extends State<PageArtist> {
                 TileChip(
                   selected: isSubscribed,
                   showCheckmark: true,
+                  showAvatar: false,
                   tile: Tile(
                     videos['subscriberCount'],
                     Icons.numbers_rounded,
