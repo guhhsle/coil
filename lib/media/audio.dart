@@ -14,8 +14,8 @@ extension MediaAudio on Media {
     if (!offline) {
       addTo100();
       for (int i = 0; i < 5 && await forceLoad() == null; i++) {}
+      showSnack('Still trying to fetch...', false, debug: true);
       for (int i = 1; i < 5 && await forceLoad() == null; i++) {
-        showSnack('Still trying to fetch...', false, debug: true);
         await Future.delayed(Duration(seconds: i));
       }
       if (await forceLoad(showError: true) == null) return;

@@ -95,10 +95,7 @@ Future<Map> loadLocale() async {
   return l;
 }
 
-String t(dynamic d) {
-  String s = '$d';
-  return l[s] ?? s;
-}
+String t(s) => l['$s'] ?? '$s';
 
 IconData checked(bool check) {
   if (check) return Icons.radio_button_checked;
