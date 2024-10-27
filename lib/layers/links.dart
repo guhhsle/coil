@@ -11,7 +11,7 @@ class MediaLinks extends Layer {
   MediaLinks(this.media);
   @override
   void construct() async {
-    await media.forceLoad();
+    await media.load();
     action = Tile('Links', Icons.link_rounded);
     list = [
       Tile('', Icons.file_download_outlined, 'Audio', () {

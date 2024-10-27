@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:coil/media/bruteforce.dart';
 import 'package:flutter/material.dart';
 import 'listed.dart';
 import 'links.dart';
@@ -24,7 +25,7 @@ class MediaLayer extends Layer {
   void construct() {
     scroll = true;
     ValueNotifier<bool> loaded = ValueNotifier(false);
-    media.forceLoad().then((v) => loaded.value = true);
+    media.load().then((v) => loaded.value = true);
     media.getLyrics();
     action = Tile(media.title, Icons.radio_outlined, '', () async {
       final suggested = await generate([
@@ -110,5 +111,13 @@ class MediaLayer extends Layer {
         }),
       ];
     }
+    list = [
+      ...list,
+      Tile('', Icons.domain_rounded, 'Bruteforce load', () {
+        final layer = BruteForceLayer(media);
+        layer.bruteForceAll();
+        layer.show();
+      }),
+    ];
   }
 }

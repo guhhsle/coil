@@ -78,11 +78,11 @@ class PrefAsList extends Layer {
     action = Tile(pref.title, Icons.list_rounded);
     trailing = [
       IconButton(
-        icon: Icon(Icons.restart_alt_rounded),
+        icon: const Icon(Icons.restart_alt_rounded),
         onPressed: () => pref.set(pref.initial),
       ),
       IconButton(
-        icon: Icon(Icons.add_rounded),
+        icon: const Icon(Icons.add_rounded),
         onPressed: () => getInput('', 'Add').then((val) {
           if (pref.value.contains(val)) return;
           pref.set(pref.value.toList()..add(val));
@@ -90,7 +90,7 @@ class PrefAsList extends Layer {
       ),
     ];
     list = pref.value.map((e) {
-      return Tile('$e', Icons.highlight_off_rounded, '', () {
+      return Tile(e, Icons.highlight_off_rounded, '', () {
         pref.set(pref.value.toList()..remove(e));
       });
     });

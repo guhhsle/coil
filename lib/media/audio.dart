@@ -13,12 +13,13 @@ extension MediaAudio on Media {
   Future<void> play() async {
     if (!offline) {
       addTo100();
-      for (int i = 0; i < 5 && await forceLoad() == null; i++) {}
-      showSnack('Still trying to fetch...', false, debug: true);
-      for (int i = 1; i < 5 && await forceLoad() == null; i++) {
+      for (int i = 0; i < 5 && await load() == null; i++) {
+        if (i == 4) showSnack('Still trying to fetch...', false, debug: true);
+      }
+      for (int i = 2; i < 5 && await load() == null; i++) {
         await Future.delayed(Duration(seconds: i));
       }
-      if (await forceLoad(showError: true) == null) return;
+      if (await load(showError: true) == null) return;
     }
     int pos = MediaHandler().rememberedPosition(id);
     MainThread.callFn({

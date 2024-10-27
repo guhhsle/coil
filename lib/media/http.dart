@@ -11,7 +11,7 @@ extension Preload on List<Media> {
     var futures = <Future>[];
     for (int i = from; i < to; i++) {
       if (i >= 0 && i < length) {
-        futures.add(this[i].forceLoad());
+        futures.add(this[i].load());
       }
     }
     await Future.wait(futures);
@@ -19,13 +19,20 @@ extension Preload on List<Media> {
 }
 
 extension MediaHTTP on Media {
-  Future<String?> forceLoad({bool showError = false}) async {
+  Future<String?> load({
+    bool showError = false,
+  }) async {
     if (offline || audioUrl != null) return audioUrl;
+    if (MediaHandler().tryLoad(this)) return audioUrl!;
+    return forceLoad(instance: Pref.instance.value);
+  }
+
+  Future<String?> forceLoad({
+    bool showError = false,
+    required String instance,
+  }) async {
     try {
-      if (MediaHandler().tryLoad(this)) return audioUrl!;
-      Response result = await get(
-        Uri.https(Pref.instance.value, 'streams/$id'),
-      );
+      Response result = await get(Uri.https(instance, 'streams/$id'));
       Map raw = jsonDecode(result.body);
       if (raw['message'] != null) {
         debugPrint(raw['message']);
@@ -55,12 +62,11 @@ extension MediaHTTP on Media {
           diff = currDiff;
         }
       }
-
-      audioUrl = url;
+      return url;
     } catch (e) {
       debugPrint('Error loading song: $e');
       //FORMAT ERROR
     }
-    return audioUrl;
+    return null;
   }
 }
