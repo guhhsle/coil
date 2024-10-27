@@ -41,9 +41,13 @@ class BruteForceLayer extends Layer {
   @override
   construct() {
     scroll = true;
-    action = Tile('Refresh', Icons.restart_alt_rounded, '', () {
-      bruteForceAll();
-    });
+    action = Tile('Bruteforcing', Icons.domain_rounded);
+    trailing = [
+      IconButton(
+        onPressed: bruteForceAll,
+        icon: const Icon(Icons.restart_alt_rounded),
+      ),
+    ];
     final done = results.entries.map((entry) {
       debugPrint('$entry');
       return Tile(

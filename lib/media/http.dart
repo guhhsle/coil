@@ -19,12 +19,13 @@ extension Preload on List<Media> {
 }
 
 extension MediaHTTP on Media {
-  Future<String?> load({
-    bool showError = false,
-  }) async {
+  Future<String?> load({bool showError = false}) async {
     if (offline || audioUrl != null) return audioUrl;
     if (MediaHandler().tryLoad(this)) return audioUrl!;
-    return forceLoad(instance: Pref.instance.value);
+    return await forceLoad(
+      instance: Pref.instance.value,
+      showError: showError,
+    );
   }
 
   Future<String?> forceLoad({
@@ -62,7 +63,7 @@ extension MediaHTTP on Media {
           diff = currDiff;
         }
       }
-      return url;
+      return audioUrl = url;
     } catch (e) {
       debugPrint('Error loading song: $e');
       //FORMAT ERROR
