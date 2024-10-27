@@ -113,7 +113,7 @@ class MediaLayer extends Layer {
     }
     list = [
       ...list,
-      Tile('', Icons.domain_rounded, 'Bruteforce load', () {
+      Tile('', Icons.domain_rounded, 'Bruteforce', () {
         final layer = BruteForceLayer(media);
         layer.bruteForceAll();
         layer.show();

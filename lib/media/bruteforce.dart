@@ -39,6 +39,7 @@ class BruteForceLayer extends Layer {
 
   @override
   construct() {
+    scroll = true;
     action = Tile('Refresh', Icons.restart_alt_rounded, '', () {
       bruteForceAll();
     });
