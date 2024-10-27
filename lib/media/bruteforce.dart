@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'media.dart';
+import '../functions/other.dart';
 import '../template/layer.dart';
 import '../template/tile.dart';
 import '../audio/handler.dart';
@@ -46,9 +47,9 @@ class BruteForceLayer extends Layer {
     final done = results.entries.map((entry) {
       debugPrint('$entry');
       return Tile(
-        entry.key,
+        formatInstanceName(entry.key),
         Icons.domain_rounded,
-        entry.value != null ? 'Successful' : 'Unsuccessful',
+        entry.value != null,
         () async {
           Pref.instance.set(entry.key);
           final newUrl = await media.forceLoad(instance: entry.key);
@@ -60,7 +61,7 @@ class BruteForceLayer extends Layer {
     });
     final notDone = pending.map((instance) {
       debugPrint(instance);
-      return Tile(instance, Icons.timer_rounded, 'Waiting');
+      return Tile(formatInstanceName(instance), Icons.timer_rounded, 'Waiting');
     });
     list = [...done, ...notDone];
   }

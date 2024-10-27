@@ -114,6 +114,7 @@ class MediaLayer extends Layer {
     list = [
       ...list,
       Tile('', Icons.domain_rounded, 'Bruteforce', () {
+        Navigator.of(context).pop();
         final layer = BruteForceLayer(media);
         layer.bruteForceAll();
         layer.show();
