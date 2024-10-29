@@ -55,7 +55,6 @@ class NextByLayer extends Layer {
   NextByLayer(this.pref, {this.suffix = ''});
   @override
   construct() {
-    scroll = pref.all!.length > 5;
     action = Tile(
       pref.title,
       Icons.memory_rounded,
@@ -74,7 +73,6 @@ class PrefAsList extends Layer {
   PrefAsList(this.pref);
   @override
   construct() {
-    scroll = true;
     action = Tile(pref.title, Icons.list_rounded);
     trailing = [
       IconButton(

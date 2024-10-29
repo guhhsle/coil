@@ -9,7 +9,6 @@ class SearchLayer extends Layer {
   SearchLayer(this.onSelected);
   @override
   void construct() {
-    scroll = true;
     action = Tile('Clear', Icons.clear_all_rounded, '', () {
       Pref.searchHistory.set(<String>[]);
       Navigator.of(context).pop();

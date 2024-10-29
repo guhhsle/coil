@@ -23,7 +23,6 @@ class MediaLayer extends Layer {
   MediaLayer(this.media);
   @override
   void construct() {
-    scroll = true;
     ValueNotifier<bool> loaded = ValueNotifier(false);
     media.load().then((v) => loaded.value = true);
     media.getLyrics();

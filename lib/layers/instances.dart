@@ -11,7 +11,6 @@ class Instances extends Layer {
   final completer = Completer<String>();
   @override
   void construct() {
-    scroll = true;
     action = Tile('Instances', Icons.domain_rounded, '', () {
       launchUrl(
         Uri.parse('https://github.com/TeamPiped/Piped/wiki/Instances'),

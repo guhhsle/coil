@@ -40,7 +40,6 @@ class BruteForceLayer extends Layer {
 
   @override
   construct() {
-    scroll = true;
     action = Tile('Bruteforcing', Icons.domain_rounded);
     trailing = [
       IconButton(

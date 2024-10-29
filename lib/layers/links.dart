@@ -40,7 +40,6 @@ class AudioLinks extends MediaLinks {
   AudioLinks(super.media);
   @override
   void construct() {
-    scroll = true;
     action = Tile('Bitrate', Icons.graphic_eq_rounded);
     list = [
       for (MediaLink link in media.audioUrls)

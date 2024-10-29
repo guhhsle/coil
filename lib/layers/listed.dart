@@ -30,7 +30,6 @@ class ListedLayer extends Layer {
 
   @override
   void construct() async {
-    scroll = true;
     if (userPlaylists.value.isEmpty) {
       await fetchUserPlaylists(true);
     }
