@@ -1,68 +1,41 @@
+import 'package:flutter/material.dart';
 import 'cache.dart';
 import 'http.dart';
 import '../template/functions.dart';
+import '../media/media_queue.dart';
 import '../functions/other.dart';
-import '../media/media.dart';
 import '../data.dart';
 
-class Playlist {
-  String url, thumbnail, name, uploader;
-  Map raw;
-  int items;
-  List<Media> list;
+class Playlist extends MediaQueue {
+  String name = '', uploader = 'Local';
+  String url, thumbnail = '';
+  Map raw = {'relatedStreams': <Map>[]};
 
-  Playlist({
-    required this.url,
-    required this.name,
-    required this.list,
-    required this.uploader,
-    required this.items,
-    required this.thumbnail,
-    required this.raw,
-  });
-
-  static Playlist fromString(String url) {
-    return Playlist(
-      url: url,
-      thumbnail: '',
-      list: [],
-      uploader: 'Local',
-      items: 0,
-      name: t(url),
-      raw: {'relatedStreams': <Map>[]},
-    );
+  Playlist(this.url) {
+    url = formatUrl(url);
+    name = t(url);
   }
 
-  static Future<Playlist> load(
-    String url,
+  Future<void> load(
     List<int> path, {
     int timeTried = 0,
   }) async {
-    url = formatUrl(url);
-    Playlist? list;
     for (int i in path) {
       try {
-        if (i == 2) {
-          list = await PlaylistCache.from(url);
-        } else {
-          list = await PlaylistHTTP.from(url, i == 1);
-        }
-        return list;
+        if (i == 2) return await loadFromCache();
+        return await loadFromInternet(i == 1);
       } catch (e) {
-        //
+        debugPrint('Couldnt load playlist $i:');
+        debugPrint(e.toString());
       }
     }
-    if (timeTried < 4 && list == null) {
-      return load(url, path, timeTried: ++timeTried);
-    } else {
-      return Playlist.fromString(url);
-    }
+    if (timeTried < 4) return load(path, timeTried: ++timeTried);
   }
 
   bool isCacheOnly() => playlistIsCacheOnly(name);
 }
 
-const List<String> userFiles = ['Bookmarks', '100', '100raw'];
+const userFiles = ['Bookmarks', '100', '100raw'];
 
 bool playlistIsCacheOnly(String url) {
   if (Pref.token.value == '') return true;

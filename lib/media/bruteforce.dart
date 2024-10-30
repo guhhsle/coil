@@ -57,8 +57,8 @@ class BruteForceLayer extends Layer {
           Pref.instance.set(entry.key);
           final newUrl = await media.forceLoad(instance: entry.key);
           media.audioUrl = newUrl ?? entry.value;
-          MediaHandler().load([media]);
-          MediaHandler().skipTo(0);
+          MediaHandler().load(media.queue);
+          MediaHandler().skipToMedia(media);
         },
       );
     });

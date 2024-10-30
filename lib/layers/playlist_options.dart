@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../playlist/playlist.dart';
 import '../functions/export.dart';
 import '../pages/bookmarks.dart';
-import '../functions/other.dart';
+import '../template/prefs.dart';
 import '../template/layer.dart';
 import '../playlist/http.dart';
 import '../template/tile.dart';
@@ -19,13 +19,13 @@ class PlaylistOptions extends Layer {
   void construct() {
     action = Tile('Refresh', Icons.refresh_rounded, '', () async {
       path.remove(2);
-      playlist = await Playlist.load(playlist.url, path);
-      refreshList();
+      await playlist.load(path);
+      Preferences.notify();
       Navigator.of(context).pop();
     });
     list = [
       Tile('Shuffle', Icons.low_priority, '', () {
-        MediaHandler().load(playlist.list);
+        MediaHandler().load(playlist);
         MediaHandler().shuffle();
         MediaHandler().skipTo(0);
         Navigator.of(context).pop();
@@ -42,10 +42,10 @@ class PlaylistOptions extends Layer {
         }),
       Tile('Export', Icons.settings_backup_restore_rounded, '', () {
         Navigator.of(context).pop();
-        exportOther(playlist);
+        playlist.exportLoaded();
       }),
       Tile('Creator', Icons.person_rounded, playlist.uploader),
-      Tile('Items', Icons.numbers_rounded, '${playlist.items}'),
+      Tile('Items', Icons.numbers_rounded, '${playlist.length}'),
       Tile('Delete', Icons.delete_forever_rounded, 'Forever', () {
         DeletePlaylist(playlist).show();
       }),

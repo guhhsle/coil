@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:coil/audio/handler.dart';
-import 'package:coil/audio/queue.dart';
-import 'package:coil/audio/remember.dart';
+import 'remember.dart';
+import 'handler.dart';
+import 'queue.dart';
 
 extension StreamHandler on MediaHandler {
   void initStreams() {
@@ -20,7 +20,7 @@ extension StreamHandler on MediaHandler {
     ));
 
     position.addListener(() {
-      if (queuePlaying.isNotEmpty) {
+      if (!isEmpty) {
         int event = position.value;
         checkToRemember(event);
         playbackState.add(playbackState.value.copyWith(
@@ -31,11 +31,11 @@ extension StreamHandler on MediaHandler {
     });
 
     duration.addListener(() {
-      if (queuePlaying.isNotEmpty) {
+      if (!isEmpty) {
         int event = duration.value;
-        queue.add(queuePlaying);
+        queue.add(tracklist.list);
         mediaItem.add(
-          queuePlaying[index].copyWith(
+          tracklist[index].copyWith(
             duration: Duration(seconds: event),
           ),
         );
@@ -57,7 +57,7 @@ extension StreamHandler on MediaHandler {
     processing.addListener(() {
       String event = processing.value;
       if (event == 'completed') {
-        bool isLast = index == queuePlaying.length - 1;
+        bool isLast = index == length - 1;
         skipTo(loop ? index : (isLast ? 0 : index + 1));
       }
     });

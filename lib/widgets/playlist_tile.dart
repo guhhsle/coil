@@ -39,14 +39,17 @@ class PlaylistTile extends StatelessWidget {
                 ),
               )
             : null,
-        title:
-            Text(formatName(info['title'] ?? info['name'] ?? t(info['url']))),
+        title: Text(formatName(
+          info['title'] ?? info['name'] ?? t(info['url']),
+        )),
         onTap: () async => await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
               if (playlist) {
                 return PlaylistPage(
-                    url: formatUrl(info['id'] ?? info['url']), path: path);
+                  url: formatUrl(info['id'] ?? info['url']),
+                  path: path,
+                );
               } else {
                 return PageArtist(url: info['url'], artist: info['name']);
               }

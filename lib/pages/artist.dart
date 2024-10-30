@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'dart:async';
 import 'dart:io';
 import 'subscriptions.dart';
 import '../widgets/playlist_tile.dart';
 import '../template/tile_chip.dart';
+import '../media/media_queue.dart';
 import '../widgets/song_tile.dart';
 import '../functions/other.dart';
 import '../template/data.dart';
@@ -89,7 +89,7 @@ class PageArtistState extends State<PageArtist> {
 
   @override
   void initState() {
-    unawaited(loadContent());
+    loadContent();
     super.initState();
   }
 
@@ -141,7 +141,7 @@ class PageArtistState extends State<PageArtist> {
                 } else {
                   list = playlists['content'] ?? [];
                 }
-                List<Media> songList = [];
+                final queue = MediaQueue([]);
                 return RefreshIndicator(
                   onRefresh: () async => await loadContent(),
                   child: ListView.builder(
@@ -150,8 +150,9 @@ class PageArtistState extends State<PageArtist> {
                     itemCount: list.length,
                     itemBuilder: (context, i) {
                       if (list[i]['type'] == 'stream') {
-                        songList.add(Media.from(list[i]));
-                        return SongTile(list: songList, i: songList.length - 1);
+                        final media = Media.from(map: list[i], queue: queue);
+                        queue.add(media);
+                        return SongTile(media: media);
                       } else {
                         return PlaylistTile(
                           info: list[i],

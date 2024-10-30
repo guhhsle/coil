@@ -1,10 +1,10 @@
-import 'package:coil/media/http.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
-import '../data.dart';
+import 'package:coil/media/http.dart';
 import '../template/layer.dart';
 import '../template/tile.dart';
 import '../media/media.dart';
+import '../data.dart';
 
 class MediaLinks extends Layer {
   Media media;

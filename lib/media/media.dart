@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'media_queue.dart';
 import 'map.dart';
 import '../data.dart';
 
@@ -28,15 +29,16 @@ class MediaLink {
 class Media extends MediaItem {
   int quality, index, reps;
   bool offline;
-  String? audioUrl, playlist, uploaderUrl, lyrics;
+  String? audioUrl, uploaderUrl, lyrics;
+  MediaQueue queue;
   List<MediaLink> audioUrls;
   List<MediaLink> videoUrls;
 
   Media({
+    required this.queue,
     required super.id,
     this.quality = 10,
     this.index = 0,
-    this.playlist,
     this.audioUrl,
     this.uploaderUrl,
     this.audioUrls = const [],
@@ -50,8 +52,19 @@ class Media extends MediaItem {
     super.artist = '',
   });
 
-  static Media from(Map json, {int? i, String? playlist}) {
-    return MediaMap.fromMap(json, i: i ?? 10, playlist: playlist);
+  static Media from({
+    required MediaQueue queue,
+    required Map map,
+    int? i,
+  }) {
+    return MediaMap.fromMap(map: map, i: i ?? 10, queue: queue);
+  }
+
+  static Media copyFrom(Media media, {MediaQueue? queue}) {
+    return MediaMap.fromMap(
+      queue: queue ?? media.queue,
+      map: media.toMap(),
+    );
   }
 
   Widget? image({EdgeInsets? padding, force = false}) {

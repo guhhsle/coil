@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'handler.dart';
-import '../data.dart';
 import '../threads/main_thread.dart';
 import '../widgets/sheet_queue.dart';
 import '../template/prefs.dart';
+import '../data.dart';
 
 class TopIcon extends StatelessWidget {
   final bool top;
@@ -13,7 +13,8 @@ class TopIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Preferences(),
+      listenable:
+          Listenable.merge([Preferences(), MediaHandler(), showTopDock]),
       builder: (context, child) {
         return ValueListenableBuilder(
           valueListenable: MediaHandler().processing,
@@ -21,7 +22,7 @@ class TopIcon extends StatelessWidget {
             return ValueListenableBuilder(
               valueListenable: MediaHandler().playing,
               builder: (context, playing, child) {
-                if (MediaHandler().queuePlaying.isEmpty) {
+                if (MediaHandler().isEmpty) {
                   return Container();
                 } else if (!top || Pref.player.value == 'Top') {
                   late IconData status;
@@ -49,16 +50,11 @@ class TopIcon extends StatelessWidget {
                     ),
                   );
                 } else if (Pref.player.value == 'Top dock') {
-                  return ValueListenableBuilder(
-                    valueListenable: showTopDock,
-                    builder: (context, data, ch) {
-                      return IconButton(
-                        icon: Icon(data
-                            ? Icons.expand_less_rounded
-                            : Icons.expand_more_rounded),
-                        onPressed: () => showTopDock.value = !showTopDock.value,
-                      );
-                    },
+                  return IconButton(
+                    icon: Icon(showTopDock.value
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded),
+                    onPressed: () => showTopDock.value = !showTopDock.value,
                   );
                 } else {
                   return Container();

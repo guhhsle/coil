@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'dart:async';
-import '../template/tile_chip.dart';
 import '../widgets/playlist_tile.dart';
+import '../media/media_queue.dart';
+import '../template/tile_chip.dart';
 import '../template/functions.dart';
 import '../widgets/song_tile.dart';
 import '../functions/other.dart';
@@ -12,7 +12,6 @@ import '../template/data.dart';
 import '../widgets/frame.dart';
 import '../layers/search.dart';
 import '../media/media.dart';
-import '../media/http.dart';
 import '../data.dart';
 
 String query = '';
@@ -162,15 +161,17 @@ class SearchState extends State<Search> {
               List result = snapshot.data ?? [];
               if (filter == 'music_songs' || filter == 'videos') {
                 try {
-                  List<Media> songs = result.map((e) => Media.from(e)).toList();
-                  unawaited(songs.preload(0, 10));
+                  final songs = MediaQueue([]);
+                  songs.setList(result.map((map) {
+                    return Media.from(map: map, queue: songs);
+                  }), notify: false);
+                  songs.preload(0, 10);
                   return Expanded(
                     child: ListView.builder(
                       physics: scrollPhysics,
                       itemCount: result.length,
                       itemBuilder: (context, i) => SongTile(
-                        list: songs, // Handler().queueLoading,
-                        i: i,
+                        media: songs[i],
                         haptic: false,
                       ),
                     ),

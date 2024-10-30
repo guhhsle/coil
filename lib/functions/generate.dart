@@ -1,3 +1,4 @@
+import 'package:coil/audio/handler.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import '../playlist/playlist.dart';
@@ -67,8 +68,9 @@ Future<void> generateFrom(List related, bool r) async {
     List<Future> waiting = [];
     for (int i = 0; i < related.length; i++) {
       if (related[i]['type'] == 'playlist') {
-        waiting.add(Playlist.load(related[i]['url'], [0, 1]).then((value) {
-          generateFrom(value.raw['relatedStreams'], true);
+        final playlist = Playlist(related[i]['url']);
+        waiting.add(playlist.load([0, 1]).then((value) {
+          generateFrom(playlist.raw['relatedStreams'], true);
         }));
       } else {
         addToGen(related[i], r ? -10 : i);
@@ -82,7 +84,11 @@ Future<void> generateFrom(List related, bool r) async {
 
 void addToGen(Map m, int i) {
   try {
-    Media media = Media.from(m, i: i < 10 ? 10 - i : 0);
+    Media media = Media.from(
+      queue: MediaHandler().tracklist,
+      i: i < 10 ? 10 - i : 0,
+      map: m,
+    );
     int e = media.quality;
     if (i == -10) {
       for (int j = generated.length - 1; j >= 0; j--) {

@@ -1,6 +1,5 @@
 import 'package:http/http.dart';
 import 'dart:convert';
-import 'dart:async';
 import 'playlist.dart';
 import 'cache.dart';
 import 'map.dart';
@@ -23,9 +22,8 @@ extension PlaylistHTTP on Playlist {
       );
     }
     name = newName;
-    unawaited(backup());
-
-    unawaited(fetchUserPlaylists(true));
+    backup();
+    fetchUserPlaylists(true);
   }
 
   Future<void> delete() async {
@@ -41,15 +39,11 @@ extension PlaylistHTTP on Playlist {
     await fetchUserPlaylists(true);
   }
 
-  static Future<Playlist> from(String url, bool auth) async {
-    Uri u = Uri.https(Pref.instance.value, 'playlists/$url');
-    if (auth) {
-      u = Uri.https(Pref.authInstance.value, 'playlists/$url');
-    }
-    return PlaylistMap.from(
-      jsonDecode(utf8.decode((await get(u)).bodyBytes)),
-      url,
-    )..backup();
+  Future<void> loadFromInternet(bool auth) async {
+    final instance = auth ? Pref.authInstance.value : Pref.instance.value;
+    final response = await get(Uri.https(instance, 'playlists/$url'));
+    loadFromMap(jsonDecode(utf8.decode(response.bodyBytes)));
+    backup();
   }
 
   Future<void> create() async {

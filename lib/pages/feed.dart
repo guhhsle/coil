@@ -1,18 +1,25 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import '../data.dart';
-import '../media/media.dart';
-import '../template/data.dart';
 import '../widgets/song_tile.dart';
+import '../template/data.dart';
+import '../media/media.dart';
+import '../data.dart';
 
 Future<void> fetchFeed() async {
-  if (Pref.token.value == '') return;
-  Response response = await get(
-    Uri.https(Pref.authInstance.value, 'feed', {'authToken': Pref.token.value}),
-  );
-  List result = jsonDecode(utf8.decode(response.bodyBytes));
-  userFeed.value = result.map((map) => Media.from(map)).toList();
+  try {
+    if (Pref.token.value == '') return;
+    Response response = await get(
+      Uri.https(
+          Pref.authInstance.value, 'feed', {'authToken': Pref.token.value}),
+    );
+    List result = jsonDecode(utf8.decode(response.bodyBytes));
+    userFeed.setList(result.map((map) {
+      return Media.from(map: map, queue: userFeed);
+    }));
+  } catch (e) {
+    debugPrint('Couldnt fetch feed: $e');
+  }
 }
 
 class Feed extends StatelessWidget {
@@ -22,13 +29,13 @@ class Feed extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: fetchFeed,
-      child: ValueListenableBuilder(
-        valueListenable: userFeed,
-        builder: (context, snap, widget) => ListView.builder(
+      child: ListenableBuilder(
+        listenable: userFeed,
+        builder: (context, widget) => ListView.builder(
           padding: const EdgeInsets.only(top: 8, bottom: 32),
-          itemCount: snap.length,
+          itemCount: userFeed.length,
           physics: scrollPhysics,
-          itemBuilder: (context, i) => SongTile(i: i, list: snap),
+          itemBuilder: (context, i) => SongTile(media: userFeed[i]),
         ),
       ),
     );

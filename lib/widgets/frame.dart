@@ -32,9 +32,9 @@ class Frame extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: ValueListenableBuilder(
-        valueListenable: MediaHandler.refreshQueue,
-        builder: (context, none, non) {
+      body: ListenableBuilder(
+        listenable: MediaHandler(),
+        builder: (context, non) {
           bool dock = Pref.player.value == 'Dock';
           return Column(
             children: [
@@ -43,8 +43,7 @@ class Frame extends StatelessWidget {
                 child: Card(
                   color: Theme.of(context).colorScheme.surface,
                   margin: EdgeInsets.symmetric(
-                    horizontal:
-                        MediaHandler().queuePlaying.isEmpty || !dock ? 0 : 2,
+                    horizontal: MediaHandler().isEmpty || !dock ? 0 : 2,
                   ),
                   shadowColor: Colors.transparent,
                   shape: RoundedRectangleBorder(

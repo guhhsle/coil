@@ -2,7 +2,6 @@ import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:isolate';
-import 'dart:async';
 import 'dart:io';
 import 'handler_thread.dart';
 import '../template/functions.dart';

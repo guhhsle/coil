@@ -6,23 +6,21 @@ import '../media/media.dart';
 import '../data.dart';
 
 class SongTile extends StatelessWidget {
-  final List<Media> list;
-  final int i;
+  final Media media;
   final bool haptic;
 
   const SongTile({
     super.key,
-    required this.list,
-    required this.i,
+    required this.media,
     this.haptic = true,
   });
   @override
   Widget build(BuildContext context) {
     //if (haptic && i % 2 == 0) HapticFeedback.selectionClick();
-    return ValueListenableBuilder(
-      valueListenable: MediaHandler.refreshQueue,
-      builder: (context, val, child) {
-        bool selected = MediaHandler().selected(list[i]);
+    return ListenableBuilder(
+      listenable: MediaHandler(),
+      builder: (context, child) {
+        bool selected = MediaHandler().selected(media);
         Color primary = Theme.of(context).colorScheme.primary;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 256),
@@ -45,7 +43,7 @@ class SongTile extends StatelessWidget {
               ),
             ],
           ),
-          child: SongTileChild(list: list, i: i, selected: selected),
+          child: SongTileChild(media: media, selected: selected),
         );
       },
     );
@@ -53,15 +51,13 @@ class SongTile extends StatelessWidget {
 }
 
 class SongTileChild extends StatelessWidget {
-  final List<Media> list;
-  final int i;
   final bool selected;
+  final Media media;
 
   const SongTileChild({
     super.key,
-    required this.list,
-    required this.i,
     required this.selected,
+    required this.media,
   });
   @override
   Widget build(BuildContext context) {
@@ -69,13 +65,13 @@ class SongTileChild extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         onTap: () {
-          MediaHandler().load(list);
-          MediaHandler().skipTo(i);
+          MediaHandler().load(media.queue);
+          MediaHandler().skipToMedia(media);
         },
-        onLongPress: () => MediaLayer(list[i]).show(),
-        leading: list[i].image(),
+        onLongPress: () => MediaLayer(media).show(),
+        leading: media.image(),
         title: Text(
-          '${list[i].title}${!list[i].offline && Pref.artist.value ? ' - ${list[i].artist}' : ''}',
+          '${media.title}${!media.offline && Pref.artist.value ? ' - ${media.artist}' : ''}',
           style: TextStyle(
             overflow: TextOverflow.ellipsis,
             color: selected ? Theme.of(context).colorScheme.surface : null,

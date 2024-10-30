@@ -1,6 +1,5 @@
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import '../template/functions.dart';
 import '../data.dart';
 
@@ -37,10 +36,6 @@ String formatInstanceName(String str) {
     i--;
   }
   return str.substring(i + 1);
-}
-
-void refreshList() {
-  refreshPlaylist.value = !refreshPlaylist.value;
 }
 
 String formatUrl(String old) {

@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import '../data.dart';
-import '../functions/other.dart';
-import '../pages/user_playlists.dart';
+import 'package:coil/media/map.dart';
+import 'package:flutter/material.dart';
+
+import '../media/media.dart';
+import '../template/prefs.dart';
 import 'playlist.dart';
 import 'map.dart';
+import '../pages/user_playlists.dart';
+import '../functions/other.dart';
+import '../data.dart';
 
 extension PlaylistCache on Playlist {
   Future<void> backup() async {
@@ -16,7 +21,6 @@ extension PlaylistCache on Playlist {
       'name': name,
       'thumbnailUrl': thumbnail,
       'uploader': uploader,
-      'videos': items,
       'relatedStreams': <Map>[],
     };
     for (Map song in raw['relatedStreams']) {
@@ -31,11 +35,10 @@ extension PlaylistCache on Playlist {
     await file.writeAsString(jsonEncode(formatted));
   }
 
-  static Future<Playlist> from(String url) async {
-    File file = File('${Pref.appDirectory.value}/${formatUrl(url)}.json');
+  Future<void> loadFromCache() async {
+    File file = File('${Pref.appDirectory.value}/$url.json');
     if (!await file.exists()) throw Error();
-    Map json = jsonDecode(await file.readAsString());
-    return PlaylistMap.from(json, url);
+    loadFromMap(jsonDecode(await file.readAsString()));
   }
 
   Future<void> renameBackupTo(String newName) async {
@@ -62,9 +65,38 @@ extension PlaylistCache on Playlist {
       'id': url,
       'name': name,
       'thumbnail': thumbnail,
-      'videos': items,
     });
     await file.writeAsString(jsonEncode(list));
     await fetchUserPlaylists(false);
+  }
+
+  Future<void> forceAddMediaToCache(Media media, {bool top = false}) async {
+    await load([2]).onError(
+      (err, stackTrace) => debugPrint('Error adding media $err'),
+    );
+    if (top) {
+      (raw['relatedStreams'] as List).insert(0, media.toMap());
+    } else {
+      raw['relatedStreams'].add(media.toMap());
+    }
+    await backup();
+    Preferences.notify();
+  }
+
+  Future<void> forceRemoveMediaFromCache(Media media,
+      {bool first = true}) async {
+    await load([2]);
+    late int index;
+    if (first) {
+      index = raw['relatedStreams'].indexWhere((e) => e['url'] == media.id);
+    } else {
+      index = raw['relatedStreams'].lastIndexWhere((e) => e['url'] == media.id);
+    }
+    if (index != -1) raw['relatedStreams'].removeAt(index);
+    if ((raw['relatedStreams'] as List).isEmpty) {
+      await File('${Pref.appDirectory.value}/$url.json').delete();
+    }
+    await backup();
+    Preferences.notify();
   }
 }

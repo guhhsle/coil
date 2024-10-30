@@ -8,12 +8,13 @@ import '../data.dart';
 Future<void> fetchBookmarks() async {
   List<Playlist> tempBookmarks = [];
   List<Future> futures = [];
-  Playlist.load('Bookmarks', [2]).catchError(
-    (e) => Playlist.fromString('Bookmarks')..backup(),
+  Playlist('Bookmarks').load([2]).catchError(
+    (e) => Playlist('Bookmarks')..backup(),
   );
-  for (String bookmark in Pref.bookmarks.value) {
-    futures.add(Playlist.load(bookmark, [2, 0, 1]).then(
-      (val) => tempBookmarks.add(val),
+  for (String url in Pref.bookmarks.value) {
+    final playlist = Playlist(url);
+    futures.add(playlist.load([2, 0, 1]).then(
+      (val) => tempBookmarks.add(playlist),
     ));
   }
   await Future.wait(futures);
@@ -27,53 +28,51 @@ class Bookmarks extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: fetchBookmarks,
-      child: ValueListenableBuilder<List<Playlist>>(
+      child: ValueListenableBuilder(
         valueListenable: bookmarks,
-        builder: (context, data, child) {
-          return ListView(
-            physics: scrollPhysics,
-            padding: const EdgeInsets.only(bottom: 32, top: 16),
-            children: [
-              Wrap(
-                alignment: WrapAlignment.spaceEvenly,
-                children: [
-                  FutureBuilder(
-                    future: Playlist.load('Bookmarks', [2]),
-                    builder: (context, snap) {
-                      if (snap.hasError) return Container();
-                      return const PlaylistTile(
-                        info: {'url': 'Bookmarks'},
-                        playlist: true,
-                        path: [2],
-                      );
-                    },
-                  ),
-                  FutureBuilder(
-                    future: Playlist.load('100', [2]),
-                    builder: (context, snap) {
-                      if (snap.hasError) return Container();
-                      return const PlaylistTile(
-                        info: {'url': '100'},
-                        playlist: true,
-                        path: [2],
-                      );
-                    },
-                  ),
-                  for (Playlist item in data)
-                    PlaylistTile(
-                      info: {
-                        'url': item.url,
-                        'thumbnail': item.thumbnail,
-                        'title': item.name,
-                      },
+        builder: (context, data, child) => ListView(
+          physics: scrollPhysics,
+          padding: const EdgeInsets.only(bottom: 32, top: 16),
+          children: [
+            Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+              children: [
+                FutureBuilder(
+                  future: Playlist('Bookmarks').load([2]),
+                  builder: (context, snap) {
+                    if (snap.hasError) return Container();
+                    return const PlaylistTile(
+                      info: {'url': 'Bookmarks'},
                       playlist: true,
-                      path: const [2, 0, 1],
-                    ),
-                ],
-              ),
-            ],
-          );
-        },
+                      path: [2],
+                    );
+                  },
+                ),
+                FutureBuilder(
+                  future: Playlist('100').load([2]),
+                  builder: (context, snap) {
+                    if (snap.hasError) return Container();
+                    return const PlaylistTile(
+                      info: {'url': '100'},
+                      playlist: true,
+                      path: [2],
+                    );
+                  },
+                ),
+                for (Playlist item in data)
+                  PlaylistTile(
+                    info: {
+                      'url': item.url,
+                      'thumbnail': item.thumbnail,
+                      'title': item.name,
+                    },
+                    playlist: true,
+                    path: const [2, 0, 1],
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

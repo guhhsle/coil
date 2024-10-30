@@ -1,13 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:coil/media/bruteforce.dart';
 import 'package:flutter/material.dart';
 import 'listed.dart';
 import 'links.dart';
 import '../template/single_child.dart';
 import '../functions/generate.dart';
 import '../template/functions.dart';
-import '../media/playlist.dart';
+import '../media/media_queue.dart';
+import '../media/bruteforce.dart';
 import '../template/layer.dart';
+import '../media/playlist.dart';
 import '../template/tile.dart';
 import '../audio/handler.dart';
 import '../media/lyrics.dart';
@@ -32,7 +33,7 @@ class MediaLayer extends Layer {
         Pref.instance.value,
         Pref.indie.value,
       ]);
-      MediaHandler().load(suggested);
+      MediaHandler().load(MediaQueue(suggested));
 
       media.insertToQueue(0);
       MediaHandler().skipTo(0);
@@ -92,16 +93,16 @@ class MediaLayer extends Layer {
         Navigator.of(context).pop();
       }),
     ];
-    if (media.playlist == 'queue') {
+    if (media.queue == MediaHandler().tracklist) {
       list = [
         ...list,
         Tile('', Icons.remove_rounded, 'Dequeue', () {
           MediaHandler().removeItemAt(
-            MediaHandler().queuePlaying.indexOf(media),
+            MediaHandler().tracklist.indexOf(media),
           );
         }),
       ];
-    } else if (media.playlist != null) {
+    } else if (media.queue.user) {
       list = [
         ...list,
         Tile('', Icons.remove_rounded, 'Remove', () {

@@ -19,30 +19,28 @@ class UserPlaylists extends StatelessWidget {
       onRefresh: () => fetchUserPlaylists(true),
       child: ValueListenableBuilder(
         valueListenable: userPlaylists,
-        builder: (context, snap, child) {
-          return ListView(
-            physics: scrollPhysics,
-            padding: const EdgeInsets.only(bottom: 32, top: 16),
-            children: [
-              for (Map map in snap)
-                PlaylistTile(
-                  info: map,
-                  playlist: true,
-                  path: const [2, 1],
-                ),
-              Padding(
-                padding: const EdgeInsets.all(2),
-                child: IconButton(
-                  icon: const Icon(Icons.add_rounded),
-                  tooltip: t('Create a playlist'),
-                  onPressed: () async => Playlist.fromString(
-                    await getInput('', 'Playlist name'),
-                  ).create(),
-                ),
-              )
-            ],
-          );
-        },
+        builder: (context, snap, child) => ListView(
+          physics: scrollPhysics,
+          padding: const EdgeInsets.only(bottom: 32, top: 16),
+          children: [
+            for (Map map in snap)
+              PlaylistTile(
+                info: map,
+                playlist: true,
+                path: const [2, 1],
+              ),
+            Padding(
+              padding: const EdgeInsets.all(2),
+              child: IconButton(
+                icon: const Icon(Icons.add_rounded),
+                tooltip: t('Create a playlist'),
+                onPressed: () async => Playlist(
+                  await getInput('', 'Playlist name'),
+                ).create(),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

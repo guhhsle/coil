@@ -9,11 +9,11 @@ class Float extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: MediaHandler.refreshQueue,
-      builder: (context, non, widget) {
+    return ListenableBuilder(
+      listenable: MediaHandler(),
+      builder: (context, widget) {
         if (Pref.player.value != 'Floating') return Container();
-        if (MediaHandler().queuePlaying.isEmpty) return Container();
+        if (MediaHandler().isEmpty) return Container();
         return SizedBox(
           width: 80,
           height: 80,

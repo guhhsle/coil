@@ -8,64 +8,53 @@ import '../playlist/playlist.dart';
 import '../functions/other.dart';
 import '../data.dart';
 
-//BULK INDICATES ONE BIG FILE
-Future<void> exportUser(bool bulk) async {
-  playlists = [];
+Future<void> exportUser() async {
   showSnack('Loading', true);
   await fetchUserPlaylists(true);
-  var futures = <Future>[];
-  for (int i = 0; i < userPlaylists.value.length; i++) {
-    futures.add(exportPlaylist(i, null));
-  }
-  await Future.wait(futures);
-  for (int i = 0; i < playlists.length; i++) {
+  final playlists = userPlaylists.value.map((map) {
+    return Playlist(map['id']);
+  });
+  await Future.wait(playlists.map((playlist) => playlist.load([1, 2])));
+  final exportMaps = playlists.map((playlist) => playlist.exportMap);
+  for (var map in exportMaps) {
     try {
       await writeFile(
-        bulk ? 'playlists.json' : '${playlists[i]['name']}.json',
+        '${map['name']}.json',
         jsonEncode({
           'format': 'Piped',
           'version': 1,
-          'playlists': bulk ? playlists : [playlists[i]],
+          'playlists': [map],
         }),
       );
     } catch (e) {
       showSnack('$e', false);
     }
-    if (bulk) i = playlists.length;
   }
 }
 
-List<Map> playlists = [];
-//TEMPORARY VARIABLE FOR SAVING USER PLAYLISTS
-
-Future<void> exportPlaylist(int i, Playlist? list) async {
-  List<String> videos = [];
-  list ??= await Playlist.load(userPlaylists.value[i]['id'], [1, 2]);
-  for (int j = 0; j < list.list.length; j++) {
-    videos.add('https://youtube.com${list.list[j].id}');
+extension Export on Playlist {
+  Map get exportMap {
+    return {
+      'name': formatName(name),
+      'type': 'playlist',
+      'visibility': 'private',
+      'videos': list.map((m) => 'https://youtube.com${m.id}'),
+    };
   }
-  playlists.add({
-    'name': formatName(list.name),
-    'type': 'playlist',
-    'visibility': 'private',
-    'videos': videos,
-  });
-}
 
-Future<void> exportOther(Playlist list) async {
-  playlists = [];
-  await exportPlaylist(0, list);
-  try {
-    await writeFile(
-      '${playlists[0]['name']}.json',
-      jsonEncode({
-        'format': 'Piped',
-        'version': 1,
-        'playlists': playlists,
-      }),
-    );
-  } catch (e) {
-    showSnack('$e', false);
+  Future<void> exportLoaded() async {
+    try {
+      await writeFile(
+        '${exportMap['name']}.json',
+        jsonEncode({
+          'format': 'Piped',
+          'version': 1,
+          'playlists': [exportMap],
+        }),
+      );
+    } catch (e) {
+      showSnack('$e', false);
+    }
   }
 }
 

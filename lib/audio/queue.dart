@@ -1,69 +1,69 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'handler.dart';
+import '../media/media_queue.dart';
 import '../media/audio.dart';
-import '../media/http.dart';
 import '../media/media.dart';
 
 extension QueueHandler on MediaHandler {
   void addToQueue(Media media) {
-    queuePlaying.add(media);
-    unawaited(preload());
-    if (queuePlaying.length == 1) skipTo(0);
+    tracklist.add(media);
+    preload();
+    if (tracklist.length == 1) skipTo(0);
     bottomText = PageController(initialPage: index);
-    refresh();
+    notify();
   }
 
-  Future<void> skipTo(int i) async {
-    if (i < 0 || i >= queuePlaying.length) return;
+  void skipToMedia(Media media) => skipTo(tracklist.indexOf(media));
+
+  void skipTo(int i) {
+    if (i < 0 || i >= tracklist.length) return;
     index = i;
-    queuePlaying[i].play();
+    tracklist[i].play();
     if (processing.value != 'ready') {
       processing.value = 'loading';
     }
     bottomText = PageController(initialPage: i);
-    refresh();
+    notify();
   }
 
   void insertToQueue(Media media, int i, {bool e = false}) {
-    if (queuePlaying.isEmpty) {
+    if (isEmpty) {
       addToQueue(media);
       return;
     }
-    queuePlaying.insert(i, media);
-    unawaited(preload());
+    tracklist.insert(i, media);
+    preload();
     if (e) {
       index--;
     } else if (i <= index) {
       index++;
     }
     bottomText = PageController(initialPage: index);
-    refresh();
+    notify();
   }
 
   void removeItemAt(int i) {
-    queuePlaying.removeAt(i);
-    unawaited(preload());
+    tracklist.removeAt(i);
+    preload();
     if (i < index) index--;
     bottomText = PageController(initialPage: index);
-    refresh();
+    notify();
   }
 
   void shuffle() {
     Media media = current;
-    queuePlaying.shuffle();
-    index = queuePlaying.indexOf(media);
+    tracklist.shuffle();
+    index = tracklist.indexOf(media);
     bottomText = PageController(initialPage: index);
-    refresh();
+    notify();
   }
 
-  Future<void> preload() => queuePlaying.preload(index - 2, index + 5);
+  Future<void> preload() => tracklist.preload(index - 2, index + 5);
 
-  void load(List<Media> list) {
-    if (list == queuePlaying) return;
-    queuePlaying.clear();
-    for (Media media in list) {
-      queuePlaying.add(media..playlist = 'queue');
-    }
+  void load(MediaQueue queue) {
+    if (queue == tracklist) return;
+    tracklist.setList(queue.list.map((media) {
+      return Media.copyFrom(media, queue: tracklist);
+    }));
   }
 }

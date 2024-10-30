@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'media_queue.dart';
 import 'media.dart';
 import '../functions/other.dart';
 import '../data.dart';
@@ -14,16 +15,20 @@ extension MediaMap on Media {
     };
   }
 
-  static Media fromMap(Map json, {int i = 10, String? playlist}) {
+  static Media fromMap({
+    required MediaQueue queue,
+    required Map map,
+    int i = 10,
+  }) {
     return Media(
-      title: json['title'],
-      id: formatUrl(json['url']),
-      artUri: Uri.parse(json['thumbnail'] ?? ''),
-      artist: formatName(json['uploaderName'] ?? json['uploader']),
-      uploaderUrl: json['uploaderUrl'] ?? '',
-      quality: evaluateSong(json, i),
+      title: map['title'],
+      id: formatUrl(map['url']),
+      artUri: Uri.parse(map['thumbnail'] ?? ''),
+      artist: formatName(map['uploaderName'] ?? map['uploader']),
+      uploaderUrl: map['uploaderUrl'] ?? '',
+      quality: evaluateSong(map, i),
+      queue: queue,
       index: i,
-      playlist: playlist,
     );
   }
 

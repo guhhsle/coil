@@ -1,7 +1,6 @@
-import 'dart:async';
+import 'package:just_audio/just_audio.dart';
 import 'dart:convert';
 import 'dart:isolate';
-import 'package:just_audio/just_audio.dart';
 
 @pragma('vm:entry-point')
 void handlerThread(SendPort answerPort) {

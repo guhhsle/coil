@@ -1,24 +1,25 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
-import 'queue.dart';
+import 'package:flutter/material.dart';
 import 'streams.dart';
+import 'queue.dart';
 import '../threads/main_thread.dart';
+import '../media/media_queue.dart';
 import '../media/media.dart';
 
-class MediaHandler extends BaseAudioHandler {
+class MediaHandler extends BaseAudioHandler with ChangeNotifier {
   static final MediaHandler instance = MediaHandler.internal();
 
-  final position = ValueNotifier(0);
-  final playing = ValueNotifier(false);
-  final duration = ValueNotifier(1000);
   final processing = ValueNotifier('idle');
+  final duration = ValueNotifier(1000);
+  final playing = ValueNotifier(false);
+  final position = ValueNotifier(0);
 
   var bottomText = PageController();
   bool loop = false;
-  List<Media> queuePlaying = [];
+  final tracklist = MediaQueue([]);
   int index = 0;
-  static final refreshQueue = ValueNotifier(false);
+  //List<Media> queuePlaying = [];
+  //static final refreshQueue = ValueNotifier(false);
 
   factory MediaHandler() => instance;
 
@@ -28,8 +29,10 @@ class MediaHandler extends BaseAudioHandler {
     });
   }
 
+  void notify() => notifyListeners();
+
   @override
-  Future<void> skipToNext() => skipTo(index + 1);
+  Future<void> skipToNext() async => skipTo(index + 1);
 
   @override
   Future<void> skipToPrevious() async {
@@ -49,8 +52,8 @@ class MediaHandler extends BaseAudioHandler {
   @override
   Future<void> stop() async {
     MainThread.callFn({'stop': null});
-    refresh();
-    queuePlaying.clear();
+    tracklist.clear();
+    notifyListeners();
   }
 
   @override
@@ -59,27 +62,25 @@ class MediaHandler extends BaseAudioHandler {
       });
 
   bool selected(Media media) {
-    if (index >= queuePlaying.length) return false;
-    return media.id == queuePlaying[index].id;
+    if (index >= length) return false;
+    return media.id == current.id;
   }
 
-  void refresh() {
-    refreshQueue.value = !refreshQueue.value;
-  }
-
-  bool get isEmpty => queuePlaying.isEmpty;
+  bool get isEmpty => tracklist.isEmpty;
 
   bool tryLoad(Media media) {
-    for (int q = 0; q < queuePlaying.length; q++) {
-      if (queuePlaying[q].id == media.id && queuePlaying[q].audioUrl != null) {
-        media.audioUrl = queuePlaying[q].audioUrl;
-        media.audioUrls = queuePlaying[q].audioUrls;
-        media.videoUrls = queuePlaying[q].videoUrls;
-        return true;
-      }
+    for (var item in tracklist.list) {
+      if (item.id != media.id || item.audioUrl == null) continue;
+      media.videoUrls = item.videoUrls;
+      media.audioUrls = item.audioUrls;
+      media.audioUrl = item.audioUrl;
+      return true;
     }
     return false;
   }
 
-  Media get current => queuePlaying[index];
+  int get length => tracklist.length;
+  Media get current => this[index];
+
+  Media operator [](int i) => tracklist[i];
 }

@@ -5,7 +5,6 @@ import '../../template/layer.dart';
 import '../../template/tile.dart';
 import '../../countries.dart';
 import '../../data.dart';
-import '../export.dart';
 
 class AccountLayer extends Layer {
   @override
@@ -17,7 +16,7 @@ class AccountLayer extends Layer {
     list = [
       Tile('Export', Icons.settings_backup_restore_rounded, '', () {
         Navigator.of(context).pop();
-        ExportCache().show();
+        exportUser();
       }),
       Tile('Import Cache', Icons.settings_backup_restore_rounded, '', () {
         importCache();

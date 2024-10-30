@@ -1,14 +1,14 @@
-import 'layers/settings/interface.dart';
 import 'package:flutter/material.dart';
+import 'layers/settings/interface.dart';
 import 'layers/settings/account.dart';
 import 'layers/settings/other.dart';
 import 'layers/settings/data.dart';
+import 'media/media_queue.dart';
 import 'playlist/playlist.dart';
 import 'functions/other.dart';
 import 'template/theme.dart';
 import 'template/prefs.dart';
 import 'template/tile.dart';
-import 'media/media.dart';
 
 const locales = [
   ...['Serbian', 'English', 'Spanish', 'German', 'French', 'Italian'],
@@ -90,9 +90,7 @@ enum Pref<T> {
 
   Future next() => Preferences.next(this);
 
-  void nextByLayer({String suffix = ''}) {
-    NextByLayer(this, suffix: suffix).show();
-  }
+  void nextByLayer({suffix = ''}) => NextByLayer(this, suffix: suffix).show();
 
   @override
   String toString() => name;
@@ -109,16 +107,16 @@ List<Tile> get settings {
   ];
 }
 
-final userPlaylists = ValueNotifier([]);
-final localMusic = ValueNotifier(<Media>[]);
+final trendingVideos = MediaQueue([]);
+final localMusic = MediaQueue([]);
+final userFeed = MediaQueue([]);
 final bookmarks = ValueNotifier(<Playlist>[]);
-final userFeed = ValueNotifier(<Media>[]);
 final userSubscriptions = ValueNotifier([]);
-final trendingVideos = ValueNotifier(<Media>[]);
 final currentLyrics = ValueNotifier('');
+final userPlaylists = ValueNotifier([]);
 
 final showTopDock = ValueNotifier(false);
-final refreshPlaylist = ValueNotifier(false);
+//final refreshPlaylist = ValueNotifier(false);
 
 final homeMap = <String, Widget>{};
 String selectedHome = 'Playlists';

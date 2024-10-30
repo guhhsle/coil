@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'dart:convert';
 import '../widgets/song_tile.dart';
 import '../template/data.dart';
 import '../media/media.dart';
 import '../countries.dart';
 import '../data.dart';
-import 'dart:convert';
 
 class Trending extends StatelessWidget {
   const Trending({super.key});
@@ -14,13 +14,15 @@ class Trending extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: trending,
-      child: ValueListenableBuilder(
-        valueListenable: trendingVideos,
-        builder: (context, snap, child) => ListView.builder(
+      child: ListenableBuilder(
+        listenable: trendingVideos,
+        builder: (context, child) => ListView.builder(
           padding: const EdgeInsets.only(top: 8, bottom: 32),
-          itemCount: snap.length,
+          itemCount: trendingVideos.length,
           physics: scrollPhysics,
-          itemBuilder: (context, i) => SongTile(i: i, list: snap),
+          itemBuilder: (context, i) => SongTile(
+            media: trendingVideos[i],
+          ),
         ),
       ),
     );
@@ -35,5 +37,7 @@ Future<void> trending() async {
     ),
   }));
   List result = jsonDecode(utf8.decode(response.bodyBytes));
-  trendingVideos.value = result.map((map) => Media.from(map)).toList();
+  trendingVideos.setList(result.map((map) {
+    return Media.from(map: map, queue: trendingVideos);
+  }));
 }
