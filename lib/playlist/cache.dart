@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:coil/media/map.dart';
-import 'package:flutter/material.dart';
-
-import '../media/media.dart';
-import '../template/prefs.dart';
 import 'playlist.dart';
 import 'map.dart';
+import 'package:flutter/material.dart';
 import '../pages/user_playlists.dart';
 import '../functions/other.dart';
+import '../template/prefs.dart';
+import '../media/media.dart';
+import '../media/map.dart';
 import '../data.dart';
 
 extension PlaylistCache on Playlist {
@@ -37,7 +36,7 @@ extension PlaylistCache on Playlist {
 
   Future<void> loadFromCache() async {
     File file = File('${Pref.appDirectory.value}/$url.json');
-    if (!await file.exists()) throw Error();
+    if (!await file.exists()) throw Exception('$name is not cached');
     loadFromMap(jsonDecode(await file.readAsString()));
   }
 

@@ -11,24 +11,10 @@ import '../data.dart';
 Future<void> exportUser() async {
   showSnack('Loading', true);
   await fetchUserPlaylists(true);
-  final playlists = userPlaylists.value.map((map) {
-    return Playlist(map['id']);
-  });
-  await Future.wait(playlists.map((playlist) => playlist.load([1, 2])));
-  final exportMaps = playlists.map((playlist) => playlist.exportMap);
-  for (var map in exportMaps) {
-    try {
-      await writeFile(
-        '${map['name']}.json',
-        jsonEncode({
-          'format': 'Piped',
-          'version': 1,
-          'playlists': [map],
-        }),
-      );
-    } catch (e) {
-      showSnack('$e', false);
-    }
+  for (final map in userPlaylists.value) {
+    final playlist = Playlist(map['id']);
+    playlist.name = map['name'];
+    playlist.load([1, 2]).then((_) => playlist.exportLoaded());
   }
 }
 
