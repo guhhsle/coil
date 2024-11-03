@@ -38,7 +38,7 @@ extension Export on Playlist {
       'name': formatName(name),
       'type': 'playlist',
       'visibility': 'private',
-      'videos': list.map((m) => 'https://youtube.com${m.id}'),
+      'videos': list.map((m) => 'https://youtube.com${m.id}').toList(),
     };
   }
 

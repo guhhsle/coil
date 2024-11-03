@@ -61,9 +61,22 @@ class Media extends MediaItem {
   }
 
   static Media copyFrom(Media media, {MediaQueue? queue}) {
-    return MediaMap.fromMap(
+    return Media(
       queue: queue ?? media.queue,
-      map: media.toMap(),
+      id: media.id,
+      quality: media.quality,
+      index: media.index,
+      audioUrl: media.audioUrl,
+      uploaderUrl: media.uploaderUrl,
+      audioUrls: media.audioUrls,
+      lyrics: media.lyrics,
+      videoUrls: media.videoUrls,
+      offline: media.offline,
+      reps: media.reps,
+      title: media.title,
+      duration: media.duration,
+      artUri: media.artUri,
+      artist: media.artist,
     );
   }
 
