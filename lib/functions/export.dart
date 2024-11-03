@@ -9,14 +9,15 @@ import '../functions/other.dart';
 import '../data.dart';
 
 Future<void> exportUser() async {
-  showSnack('Loading', true);
   await fetchUserPlaylists(true);
   for (final map in userPlaylists.value) {
+    showSnack('Loading...', true);
     final playlist = Playlist(map['id']);
     playlist.name = map['name'];
     await playlist.load([1, 2]);
     await playlist.exportLoaded();
   }
+  showSnack('Completed', true);
 }
 
 extension Export on Playlist {
