@@ -17,7 +17,9 @@ class Instances extends Layer {
         mode: LaunchMode.externalApplication,
       );
     });
-    list = Pref.instanceHistory.value.map<Tile>((instance) {
+    final sorted = Pref.instanceHistory.value.toList();
+    sorted.sort((a, b) => a.compareTo(b));
+    list = sorted.map((instance) {
       return Tile.complex(
         instance,
         icon(instance),
