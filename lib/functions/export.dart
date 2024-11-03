@@ -14,7 +14,8 @@ Future<void> exportUser() async {
   for (final map in userPlaylists.value) {
     final playlist = Playlist(map['id']);
     playlist.name = map['name'];
-    playlist.load([1, 2]).then((_) => playlist.exportLoaded());
+    await playlist.load([1, 2]);
+    await playlist.exportLoaded();
   }
 }
 
