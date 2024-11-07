@@ -53,7 +53,7 @@ class MediaLayer extends Layer {
       Tile('', Icons.person_outline_rounded, media.artist ?? 'Artist', () {
         final artist = ArtistPlaylist(media.uploaderUrl ?? '');
         artist.name = media.artist ?? '';
-        goToPage(PageArtist(artistPlaylist: artist));
+        goToPage(PageArtist(artist));
       }),
       Tile('', Icons.link_rounded, 'Audio/Video', () {
         if (loaded.value) {

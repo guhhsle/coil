@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:coil/playlist/http.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
@@ -52,53 +49,28 @@ extension Export on Playlist {
 }
 
 Future<void> exportCache() async {
-  File file = File('${Pref.appDirectory.value}/playlists.json');
-  await writeFile('playlists.json', await file.readAsString());
+  final fileNames = userPlaylists.value.map((p) => p.url).toList();
+  fileNames.addAll(['playlists', 'subscriptions', '100raw', 'Bookmarks']);
 
-  file = File('${Pref.appDirectory.value}/subscriptions.json');
-  await writeFile('subscriptions.json', await file.readAsString());
-
-  file = File('${Pref.appDirectory.value}/100raw.json');
-  await writeFile('100raw.json', await file.readAsString());
-
-  file = File('${Pref.appDirectory.value}/Bookmarks.json');
-  await writeFile('Bookmarks.json', await file.readAsString());
-
-  for (final playlist in userPlaylists.value) {
-    String name = '${playlist.url}.json';
-    file = File('${Pref.appDirectory.value}/$name');
-    await writeFile(name, await file.readAsString());
+  for (final fileName in fileNames) {
+    try {
+      final file = File('${Pref.appDirectory.value}/$fileName.json');
+      await writeFile('$fileName.json', await file.readAsString());
+    } catch (e) {
+      showSnack('$e', false);
+    }
   }
+  showSnack('Done', true);
 }
 
 Future<void> importCache() async {
   try {
-    //TODO
     final result = await FilePicker.platform.pickFiles(allowMultiple: true);
-    final files = result!.paths.map((path) => File(path!)).toList();
-    for (final backedFile in files) {
-      final url = cleanFileName(backedFile.path);
-      File cacheFile = File('${Pref.appDirectory.value}/$url.json');
-      cacheFile.writeAsBytes(await backedFile.readAsBytes());
-      final imported = Playlist(url);
-      imported.path = [2];
-      await imported.load();
-      await imported.create();
+    final files = result!.paths.map((path) => File(path!));
+    for (final file in files) {
+      await file.copy('${Pref.appDirectory.value}/${basename(file.path)}');
     }
   } catch (e) {
     showSnack('$e', false);
   }
-}
-
-String fileName(String unformattedPath) {
-  final parts = unformattedPath.split('/');
-  final name = parts.isNotEmpty ? parts.last : unformattedPath;
-  return name.trim();
-}
-
-String cleanFileName(String unformattedPath) {
-  final fullName = fileName(unformattedPath);
-  final parts = fullName.split('.');
-  final name = parts.isNotEmpty ? parts.first : fullName;
-  return name.trim();
 }

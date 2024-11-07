@@ -15,7 +15,11 @@ class AuthLayer extends Layer {
   @override
   void construct() {
     action = Tile('Confirm', Icons.keyboard_return_rounded, '', () {
-      login();
+      showSnack(
+        'This will forget all locally saved lists, confirm?',
+        true,
+        onTap: login,
+      );
     });
     list = [
       Tile(

@@ -1,10 +1,9 @@
-import 'package:coil/pages/bookmarks.dart';
-import 'package:coil/playlist/cache.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'media.dart';
 import '../template/functions.dart';
+import '../playlist/cache.dart';
 import '../audio/handler.dart';
 import '../data.dart';
 

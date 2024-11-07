@@ -42,7 +42,7 @@ class Subscriptions extends StatelessWidget {
           itemCount: snap.length,
           physics: scrollPhysics,
           itemBuilder: (context, i) => PlaylistTile(
-            playlist: ArtistPlaylist.fromMap(snap[i]),
+            ArtistPlaylist.fromMap(snap[i]),
           ),
         ),
       ),

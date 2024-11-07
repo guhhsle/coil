@@ -5,7 +5,6 @@ import 'dart:io';
 import '../widgets/playlist_tile.dart';
 import '../template/functions.dart';
 import '../playlist/playlist.dart';
-import '../template/prefs.dart';
 import '../playlist/http.dart';
 import '../template/data.dart';
 import '../data.dart';
@@ -23,7 +22,7 @@ class UserPlaylists extends StatelessWidget {
           physics: scrollPhysics,
           padding: const EdgeInsets.only(bottom: 32, top: 16),
           children: [
-            for (final playlist in snap) PlaylistTile(playlist: playlist),
+            for (final playlist in snap) PlaylistTile(playlist),
             Padding(
               padding: const EdgeInsets.all(2),
               child: IconButton(

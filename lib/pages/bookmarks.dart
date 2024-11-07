@@ -6,18 +6,13 @@ import '../template/data.dart';
 import '../data.dart';
 
 Future<void> fetchBookmarks() async {
-  List<Playlist> tempBookmarks = [];
-  List<Future> futures = [];
   bookmarks.load().catchError((e) => bookmarks..backup());
-  for (final url in Pref.bookmarks.value) {
+  final online = Pref.bookmarks.value.map((url) {
     final playlist = Playlist(url);
     playlist.path = [2, 0, 1];
-    futures.add(playlist.load().then((_) {
-      tempBookmarks.add(playlist);
-    }));
-  }
-  await Future.wait(futures);
-  allBookmarks.value = tempBookmarks;
+    return playlist..load();
+  });
+  allBookmarks.value = [bookmarks, top100, ...online];
 }
 
 class Bookmarks extends StatelessWidget {
@@ -29,31 +24,10 @@ class Bookmarks extends StatelessWidget {
       onRefresh: fetchBookmarks,
       child: ValueListenableBuilder(
         valueListenable: allBookmarks,
-        builder: (context, data, child) => ListView(
+        builder: (context, bookmarks, child) => ListView(
           physics: scrollPhysics,
           padding: const EdgeInsets.only(bottom: 32, top: 16),
-          children: [
-            Wrap(
-              alignment: WrapAlignment.spaceEvenly,
-              children: [
-                FutureBuilder(
-                  future: bookmarks.load(),
-                  builder: (context, snap) {
-                    if (snap.hasError) return Container();
-                    return PlaylistTile(playlist: bookmarks);
-                  },
-                ),
-                FutureBuilder(
-                  future: top100.load(),
-                  builder: (context, snap) {
-                    if (snap.hasError) return Container();
-                    return PlaylistTile(playlist: top100);
-                  },
-                ),
-                for (final playlist in data) PlaylistTile(playlist: playlist),
-              ],
-            ),
-          ],
+          children: bookmarks.map((b) => PlaylistTile(b)).toList(),
         ),
       ),
     );

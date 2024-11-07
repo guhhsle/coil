@@ -19,13 +19,9 @@ void handlerThread(SendPort answerPort) {
   }
 
   void resume(dynamic non) => player.play();
-
   void pause(dynamic non) => player.pause();
-
   void stop(dynamic non) => player.stop();
-
   void volume(int vol) => player.setVolume(vol / 100);
-
   void seek(int to) => player.seek(Duration(seconds: to));
 
   Future<void> play(dynamic song) async {
@@ -53,9 +49,7 @@ void handlerThread(SendPort answerPort) {
   });
 
   player.playingStream.listen((e) => callFn({'Playing': e}));
-
   player.positionStream.listen((e) => callFn({'Position': e.inSeconds}));
-
   player.processingStateStream.listen((e) => callFn({'Processing': e.name}));
 
   receivePort.listen((message) {

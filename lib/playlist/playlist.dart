@@ -1,7 +1,7 @@
-import 'package:coil/playlist/map.dart';
 import 'package:flutter/material.dart';
 import 'cache.dart';
 import 'http.dart';
+import 'map.dart';
 import '../template/functions.dart';
 import '../media/media_queue.dart';
 import '../functions/other.dart';
@@ -37,8 +37,9 @@ class Playlist extends MediaQueue {
   Future<void> load({int timeTried = 0, bool force = false}) async {
     for (int i in path) {
       try {
+        if (i == 0) return await loadFromInstance(Pref.instance.value);
+        if (i == 1) return await loadFromInstance(Pref.authInstance.value);
         if (i == 2 && !force) return await loadFromCache();
-        return await loadFromInternet(i == 1);
       } catch (e) {
         debugPrint('Couldnt load playlist $name on $i:');
       }

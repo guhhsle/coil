@@ -9,10 +9,9 @@ import '../data.dart';
 Future<void> fetchFeed() async {
   try {
     if (Pref.token.value == '') return;
-    Response response = await get(
-      Uri.https(
-          Pref.authInstance.value, 'feed', {'authToken': Pref.token.value}),
-    );
+    Response response = await get(Uri.https(Pref.authInstance.value, 'feed', {
+      'authToken': Pref.token.value,
+    }));
     List result = jsonDecode(utf8.decode(response.bodyBytes));
     userFeed.setList(result.map((map) {
       return Media.from(map: map, queue: userFeed);

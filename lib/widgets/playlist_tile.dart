@@ -7,10 +7,7 @@ import '../data.dart';
 class PlaylistTile extends StatelessWidget {
   final Playlist playlist;
 
-  const PlaylistTile({
-    super.key,
-    required this.playlist,
-  });
+  const PlaylistTile(this.playlist, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +38,9 @@ class PlaylistTile extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) {
                 if (playlist is ArtistPlaylist) {
-                  return PageArtist(artistPlaylist: playlist as ArtistPlaylist);
+                  return PageArtist(playlist as ArtistPlaylist);
                 } else {
-                  return PlaylistPage(playlist: playlist);
+                  return PlaylistPage(playlist);
                 }
               },
             ),

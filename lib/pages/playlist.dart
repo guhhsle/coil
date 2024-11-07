@@ -15,8 +15,7 @@ import '../data.dart';
 
 class PlaylistPage extends StatefulWidget {
   final Playlist playlist;
-
-  const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
+  const PlaylistPage(this.playlist, {super.key});
 
   @override
   PlaylistPageState createState() => PlaylistPageState();

@@ -191,15 +191,10 @@ class SearchState extends State<Search> {
                       Map map = result[i];
                       if (map['uploaderName'] == 'YouTube Music') {
                         return Container();
-                      }
-                      if (filter == 'channels') {
-                        return PlaylistTile(
-                          playlist: ArtistPlaylist.fromMap(map),
-                        );
+                      } else if (filter == 'channels') {
+                        return PlaylistTile(ArtistPlaylist.fromMap(map));
                       } else {
-                        final playlist = Playlist(map['id'] ?? map['url']);
-                        playlist.loadFromMap(map);
-                        return PlaylistTile(playlist: playlist);
+                        return PlaylistTile(Playlist.fromMap(map));
                       }
                     },
                   ),

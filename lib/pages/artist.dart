@@ -15,12 +15,9 @@ import '../media/media.dart';
 import '../data.dart';
 
 class PageArtist extends StatefulWidget {
-  final ArtistPlaylist artistPlaylist;
+  final ArtistPlaylist artist;
+  const PageArtist(this.artist, {super.key});
 
-  const PageArtist({
-    super.key,
-    required this.artistPlaylist,
-  });
   @override
   PageArtistState createState() => PageArtistState();
 }
@@ -28,7 +25,7 @@ class PageArtist extends StatefulWidget {
 const options = ['Videos', 'Other'];
 
 class PageArtistState extends State<PageArtist> {
-  ArtistPlaylist get artist => widget.artistPlaylist;
+  ArtistPlaylist get artist => widget.artist;
   bool isSubscribed = false;
   String selectedHome = 'Videos';
   Map videos = {};
@@ -153,9 +150,7 @@ class PageArtistState extends State<PageArtist> {
                         queue.add(media);
                         return SongTile(media: media);
                       } else {
-                        return PlaylistTile(
-                          playlist: Playlist.fromMap(list[i]),
-                        );
+                        return PlaylistTile(Playlist.fromMap(list[i]));
                       }
                     },
                   ),

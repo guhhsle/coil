@@ -5,6 +5,7 @@ import 'cache.dart';
 import 'map.dart';
 import '../pages/user_playlists.dart';
 import '../template/functions.dart';
+import '../functions/other.dart';
 import '../data.dart';
 
 extension PlaylistHTTP on Playlist {
@@ -27,20 +28,16 @@ extension PlaylistHTTP on Playlist {
   }
 
   Future<void> delete() async {
-    if (isCacheOnly()) {
-      await removeBackup();
-    } else {
-      await post(
-        Uri.https(Pref.authInstance.value, 'user/playlists/delete'),
-        headers: {'Authorization': Pref.token.value},
-        body: jsonEncode({'playlistId': url}),
-      );
-    }
+    if (isCacheOnly()) return removeFromPlaylists();
+    await post(
+      Uri.https(Pref.authInstance.value, 'user/playlists/delete'),
+      headers: {'Authorization': Pref.token.value},
+      body: jsonEncode({'playlistId': url}),
+    );
     await fetchUserPlaylists(true);
   }
 
-  Future<void> loadFromInternet(bool auth) async {
-    final instance = auth ? Pref.authInstance.value : Pref.instance.value;
+  Future<void> loadFromInstance(String instance) async {
     final response = await get(Uri.https(instance, 'playlists/$url'));
     loadFromMap(jsonDecode(utf8.decode(response.bodyBytes)));
     backup();
@@ -49,8 +46,8 @@ extension PlaylistHTTP on Playlist {
   Future<void> create() async {
     if (Pref.token.value == '') {
       name = url;
-      url = '$name-${DateTime.now()}';
-      await addToCache();
+      url = formatUrl('$name-${DateTime.now()}');
+      await addToPlaylists();
       await backup();
     } else {
       try {

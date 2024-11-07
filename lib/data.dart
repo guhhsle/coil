@@ -119,16 +119,10 @@ final top100 = Playlist('100')..path = [2];
 final top100Raw = Playlist('100raw')..path = [2];
 
 List<Playlist> get allPlaylists {
-  return [
-    ...userPlaylists.value,
-    bookmarks,
-    top100,
-    top100Raw,
-  ];
+  return [...userPlaylists.value, bookmarks, top100, top100Raw];
 }
 
 final showTopDock = ValueNotifier(false);
-//final refreshPlaylist = ValueNotifier(false);
 
 final homeMap = <String, Widget>{};
 String selectedHome = 'Playlists';

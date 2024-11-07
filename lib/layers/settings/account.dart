@@ -14,11 +14,14 @@ class AccountLayer extends Layer {
       AuthLayer().show();
     });
     list = [
-      Tile('Export', Icons.settings_backup_restore_rounded, '', () {
+      Tile('Export to piped', Icons.settings_backup_restore_rounded, '', () {
         Navigator.of(context).pop();
         exportUser();
       }),
-      Tile('Import Cache', Icons.settings_backup_restore_rounded, '', () {
+      Tile('Export local lists', Icons.settings_backup_restore_rounded, '', () {
+        exportCache();
+      }),
+      Tile('Import local lists', Icons.settings_backup_restore_rounded, '', () {
         importCache();
       }),
       Tile.fromPref(Pref.location, onTap: () {

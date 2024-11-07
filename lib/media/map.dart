@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'media_queue.dart';
 import 'media.dart';
-import 'http.dart';
 import '../functions/other.dart';
 import '../data.dart';
 
