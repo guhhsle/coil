@@ -64,5 +64,8 @@ class MediaQueue with ChangeNotifier {
     await Future.wait(futures);
   }
 
-  bool contains(Media media) => list.contains(media);
+  bool contains(Media media) {
+    int index = list.indexOf(media);
+    return index != -1;
+  }
 }

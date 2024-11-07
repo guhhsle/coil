@@ -6,8 +6,8 @@ import 'subscriptions.dart';
 import '../widgets/playlist_tile.dart';
 import '../template/tile_chip.dart';
 import '../media/media_queue.dart';
+import '../playlist/playlist.dart';
 import '../widgets/song_tile.dart';
-import '../functions/other.dart';
 import '../template/data.dart';
 import '../template/tile.dart';
 import '../widgets/frame.dart';
@@ -15,13 +15,11 @@ import '../media/media.dart';
 import '../data.dart';
 
 class PageArtist extends StatefulWidget {
-  final String url;
-  final String artist;
+  final ArtistPlaylist artistPlaylist;
 
   const PageArtist({
     super.key,
-    required this.url,
-    required this.artist,
+    required this.artistPlaylist,
   });
   @override
   PageArtistState createState() => PageArtistState();
@@ -30,6 +28,7 @@ class PageArtist extends StatefulWidget {
 const options = ['Videos', 'Other'];
 
 class PageArtistState extends State<PageArtist> {
+  ArtistPlaylist get artist => widget.artistPlaylist;
   bool isSubscribed = false;
   String selectedHome = 'Videos';
   Map videos = {};
@@ -40,7 +39,7 @@ class PageArtistState extends State<PageArtist> {
       File file = File('${Pref.appDirectory.value}/subscriptions.json');
       List list = jsonDecode(await file.readAsString());
       if (isSubscribed) {
-        list.removeWhere((e) => e['url'].contains(widget.url));
+        list.removeWhere((e) => e['url'].contains(artist.url));
       } else {
         list.add({
           'url': videos['id'],
@@ -70,7 +69,7 @@ class PageArtistState extends State<PageArtist> {
 
   Future<void> loadContent() async {
     try {
-      Response result = await get(Uri.https(Pref.instance.value, widget.url));
+      Response result = await get(Uri.https(Pref.instance.value, artist.url));
       videos = jsonDecode(utf8.decode(result.bodyBytes));
       setState(() {});
       result = await get(
@@ -96,10 +95,10 @@ class PageArtistState extends State<PageArtist> {
   @override
   Widget build(BuildContext context) {
     isSubscribed = userSubscriptions.value
-            .indexWhere((e) => e['url'].contains(widget.url)) >=
+            .indexWhere((e) => e['url'].contains(artist.url)) >=
         0;
     return Frame(
-      title: Text(formatName(widget.artist)),
+      title: Text(artist.name),
       child: Column(
         children: [
           Container(
@@ -155,9 +154,7 @@ class PageArtistState extends State<PageArtist> {
                         return SongTile(media: media);
                       } else {
                         return PlaylistTile(
-                          info: list[i],
-                          path: const [0, 1],
-                          playlist: true,
+                          playlist: Playlist.fromMap(list[i]),
                         );
                       }
                     },

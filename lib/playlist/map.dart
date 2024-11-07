@@ -1,4 +1,6 @@
 import 'playlist.dart';
+import '../template/functions.dart';
+import '../functions/other.dart';
 import '../media/media.dart';
 import '../data.dart';
 
@@ -7,7 +9,7 @@ extension PlaylistMap on Playlist {
     List playlist = raw['relatedStreams'] ?? [];
     list = [];
     for (var i = 0; i < playlist.length; i++) {
-      user = userPlaylists.value.indexWhere((el) => el['id'] == url) >= 0;
+      user = userPlaylists.value.indexWhere((p) => p.url == url) >= 0;
       //TODO test if (url == 'Bookmarks') user = true;
       if (userFiles.contains(url)) user = true;
       if (user) {
@@ -25,8 +27,8 @@ extension PlaylistMap on Playlist {
   void loadFromMap(Map map) {
     raw = map;
     uploader = map['uploader'] ?? map['uploaderName'] ?? '';
-    thumbnail = map['thumbnailUrl'] ?? '';
-    name = map['name'] ?? 'NAME';
+    thumbnail = map['thumbnailUrl'] ?? map['thumbnail'] ?? map['avatar'] ?? '';
+    name = formatName(map['name'] ?? t(url));
     fillListFromRaw();
     notify();
   }

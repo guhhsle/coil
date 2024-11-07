@@ -8,17 +8,16 @@ import '../data.dart';
 Future<void> fetchBookmarks() async {
   List<Playlist> tempBookmarks = [];
   List<Future> futures = [];
-  Playlist('Bookmarks').load([2]).catchError(
-    (e) => Playlist('Bookmarks')..backup(),
-  );
-  for (String url in Pref.bookmarks.value) {
+  bookmarks.load().catchError((e) => bookmarks..backup());
+  for (final url in Pref.bookmarks.value) {
     final playlist = Playlist(url);
-    futures.add(playlist.load([2, 0, 1]).then(
-      (val) => tempBookmarks.add(playlist),
-    ));
+    playlist.path = [2, 0, 1];
+    futures.add(playlist.load().then((_) {
+      tempBookmarks.add(playlist);
+    }));
   }
   await Future.wait(futures);
-  bookmarks.value = tempBookmarks;
+  allBookmarks.value = tempBookmarks;
 }
 
 class Bookmarks extends StatelessWidget {
@@ -29,7 +28,7 @@ class Bookmarks extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: fetchBookmarks,
       child: ValueListenableBuilder(
-        valueListenable: bookmarks,
+        valueListenable: allBookmarks,
         builder: (context, data, child) => ListView(
           physics: scrollPhysics,
           padding: const EdgeInsets.only(bottom: 32, top: 16),
@@ -38,37 +37,20 @@ class Bookmarks extends StatelessWidget {
               alignment: WrapAlignment.spaceEvenly,
               children: [
                 FutureBuilder(
-                  future: Playlist('Bookmarks').load([2]),
+                  future: bookmarks.load(),
                   builder: (context, snap) {
                     if (snap.hasError) return Container();
-                    return const PlaylistTile(
-                      info: {'url': 'Bookmarks'},
-                      playlist: true,
-                      path: [2],
-                    );
+                    return PlaylistTile(playlist: bookmarks);
                   },
                 ),
                 FutureBuilder(
-                  future: Playlist('100').load([2]),
+                  future: top100.load(),
                   builder: (context, snap) {
                     if (snap.hasError) return Container();
-                    return const PlaylistTile(
-                      info: {'url': '100'},
-                      playlist: true,
-                      path: [2],
-                    );
+                    return PlaylistTile(playlist: top100);
                   },
                 ),
-                for (Playlist item in data)
-                  PlaylistTile(
-                    info: {
-                      'url': item.url,
-                      'thumbnail': item.thumbnail,
-                      'title': item.name,
-                    },
-                    playlist: true,
-                    path: const [2, 0, 1],
-                  ),
+                for (final playlist in data) PlaylistTile(playlist: playlist),
               ],
             ),
           ],

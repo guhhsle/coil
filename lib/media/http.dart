@@ -1,3 +1,5 @@
+import 'package:coil/pages/bookmarks.dart';
+import 'package:coil/playlist/cache.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -27,6 +29,12 @@ extension MediaHTTP on Media {
         debugPrint(raw['message']);
         if (showError) showSnack('Instance: ${raw['message']}', false);
       }
+      String? newThumbnail = raw['thumbnailUrl'];
+      if (newThumbnail != null) {
+        thumbnail = newThumbnail;
+        backupThumbnail();
+      }
+
       audioUrls = (raw['audioStreams'] as List)
           .map((e) => MediaLink.from(e))
           .toList()
@@ -57,5 +65,16 @@ extension MediaHTTP on Media {
       //FORMAT ERROR
     }
     return null;
+  }
+
+  Future<void> backupThumbnail() async {
+    for (final playlist in allPlaylists) {
+      for (final m in playlist.list) {
+        if (m.id == id) {
+          m.thumbnail = thumbnail;
+          await playlist.backup();
+        }
+      }
+    }
   }
 }

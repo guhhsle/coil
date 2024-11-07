@@ -1,42 +1,34 @@
-import 'package:flutter/material.dart';
 import 'media.dart';
-import '../playlist/playlist.dart';
 import '../playlist/cache.dart';
+import '../data.dart';
 
 extension MediaCache on Media {
   Future<void> addTo100() async {
-    await Playlist('100raw').forceAddMediaToCache(this, top: true);
-    final hundred = Playlist('100raw');
-    await hundred.load([2]);
+    await top100Raw.load();
+    await top100Raw.forceAddMediaToCache(this, top: true);
     Map<String, int> map = {};
-    List listRaw = hundred.raw['relatedStreams'];
-    if (listRaw.length > 100) listRaw.removeLast();
-    await hundred.backup();
+    if (top100Raw.list.length > 100) top100Raw.list.removeLast();
+    await top100Raw.backup();
+    await top100.load();
+    top100.list = top100Raw.list.toList();
 
-    final formatted = Playlist('100');
-    await formatted.load([2]).onError(
-      (err, stackTrace) => debugPrint('Error formatting $err'),
-    );
-    List list = formatted.raw['relatedStreams'] =
-        hundred.raw['relatedStreams'].toList();
-
-    for (Map item in list) {
-      if (map.containsKey(item['url'])) {
-        map[item['url']] = map[item['url']]! + 1;
+    for (final media in top100.list) {
+      if (map.containsKey(media.id)) {
+        map[media.id] = map[media.id]! + 1;
       } else {
-        map.addAll({item['url']: 1});
+        map.addAll({media.id: 1});
       }
     }
-    list.sort(
-      (a, b) => map[b['url']]!.compareTo(map[a['url']]!),
+    top100.list.sort(
+      (a, b) => map[b.id]!.compareTo(map[a.id]!),
     );
-    for (int i = 0; i < list.length; i++) {
-      if (map[list[i]['url']]! > 1) {
-        map[list[i]['url']] = map[list[i]['url']]! - 1;
-        list.removeAt(i);
+    for (int i = 0; i < top100.length; i++) {
+      if (map[top100[i].id]! > 1) {
+        map[top100[i].id] = map[top100[i].id]! - 1;
+        top100.list.removeAt(i);
         i--;
       }
     }
-    await formatted.backup();
+    await top100.backup();
   }
 }

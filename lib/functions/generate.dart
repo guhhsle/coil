@@ -1,7 +1,7 @@
-import 'package:coil/audio/handler.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import '../playlist/playlist.dart';
+import '../audio/handler.dart';
 import '../media/media.dart';
 import '../data.dart';
 
@@ -68,8 +68,8 @@ Future<void> generateFrom(List related, bool r) async {
     List<Future> waiting = [];
     for (int i = 0; i < related.length; i++) {
       if (related[i]['type'] == 'playlist') {
-        final playlist = Playlist(related[i]['url']);
-        waiting.add(playlist.load([0, 1]).then((value) {
+        final playlist = Playlist.fromMap(related[i]);
+        waiting.add(playlist.load().then((value) {
           generateFrom(playlist.raw['relatedStreams'], true);
         }));
       } else {

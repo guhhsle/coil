@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import '../widgets/playlist_tile.dart';
-import '../media/media_queue.dart';
 import '../template/tile_chip.dart';
 import '../template/functions.dart';
 import '../widgets/song_tile.dart';
+import '../playlist/playlist.dart';
+import '../media/media_queue.dart';
 import '../functions/other.dart';
 import '../template/tile.dart';
 import '../template/data.dart';
 import '../widgets/frame.dart';
 import '../layers/search.dart';
+import '../playlist/map.dart';
 import '../media/media.dart';
 import '../data.dart';
 
@@ -186,15 +188,19 @@ class SearchState extends State<Search> {
                     padding: const EdgeInsets.only(bottom: 32, top: 16),
                     itemCount: result.length,
                     itemBuilder: (context, i) {
-                      Map item = result[i];
-                      if (item['uploaderName'] == 'YouTube Music') {
+                      Map map = result[i];
+                      if (map['uploaderName'] == 'YouTube Music') {
                         return Container();
                       }
-                      return PlaylistTile(
-                        info: item,
-                        playlist: filter != 'channels',
-                        path: const [0, 1],
-                      );
+                      if (filter == 'channels') {
+                        return PlaylistTile(
+                          playlist: ArtistPlaylist.fromMap(map),
+                        );
+                      } else {
+                        final playlist = Playlist(map['id'] ?? map['url']);
+                        playlist.loadFromMap(map);
+                        return PlaylistTile(playlist: playlist);
+                      }
                     },
                   ),
                 );

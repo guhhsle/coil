@@ -29,7 +29,7 @@ class MediaLink {
 class Media extends MediaItem {
   int quality, index, reps;
   bool offline;
-  String? audioUrl, uploaderUrl, lyrics;
+  String? audioUrl, uploaderUrl, lyrics, thumbnail;
   MediaQueue queue;
   List<MediaLink> audioUrls;
   List<MediaLink> videoUrls;
@@ -48,7 +48,7 @@ class Media extends MediaItem {
     this.reps = 1,
     required super.title,
     super.duration,
-    super.artUri,
+    this.thumbnail,
     super.artist = '',
   });
 
@@ -58,6 +58,11 @@ class Media extends MediaItem {
     int? i,
   }) {
     return MediaMap.fromMap(map: map, i: i ?? 10, queue: queue);
+  }
+
+  @override
+  Uri get artUri {
+    return Uri.parse(thumbnail ?? '');
   }
 
   static Media copyFrom(Media media, {MediaQueue? queue}) {
@@ -75,7 +80,7 @@ class Media extends MediaItem {
       reps: media.reps,
       title: media.title,
       duration: media.duration,
-      artUri: media.artUri,
+      thumbnail: media.thumbnail,
       artist: media.artist,
     );
   }

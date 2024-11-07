@@ -45,6 +45,17 @@ class AuthLayer extends Layer {
         }),
       ),
     ];
+    trailing = [
+      IconButton(
+        icon: const Icon(Icons.logout_rounded),
+        onPressed: () {
+          Pref.token.set('');
+          Pref.username.set('');
+          Pref.password.set('');
+          Pref.authInstance.set('');
+        },
+      ),
+    ];
   }
 
   Future<bool> login() async {

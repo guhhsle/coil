@@ -48,6 +48,7 @@ extension PlaylistHTTP on Playlist {
 
   Future<void> create() async {
     if (Pref.token.value == '') {
+      name = url;
       url = '$name-${DateTime.now()}';
       await addToCache();
       await backup();

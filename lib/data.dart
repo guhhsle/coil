@@ -110,10 +110,22 @@ List<Tile> get settings {
 final trendingVideos = MediaQueue([]);
 final localMusic = MediaQueue([]);
 final userFeed = MediaQueue([]);
-final bookmarks = ValueNotifier(<Playlist>[]);
+final allBookmarks = ValueNotifier(<Playlist>[]);
 final userSubscriptions = ValueNotifier([]);
 final currentLyrics = ValueNotifier('');
-final userPlaylists = ValueNotifier([]);
+final userPlaylists = ValueNotifier(<Playlist>[]);
+final bookmarks = Playlist('Bookmarks')..path = [2];
+final top100 = Playlist('100')..path = [2];
+final top100Raw = Playlist('100raw')..path = [2];
+
+List<Playlist> get allPlaylists {
+  return [
+    ...userPlaylists.value,
+    bookmarks,
+    top100,
+    top100Raw,
+  ];
+}
 
 final showTopDock = ValueNotifier(false);
 //final refreshPlaylist = ValueNotifier(false);

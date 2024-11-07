@@ -13,13 +13,11 @@ import '../data.dart';
 
 class PlaylistOptions extends Layer {
   Playlist playlist;
-  List<int> path;
-  PlaylistOptions(this.playlist, this.path);
+  PlaylistOptions(this.playlist);
   @override
   void construct() {
     action = Tile('Refresh', Icons.refresh_rounded, '', () async {
-      path.remove(2);
-      await playlist.load(path);
+      await playlist.load(force: true);
       Preferences.notify();
       Navigator.of(context).pop();
     });

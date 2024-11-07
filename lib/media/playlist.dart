@@ -1,35 +1,28 @@
-import 'package:coil/playlist/cache.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'media.dart';
 import '../template/functions.dart';
 import '../playlist/playlist.dart';
-import '../template/prefs.dart';
+import '../playlist/cache.dart';
 import '../template/data.dart';
 import '../data.dart';
 
 extension MediaPlaylist on Media {
   Future<void> addToPlaylist(Playlist playlist) async {
-    try {
-      await playlist.load([2]);
-      if (playlist.indexOf(this) != -1) {
-        showSnack(
-          'Already saved, tap to add again',
-          false,
-          onTap: () async => await forceAddToPlaylist(playlist),
-        );
-        return;
-      }
-    } catch (e) {
-      //Playlist not offline
+    if (!playlist.contains(this)) {
+      return forceAddToPlaylist(playlist);
     }
-    await forceAddToPlaylist(playlist);
+    showSnack(
+      'Already saved, tap to add again',
+      false,
+      onTap: () => forceAddToPlaylist(playlist),
+    );
   }
 
   Future<void> removeFromPlaylist() async {
-    final playlistID = (queue as Playlist).url;
-    if (playlistIsCacheOnly(playlistID)) {
-      await Playlist(playlistID).forceRemoveMediaFromCache(
+    final playlist = queue as Playlist;
+    if (playlistIsCacheOnly(playlist.url)) {
+      await playlist.forceRemoveMediaFromCache(
         this,
         first: false,
       );
@@ -37,14 +30,11 @@ extension MediaPlaylist on Media {
       Response response = await post(
         Uri.https(Pref.authInstance.value, 'user/playlists/remove'),
         headers: {'Authorization': Pref.token.value},
-        body: jsonEncode({'playlistId': playlistID, 'index': index}),
+        body: jsonEncode({'playlistId': playlist.url, 'index': index}),
       );
       String? error = jsonDecode(response.body)['error'];
-      if (error != null) {
-        showSnack(error, false);
-      }
-      await Playlist(playlistID).load([1, 2]);
-      Preferences.notify();
+      if (error != null) showSnack(error, false);
+      await playlist.load(force: true);
     }
   }
 
@@ -56,13 +46,11 @@ extension MediaPlaylist on Media {
       Response response = await post(
         Uri.https(Pref.authInstance.value, 'user/playlists/add'),
         headers: {'Authorization': Pref.token.value},
-        body: jsonEncode({'playlistId': playlist.raw['id'], 'videoId': id}),
+        body: jsonEncode({'playlistId': playlist.url, 'videoId': id}),
       );
       String? error = jsonDecode(response.body)['error'];
       showSnack(error ?? '${l['Added']} $title', error == null);
-
-      await playlist.load([1, 2]);
-      Preferences.notify();
+      await playlist.load(force: true);
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'package:coil/template/prefs.dart';
 import 'package:flutter/material.dart';
 import '../layers/playlist_options.dart';
 import '../functions/generate.dart';
@@ -15,14 +14,9 @@ import '../audio/queue.dart';
 import '../data.dart';
 
 class PlaylistPage extends StatefulWidget {
-  final String url;
-  final List<int> path;
+  final Playlist playlist;
 
-  const PlaylistPage({
-    Key? key,
-    required this.url,
-    required this.path,
-  }) : super(key: key);
+  const PlaylistPage({Key? key, required this.playlist}) : super(key: key);
 
   @override
   PlaylistPageState createState() => PlaylistPageState();
@@ -30,26 +24,12 @@ class PlaylistPage extends StatefulWidget {
 
 class PlaylistPageState extends State<PlaylistPage> {
   bool generating = false;
-  late Playlist playlist;
+  Playlist get playlist => widget.playlist;
 
   @override
   void initState() {
-    playlist = Playlist(widget.url);
-    Preferences().addListener(refreshPlaylist);
-    refreshPlaylist();
+    playlist.load().then((_) => playlist.preload(0, 10));
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    Preferences().removeListener(refreshPlaylist);
-    super.dispose();
-  }
-
-  Future<void> refreshPlaylist() async {
-    //Mulitple instances have same ID
-    await playlist.load(widget.path);
-    playlist.preload(0, 10);
   }
 
   @override
@@ -110,12 +90,12 @@ class PlaylistPageState extends State<PlaylistPage> {
             icon: const Icon(Icons.menu_rounded),
             tooltip: t('Menu'),
             onPressed: () {
-              PlaylistOptions(playlist, widget.path.toList()).show();
+              PlaylistOptions(playlist).show();
             },
           ),
         ],
         child: RefreshIndicator(
-          onRefresh: () => playlist.load(widget.path.toList()..remove(2)),
+          onRefresh: () => playlist.load(force: true),
           child: ListView.builder(
             physics: scrollPhysics,
             padding: const EdgeInsets.only(top: 16, bottom: 16),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import '../pages/user_playlists.dart';
 import '../template/functions.dart';
 import '../playlist/playlist.dart';
 import '../media/playlist.dart';
 import '../template/layer.dart';
-import '../template/prefs.dart';
 import '../playlist/cache.dart';
 import '../playlist/http.dart';
 import '../template/tile.dart';
@@ -14,45 +12,24 @@ import '../data.dart';
 class ListedLayer extends Layer {
   Media media;
   ListedLayer(this.media);
-  Map<Playlist, String> playlists = {};
-
-  Future<void> checkListed(Playlist playlist) async {
-    await playlist.load([2]);
-    if (playlist.isEmpty) {
-      // NOT CACHED
-      playlists.addAll({playlist: '?'});
-    } else {
-      bool has = playlist.indexOf(media) != -1;
-      playlists.addAll({playlist: has ? 'true' : 'false'});
-    }
-  }
 
   @override
-  void construct() async {
-    if (userPlaylists.value.isEmpty) {
-      await fetchUserPlaylists(true);
-    }
+  void construct() {
+    listenTo(bookmarks);
+    userPlaylists.value.forEach(listenTo);
 
-    final bookmarks = Playlist('Bookmarks');
-    await bookmarks.load([2]);
-    bool bookmarked = bookmarks.indexOf(media) != -1;
-
-    playlists = {};
-    await Future.wait(userPlaylists.value.map((map) {
-      final playlist = Playlist(map['id']);
-      playlist.name = map['name'];
-      return checkListed(playlist);
+    final playlists = Map.fromEntries(userPlaylists.value.map((playlist) {
+      if (playlist.isEmpty) return MapEntry(playlist, '?');
+      return MapEntry(playlist, playlist.contains(media) ? 'true' : 'false');
     }));
 
-    if (bookmarked) {
-      action = Tile('Bookmarked', Icons.bookmark_rounded, '', () async {
-        await Playlist('Bookmarks').forceRemoveMediaFromCache(media);
-        Preferences.notify();
+    if (bookmarks.contains(media)) {
+      action = Tile('Bookmarked', Icons.bookmark_rounded, '', () {
+        bookmarks.forceRemoveMediaFromCache(media);
       });
     } else {
-      action = Tile('Bookmark', Icons.bookmark_outline_rounded, '', () async {
-        await Playlist('Bookmarks').forceAddMediaToCache(media);
-        Preferences.notify();
+      action = Tile('Bookmark', Icons.bookmark_outline_rounded, '', () {
+        bookmarks.forceAddMediaToCache(media);
       });
     }
     leading = [
@@ -75,6 +52,5 @@ class ListedLayer extends Layer {
         () => media.addToPlaylist(entry.key),
       ),
     );
-    notifyListeners();
   }
 }

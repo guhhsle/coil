@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:coil/playlist/http.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
@@ -10,11 +13,9 @@ import '../data.dart';
 
 Future<void> exportUser() async {
   await fetchUserPlaylists(true);
-  for (final map in userPlaylists.value) {
+  for (final playlist in userPlaylists.value) {
     showSnack('Loading...', true);
-    final playlist = Playlist(map['id']);
-    playlist.name = map['name'];
-    await playlist.load([1, 2]);
+    await playlist.load(force: true);
     await playlist.exportLoaded();
   }
   showSnack('Completed', true);
@@ -23,7 +24,7 @@ Future<void> exportUser() async {
 extension Export on Playlist {
   Map get exportMap {
     List<String> videos = list.map((m) {
-      return 'https://youtube.com${m.id}';
+      return 'https://youtube.com/${m.id}';
     }).toList();
     if (user) videos = videos.reversed.toList();
     return {
@@ -63,8 +64,8 @@ Future<void> exportCache() async {
   file = File('${Pref.appDirectory.value}/Bookmarks.json');
   await writeFile('Bookmarks.json', await file.readAsString());
 
-  for (Map userPlaylist in userPlaylists.value) {
-    String name = '${formatUrl(userPlaylist['id'])}.json';
+  for (final playlist in userPlaylists.value) {
+    String name = '${playlist.url}.json';
     file = File('${Pref.appDirectory.value}/$name');
     await writeFile(name, await file.readAsString());
   }
@@ -72,14 +73,32 @@ Future<void> exportCache() async {
 
 Future<void> importCache() async {
   try {
+    //TODO
     final result = await FilePicker.platform.pickFiles(allowMultiple: true);
     final files = result!.paths.map((path) => File(path!)).toList();
-    for (File backedFile in files) {
-      File cacheFile =
-          File('${Pref.appDirectory.value}/${basename(backedFile.path)}');
+    for (final backedFile in files) {
+      final url = cleanFileName(backedFile.path);
+      File cacheFile = File('${Pref.appDirectory.value}/$url.json');
       cacheFile.writeAsBytes(await backedFile.readAsBytes());
+      final imported = Playlist(url);
+      imported.path = [2];
+      await imported.load();
+      await imported.create();
     }
   } catch (e) {
     showSnack('$e', false);
   }
+}
+
+String fileName(String unformattedPath) {
+  final parts = unformattedPath.split('/');
+  final name = parts.isNotEmpty ? parts.last : unformattedPath;
+  return name.trim();
+}
+
+String cleanFileName(String unformattedPath) {
+  final fullName = fileName(unformattedPath);
+  final parts = fullName.split('.');
+  final name = parts.isNotEmpty ? parts.first : fullName;
+  return name.trim();
 }

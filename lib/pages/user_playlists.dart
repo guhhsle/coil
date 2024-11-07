@@ -23,12 +23,7 @@ class UserPlaylists extends StatelessWidget {
           physics: scrollPhysics,
           padding: const EdgeInsets.only(bottom: 32, top: 16),
           children: [
-            for (Map map in snap)
-              PlaylistTile(
-                info: map,
-                playlist: true,
-                path: const [2, 1],
-              ),
+            for (final playlist in snap) PlaylistTile(playlist: playlist),
             Padding(
               padding: const EdgeInsets.all(2),
               child: IconButton(
@@ -62,21 +57,28 @@ Future<void> fetchUserPlaylists(bool force) async {
       if (list.isEmpty && !force) fetchUserPlaylists(true);
     }
     if (Pref.sortBy.value == 'Default <') {
-      List r = List.from(list.reversed);
-      list = r.toList();
+      list = list.reversed.toList();
     } else if (Pref.sortBy.value != 'Default') {
-      list.sort(
-        (a, b) => {
-          'Name': a['name'].compareTo(b['name']),
-          'Name <': b['name'].compareTo(a['name']),
-          'Length': a['videos'].compareTo(b['videos']),
-          'Length <': b['videos'].compareTo(a['videos']),
-        }[Pref.sortBy.value]!,
-      );
+      try {
+        list.sort(
+          (a, b) => {
+            'Name': a['name'].compareTo(b['name']),
+            'Name <': b['name'].compareTo(a['name']),
+            'Length': a['videos'].compareTo(b['videos']),
+            'Length <': b['videos'].compareTo(a['videos']),
+          }[Pref.sortBy.value]!,
+        );
+      } catch (e) {
+        debugPrint('$e');
+      }
     }
-    userPlaylists.value = list;
+    userPlaylists.value = list.map((map) {
+      final playlist = Playlist.fromMap(map);
+      playlist.path = [2, 1];
+      playlist.load();
+      return playlist;
+    }).toList();
   } catch (e) {
     if (force) fetchUserPlaylists(false);
   }
-  Preferences.notify();
 }

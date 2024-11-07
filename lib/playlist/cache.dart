@@ -5,7 +5,6 @@ import 'map.dart';
 import 'package:flutter/material.dart';
 import '../pages/user_playlists.dart';
 import '../functions/other.dart';
-import '../template/prefs.dart';
 import '../media/media.dart';
 import '../media/map.dart';
 import '../data.dart';
@@ -13,25 +12,27 @@ import '../data.dart';
 extension PlaylistCache on Playlist {
   Future<void> backup() async {
     if (!userFiles.contains(url) &&
-        userPlaylists.value.indexWhere((el) => el['id'] == url) == -1 &&
+        userPlaylists.value.indexWhere((p) => p.url == url) == -1 &&
         !Pref.bookmarks.value.contains(url)) return;
     File file = File('${Pref.appDirectory.value}/${formatUrl(url)}.json');
-    Map formatted = {
+
+    print(name);
+    List<Media> songs = [];
+    if (user) {
+      songs = list.reversed.toList();
+    } else {
+      songs = list.toList();
+    }
+    final formatted = {
       'name': name,
       'thumbnailUrl': thumbnail,
       'uploader': uploader,
-      'relatedStreams': <Map>[],
+      'relatedStreams': songs.map((song) {
+        return song.toMap();
+      }).toList(),
     };
-    for (Map song in raw['relatedStreams']) {
-      formatted['relatedStreams'].add({
-        'url': song['url'].replaceAll('/watch?v=', ''),
-        'title': song['title'],
-        'thumbnail': song['thumbnail'],
-        'uploaderName': song['uploaderName'].replaceAll(' - Topic', ''),
-        'uploaderUrl': song['uploaderUrl'],
-      });
-    }
     await file.writeAsString(jsonEncode(formatted));
+    notify();
   }
 
   Future<void> loadFromCache() async {
@@ -69,33 +70,38 @@ extension PlaylistCache on Playlist {
     await fetchUserPlaylists(false);
   }
 
-  Future<void> forceAddMediaToCache(Media media, {bool top = false}) async {
-    await load([2]).onError(
+  Future<void> forceAddMediaToCache(
+    Media media, {
+    bool top = false,
+  }) async {
+    await load().onError(
       (err, stackTrace) => debugPrint('Error adding media $err'),
     );
+    if (user) top = !top;
     if (top) {
-      (raw['relatedStreams'] as List).insert(0, media.toMap());
+      list.insert(0, media);
     } else {
-      raw['relatedStreams'].add(media.toMap());
+      list.add(media);
     }
     await backup();
-    Preferences.notify();
   }
 
-  Future<void> forceRemoveMediaFromCache(Media media,
-      {bool first = true}) async {
-    await load([2]);
-    late int index;
+  Future<void> forceRemoveMediaFromCache(
+    Media media, {
+    bool first = true,
+  }) async {
+    await load();
+    int index = -1;
+    if (user) first = !first;
     if (first) {
-      index = raw['relatedStreams'].indexWhere((e) => e['url'] == media.id);
+      index = list.indexWhere((m) => m.id == media.id);
     } else {
-      index = raw['relatedStreams'].lastIndexWhere((e) => e['url'] == media.id);
+      index = list.lastIndexWhere((m) => m.id == media.id);
     }
-    if (index != -1) raw['relatedStreams'].removeAt(index);
-    if ((raw['relatedStreams'] as List).isEmpty) {
-      await File('${Pref.appDirectory.value}/$url.json').delete();
-    }
+    if (index == -1) return;
+    list.removeAt(index);
+    if (isEmpty) await File('${Pref.appDirectory.value}/$url.json').delete();
+    print('INDEX : $index');
     await backup();
-    Preferences.notify();
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'media_queue.dart';
 import 'media.dart';
+import 'http.dart';
 import '../functions/other.dart';
 import '../data.dart';
 
@@ -23,7 +24,7 @@ extension MediaMap on Media {
     return Media(
       title: map['title'],
       id: formatUrl(map['url']),
-      artUri: Uri.parse(map['thumbnail'] ?? ''),
+      thumbnail: map['thumbnail'] ?? '',
       artist: formatName(map['uploaderName'] ?? map['uploader']),
       uploaderUrl: map['uploaderUrl'] ?? '',
       quality: evaluateSong(map, i),
