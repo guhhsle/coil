@@ -1,5 +1,11 @@
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:flutter/material.dart';
+import '../pages/bookmarks.dart';
+import '../pages/feed.dart';
+import '../pages/local.dart';
+import '../pages/subscriptions.dart';
+import '../pages/trending.dart';
+import '../pages/user_playlists.dart';
 import '../template/functions.dart';
 import '../data.dart';
 
@@ -77,4 +83,13 @@ String trimUrl(String raw) {
       .replaceAll('https://', '')
       .replaceAll('/', '')
       .replaceAll(' ', '');
+}
+
+void fetchAll() {
+  fetchUserPlaylists(false);
+  getLocal();
+  fetchBookmarks();
+  fetchFeed();
+  trending();
+  fetchSubscriptions(false);
 }

@@ -44,12 +44,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       });
     }
     animationController = AnimationController(vsync: this);
-    fetchUserPlaylists(false);
-    getLocal();
-    fetchBookmarks();
-    fetchFeed();
-    trending();
-    fetchSubscriptions(false);
+    fetchAll();
     super.initState();
     Future.delayed(
       const Duration(milliseconds: 32),

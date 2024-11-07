@@ -70,6 +70,8 @@ Future<void> importCache() async {
     for (final file in files) {
       await file.copy('${Pref.appDirectory.value}/${basename(file.path)}');
     }
+    fetchAll();
+    showSnack('Done', true);
   } catch (e) {
     showSnack('$e', false);
   }
