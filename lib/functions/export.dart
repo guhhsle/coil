@@ -22,11 +22,15 @@ Future<void> exportUser() async {
 
 extension Export on Playlist {
   Map get exportMap {
+    List<String> videos = list.map((m) {
+      return 'https://youtube.com${m.id}';
+    }).toList();
+    if (user) videos = videos.reversed.toList();
     return {
       'name': formatName(name),
       'type': 'playlist',
       'visibility': 'private',
-      'videos': list.map((m) => 'https://youtube.com${m.id}').toList(),
+      'videos': videos,
     };
   }
 
