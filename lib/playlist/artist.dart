@@ -34,22 +34,34 @@ class Artist extends Playlist {
     return i >= 0;
   }
 
+  Future<void> unSubscribeCache() async {
+    File file = File('${Pref.appDirectory.value}/subscriptions.json');
+    List list = jsonDecode(await file.readAsString());
+    if (isSubscribed) {
+      list.removeWhere((e) => e['url'].contains(url));
+    } else {
+      list.add({
+        'url': '/channel/${videos['id']}',
+        'name': videos['name'],
+        'avatar': videos['avatarUrl'],
+        'verified': true,
+      });
+    }
+    list.sort((a, b) {
+      return a['name'].compareTo(b['name']);
+    });
+    await file.writeAsString(jsonEncode(list));
+    await fetchSubscriptions(false);
+  }
+
+  Future<void> refreshInfo() async {
+    await unSubscribeCache();
+    await unSubscribeCache();
+  }
+
   Future<void> unSubscribe() async {
     if (Pref.token.value == '') {
-      File file = File('${Pref.appDirectory.value}/subscriptions.json');
-      List list = jsonDecode(await file.readAsString());
-      if (isSubscribed) {
-        list.removeWhere((e) => e['url'].contains(url));
-      } else {
-        list.add({
-          'url': videos['id'],
-          'name': videos['name'],
-          'avatar': videos['avatarUrl'],
-          'verified': true,
-        });
-      }
-      await file.writeAsString(jsonEncode(list));
-      await fetchSubscriptions(false);
+      await unSubscribeCache();
     } else {
       await post(
         Uri.https(
@@ -72,6 +84,7 @@ class Artist extends Playlist {
       Response result = await get(Uri.https(Pref.instance.value, url));
       videos = jsonDecode(utf8.decode(result.bodyBytes));
       formatDisplayed();
+      refreshInfo();
       result = await get(
         Uri.https(
           Pref.instance.value,
