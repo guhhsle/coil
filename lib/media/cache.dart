@@ -4,9 +4,9 @@ import '../data.dart';
 
 extension MediaCache on Media {
   Future<void> addTo100() async {
-    await top100Raw.load();
-    await top100Raw.forceAddMediaToCache(this, top: true);
     Map<String, int> map = {};
+    await top100Raw.load();
+    top100Raw.list.insert(0, this);
     if (top100Raw.list.length > 100) top100Raw.list.removeLast();
     await top100Raw.backup();
     await top100.load();

@@ -62,10 +62,14 @@ class BruteForceLayer extends Layer {
         },
       );
     });
+
+    final doneWorking = done.where((tile) => tile.trailing == true);
+    final doneNotWorking = done.where((tile) => tile.trailing == false);
+
     final notDone = pending.map((instance) {
       debugPrint(instance);
       return Tile(formatInstanceName(instance), Icons.timer_rounded, 'Waiting');
     });
-    list = [...done, ...notDone];
+    list = [...doneWorking, ...notDone, ...doneNotWorking];
   }
 }
