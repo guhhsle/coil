@@ -7,12 +7,12 @@ import '../template/functions.dart';
 import '../widgets/song_tile.dart';
 import '../playlist/playlist.dart';
 import '../media/media_queue.dart';
+import '../playlist/artist.dart';
 import '../functions/other.dart';
 import '../template/tile.dart';
 import '../template/data.dart';
 import '../widgets/frame.dart';
 import '../layers/search.dart';
-import '../playlist/map.dart';
 import '../media/media.dart';
 import '../data.dart';
 
@@ -192,7 +192,7 @@ class SearchState extends State<Search> {
                       if (map['uploaderName'] == 'YouTube Music') {
                         return Container();
                       } else if (filter == 'channels') {
-                        return PlaylistTile(ArtistPlaylist.fromMap(map));
+                        return PlaylistTile(Artist.fromMap(map));
                       } else {
                         return PlaylistTile(Playlist.fromMap(map));
                       }

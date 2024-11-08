@@ -1,164 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
-import 'dart:io';
-import 'subscriptions.dart';
 import '../widgets/playlist_tile.dart';
 import '../template/tile_chip.dart';
-import '../media/media_queue.dart';
-import '../playlist/playlist.dart';
 import '../widgets/song_tile.dart';
+import '../playlist/artist.dart';
 import '../template/data.dart';
 import '../template/tile.dart';
 import '../widgets/frame.dart';
 import '../media/media.dart';
-import '../data.dart';
 
-class PageArtist extends StatefulWidget {
-  final ArtistPlaylist artist;
+class PageArtist extends StatelessWidget {
+  final Artist artist;
   const PageArtist(this.artist, {super.key});
 
   @override
-  PageArtistState createState() => PageArtistState();
-}
-
-const options = ['Videos', 'Other'];
-
-class PageArtistState extends State<PageArtist> {
-  ArtistPlaylist get artist => widget.artist;
-  bool isSubscribed = false;
-  String selectedHome = 'Videos';
-  Map videos = {};
-  Map playlists = {};
-
-  Future<void> unSubscribe() async {
-    if (Pref.token.value == '') {
-      File file = File('${Pref.appDirectory.value}/subscriptions.json');
-      List list = jsonDecode(await file.readAsString());
-      if (isSubscribed) {
-        list.removeWhere((e) => e['url'].contains(artist.url));
-      } else {
-        list.add({
-          'url': videos['id'],
-          'name': videos['name'],
-          'avatar': videos['avatarUrl'],
-          'verified': true,
-        });
-      }
-      await file.writeAsString(jsonEncode(list));
-      await fetchSubscriptions(false);
-    } else {
-      await post(
-        Uri.https(
-          Pref.authInstance.value,
-          isSubscribed ? 'unsubscribe' : 'subscribe',
-        ),
-        headers: {
-          'Authorization': Pref.token.value,
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'channelId': videos['id']}),
-      );
-      await fetchSubscriptions(true);
-    }
-    setState(() {});
-  }
-
-  Future<void> loadContent() async {
-    try {
-      Response result = await get(Uri.https(Pref.instance.value, artist.url));
-      videos = jsonDecode(utf8.decode(result.bodyBytes));
-      setState(() {});
-      result = await get(
-        Uri.https(
-          Pref.instance.value,
-          'channels/tabs',
-          {'data': (jsonDecode(result.body)['tabs'][0])['data']},
-        ),
-      );
-      playlists = jsonDecode(utf8.decode(result.bodyBytes));
-    } catch (e) {
-      //INVALID CHANNEL
-    }
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    loadContent();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    isSubscribed = userSubscriptions.value
-            .indexWhere((e) => e['url'].contains(artist.url)) >=
-        0;
-    return Frame(
-      title: Text(artist.name),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            height: 64,
-            child: ListView(
-              physics: scrollPhysics,
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (String option in options)
+    artist.loadContent();
+    return ListenableBuilder(
+      listenable: artist,
+      builder: (context, child) => Frame(
+        title: Text(artist.name),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              height: 64,
+              child: ListView(
+                physics: scrollPhysics,
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for (final tab in tabs)
+                    TileChip(
+                      selected: artist.tab == tab,
+                      showAvatar: false,
+                      tile: Tile(tab, Icons.filter_rounded, '', () {
+                        artist.tab = tab;
+                      }),
+                    ),
                   TileChip(
-                    selected: selectedHome == option,
+                    selected: artist.isSubscribed,
+                    showCheckmark: true,
                     showAvatar: false,
-                    tile: Tile(option, Icons.filter_rounded, '', () {
-                      selectedHome = option;
-                      setState(() {});
-                    }),
-                  ),
-                TileChip(
-                  selected: isSubscribed,
-                  showCheckmark: true,
-                  showAvatar: false,
-                  tile: Tile(
-                    videos['subscriberCount'],
-                    Icons.numbers_rounded,
-                    '',
-                    unSubscribe,
-                  ),
-                )
-              ],
+                    tile: Tile(
+                      artist.subscribers,
+                      Icons.numbers_rounded,
+                      '',
+                      artist.unSubscribe,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Builder(
-              builder: (context) {
-                late List list;
-                if (selectedHome == 'Videos') {
-                  list = videos['relatedStreams'] ?? [];
-                } else {
-                  list = playlists['content'] ?? [];
-                }
-                final queue = MediaQueue([]);
-                return RefreshIndicator(
-                  onRefresh: () async => await loadContent(),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 32, top: 16),
-                    physics: scrollPhysics,
-                    itemCount: list.length,
-                    itemBuilder: (context, i) {
-                      if (list[i]['type'] == 'stream') {
-                        final media = Media.from(map: list[i], queue: queue);
-                        queue.add(media);
-                        return SongTile(media: media);
-                      } else {
-                        return PlaylistTile(Playlist.fromMap(list[i]));
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
-          )
-        ],
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: artist.loadContent,
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 32, top: 16),
+                  physics: scrollPhysics,
+                  itemCount: artist.length,
+                  itemBuilder: (context, i) {
+                    if (artist.displayed[i] is Media) {
+                      return SongTile(media: artist.displayed[i]);
+                    } else {
+                      return PlaylistTile(artist.displayed[i]);
+                    }
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

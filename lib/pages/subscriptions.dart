@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:io';
 import '../widgets/playlist_tile.dart';
-import '../playlist/playlist.dart';
+import '../playlist/artist.dart';
 import '../template/data.dart';
 import '../data.dart';
 
@@ -42,7 +42,7 @@ class Subscriptions extends StatelessWidget {
           itemCount: snap.length,
           physics: scrollPhysics,
           itemBuilder: (context, i) => PlaylistTile(
-            ArtistPlaylist.fromMap(snap[i]),
+            Artist.fromMap(snap[i]),
           ),
         ),
       ),

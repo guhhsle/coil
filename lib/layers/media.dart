@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:coil/playlist/playlist.dart';
 import 'package:flutter/material.dart';
 import 'listed.dart';
 import 'links.dart';
@@ -8,6 +7,7 @@ import '../functions/generate.dart';
 import '../template/functions.dart';
 import '../media/media_queue.dart';
 import '../media/bruteforce.dart';
+import '../playlist/artist.dart';
 import '../template/layer.dart';
 import '../media/playlist.dart';
 import '../template/tile.dart';
@@ -51,7 +51,7 @@ class MediaLayer extends Layer {
     ];
     list = [
       Tile('', Icons.person_outline_rounded, media.artist ?? 'Artist', () {
-        final artist = ArtistPlaylist(media.uploaderUrl ?? '');
+        final artist = Artist(media.uploaderUrl ?? '');
         artist.name = media.artist ?? '';
         goToPage(PageArtist(artist));
       }),

@@ -7,16 +7,6 @@ import '../media/media_queue.dart';
 import '../functions/other.dart';
 import '../data.dart';
 
-class ArtistPlaylist extends Playlist {
-  ArtistPlaylist(super.url);
-
-  static ArtistPlaylist fromMap(Map map) {
-    final artist = ArtistPlaylist(map['id'] ?? map['url']);
-    artist.loadFromMap(map);
-    return artist;
-  }
-}
-
 class Playlist extends MediaQueue {
   String name = '', uploader = 'Local';
   String url, thumbnail = '';
@@ -41,7 +31,7 @@ class Playlist extends MediaQueue {
         if (i == 1) return await loadFromInstance(Pref.authInstance.value);
         if (i == 2 && !force) return await loadFromCache();
       } catch (e) {
-        debugPrint('Couldnt load playlist $name on $i:');
+        debugPrint('Couldnt load playlist $name on $i: $e');
       }
     }
     if (timeTried < 4) return load(timeTried: ++timeTried);

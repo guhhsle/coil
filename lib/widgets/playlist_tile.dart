@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../playlist/playlist.dart';
+import '../playlist/artist.dart';
 import '../pages/playlist.dart';
 import '../pages/artist.dart';
 import '../data.dart';
@@ -24,7 +25,9 @@ class PlaylistTile extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 1,
                       child: Image.network(
-                        playlist.thumbnail,
+                        playlist.isEmpty
+                            ? playlist.thumbnail
+                            : playlist[0].thumbnail ?? '',
                         fit: BoxFit.cover,
                         errorBuilder: (c, o, s) =>
                             const Icon(Icons.clear_all_rounded),
@@ -37,8 +40,8 @@ class PlaylistTile extends StatelessWidget {
           onTap: () async => await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
-                if (playlist is ArtistPlaylist) {
-                  return PageArtist(playlist as ArtistPlaylist);
+                if (playlist is Artist) {
+                  return PageArtist(playlist as Artist);
                 } else {
                   return PlaylistPage(playlist);
                 }

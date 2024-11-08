@@ -1,3 +1,4 @@
+import 'package:coil/template/functions.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -36,7 +37,12 @@ extension PlaylistCache on Playlist {
   Future<void> loadFromCache() async {
     File file = File('${Pref.appDirectory.value}/$url.json');
     if (!await file.exists()) throw Exception('$name is not cached');
-    loadFromMap(jsonDecode(await file.readAsString()));
+    try {
+      loadFromMap(jsonDecode(await file.readAsString()));
+    } catch (e) {
+      showSnack('$name is corrupted', false);
+      rethrow;
+    }
   }
 
   Future<void> renameBackupTo(String newName) async {
