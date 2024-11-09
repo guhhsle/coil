@@ -10,7 +10,14 @@ import '../data.dart';
 extension MediaHTTP on Media {
   Future<String?> load({bool showError = false}) async {
     if (offline || audioUrl != null) return audioUrl;
-    if (MediaHandler().tryLoad(this)) return audioUrl!;
+    final tryFrom = [...allPlaylists, MediaHandler().tracklist];
+    for (final tryQueue in tryFrom) {
+      for (final tryMedia in tryQueue.list) {
+        if (tryMedia.id == id && tryMedia.audioUrl != null) {
+          return copyLoaded(tryMedia);
+        }
+      }
+    }
     return await forceLoad(
       instance: Pref.instance.value,
       showError: showError,
@@ -75,5 +82,12 @@ extension MediaHTTP on Media {
         }
       }
     }
+  }
+
+  String copyLoaded(Media media) {
+    debugPrint('Found already loaded $title');
+    videoUrls = media.videoUrls;
+    audioUrls = media.audioUrls;
+    return audioUrl = media.audioUrl!;
   }
 }

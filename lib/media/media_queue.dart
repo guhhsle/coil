@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data.dart';
 import 'media.dart';
 import 'http.dart';
 
@@ -56,7 +57,7 @@ class MediaQueue with ChangeNotifier {
 
   Future<void> preload(int from, int to) async {
     var futures = <Future>[];
-    for (int i = from; i < to; i++) {
+    for (int i = from; i < to && i < Pref.maxPreload.value; i++) {
       if (i >= 0 && i < length) {
         futures.add(this[i].load());
       }

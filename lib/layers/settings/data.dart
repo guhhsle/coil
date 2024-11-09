@@ -13,7 +13,7 @@ class DataLayer extends Layer {
       Tile.fromPref(Pref.thumbnails),
       Tile.fromPref(Pref.indie),
       Tile.fromPref(Pref.timeLimit, onPrefInput: (i) {
-        Pref.timeLimit.set(int.parse(i));
+        Pref.timeLimit.set(int.parse(i).clamp(0, 1000));
       }),
       Tile('Search', Icons.fiber_manual_record_outlined, 'Reorder', () {
         ReorderSearch().show();
@@ -21,6 +21,9 @@ class DataLayer extends Layer {
       Tile.fromPref(Pref.alternative, onPrefInput: (i) {
         Pref.alternative.set(i);
       }),
+      Tile.fromPref(Pref.maxPreload, onPrefInput: (i) {
+        Pref.maxPreload.set(int.parse(i).clamp(0, 10));
+      })
     ];
   }
 }

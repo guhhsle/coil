@@ -68,17 +68,6 @@ class MediaHandler extends BaseAudioHandler with ChangeNotifier {
 
   bool get isEmpty => tracklist.isEmpty;
 
-  bool tryLoad(Media media) {
-    for (var item in tracklist.list) {
-      if (item.id != media.id || item.audioUrl == null) continue;
-      media.videoUrls = item.videoUrls;
-      media.audioUrls = item.audioUrls;
-      media.audioUrl = item.audioUrl;
-      return true;
-    }
-    return false;
-  }
-
   int get length => tracklist.length;
   Media get current => this[index];
 

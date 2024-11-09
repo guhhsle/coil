@@ -55,6 +55,8 @@ enum Pref<T> {
   homeOrder('Home', initHome, Icons.door_front_door_rounded, ui: true),
   tags('Tags', 'Top', Icons.label_rounded, all: allTags, ui: true),
   sortBy('Sort', 'Name', Icons.sort_rounded, all: allSortBy, ui: true),
+  //DATA
+  maxPreload('Preload limit', 2, Icons.clear_all_rounded),
   bitrate('Quality', 180000, Icons.cloud_rounded),
   thumbnails('Thumbnails', true, Icons.image_rounded, ui: true),
   indie('Recommend less popular', true, Icons.track_changes_rounded),
