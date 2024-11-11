@@ -50,11 +50,6 @@ class MediaLayer extends Layer {
       )
     ];
     list = [
-      Tile('', Icons.person_outline_rounded, media.artist ?? 'Artist', () {
-        final artist = Artist(media.uploaderUrl ?? '');
-        artist.name = media.artist ?? '';
-        goToPage(PageArtist(artist));
-      }),
       Tile('', Icons.link_rounded, 'Audio/Video', () {
         if (loaded.value) {
           Navigator.of(context).pop();
@@ -81,6 +76,17 @@ class MediaLayer extends Layer {
             builder: (context, snap, child) => Text(snap),
           ),
         );
+      }),
+      Tile('', Icons.domain_rounded, 'Bruteforce', () {
+        Navigator.of(context).pop();
+        final layer = BruteForceLayer(media);
+        layer.bruteForceAll();
+        layer.show();
+      }),
+      Tile('', Icons.person_outline_rounded, media.artist ?? 'Artist', () {
+        final artist = Artist(media.uploaderUrl ?? '');
+        artist.name = media.artist ?? '';
+        goToPage(PageArtist(artist));
       }),
       Tile('', Icons.skip_next_rounded, 'Play next', () {
         media.insertToQueue(MediaHandler().index + 1);
@@ -109,14 +115,5 @@ class MediaLayer extends Layer {
         }),
       ];
     }
-    list = [
-      ...list,
-      Tile('', Icons.domain_rounded, 'Bruteforce', () {
-        Navigator.of(context).pop();
-        final layer = BruteForceLayer(media);
-        layer.bruteForceAll();
-        layer.show();
-      }),
-    ];
   }
 }
