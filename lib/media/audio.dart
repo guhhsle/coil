@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'bruteforce.dart';
 import 'media.dart';
 import 'cache.dart';
@@ -11,6 +12,16 @@ import '../data.dart';
 
 extension MediaAudio on Media {
   Future<void> play() async {
+    if (Pref.tryLocal.value) {
+      for (final local in localMusic.list) {
+        if (title.toLowerCase() == local.title.toLowerCase()) {
+          debugPrint('Found local');
+          audioUrl = local.audioUrl;
+          offline = true;
+          break;
+        }
+      }
+    }
     if (!offline) {
       addTo100();
       for (int i = 0; i < 3 && await load() == null; i++) {}

@@ -57,6 +57,7 @@ enum Pref<T> {
   sortBy('Sort', 'Name', Icons.sort_rounded, all: allSortBy, ui: true),
   //DATA
   maxPreload('Preload limit', 2, Icons.clear_all_rounded),
+  tryLocal('Try local first', false, Icons.wifi_off_rounded),
   bitrate('Quality', 180000, Icons.cloud_rounded),
   thumbnails('Thumbnails', true, Icons.image_rounded, ui: true),
   indie('Recommend less popular', true, Icons.track_changes_rounded),

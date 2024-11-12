@@ -10,6 +10,7 @@ class DataLayer extends Layer {
       Pref.bitrate.set(int.parse(i));
     });
     list = [
+      Tile.fromPref(Pref.tryLocal),
       Tile.fromPref(Pref.thumbnails),
       Tile.fromPref(Pref.indie),
       Tile.fromPref(Pref.timeLimit, onPrefInput: (i) {
@@ -23,7 +24,7 @@ class DataLayer extends Layer {
       }),
       Tile.fromPref(Pref.maxPreload, onPrefInput: (i) {
         Pref.maxPreload.set(int.parse(i).clamp(0, 10));
-      })
+      }),
     ];
   }
 }
