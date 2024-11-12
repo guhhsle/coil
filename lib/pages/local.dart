@@ -34,22 +34,23 @@ Future<void> getLocal() async {
       await Permission.audio.request();
     }
     if (await Directory(Pref.musicFolder.value).exists()) {
-      final files = Directory(Pref.musicFolder.value).listSync();
+      final files = Directory(Pref.musicFolder.value).listSync(recursive: true);
       localMusic.clear(notify: false);
-      for (var file in files) {
-        String songPath =
-            file.path.replaceAll('.m4a', '').replaceAll('.mp3', '');
-        if (file.path.endsWith('.m4a') || file.path.endsWith('.mp3')) {
-          localMusic.add(
-            Media(
-              title: basename(songPath),
-              id: file.path,
-              audioUrl: file.path,
-              offline: true,
-              queue: localMusic,
-            ),
-            notify: false,
-          );
+      for (final file in files) {
+        for (final extension in audioExtensions) {
+          if (file.path.endsWith('.$extension')) {
+            localMusic.add(
+              Media(
+                title: basename(file.path.replaceAll('.$extension', '')),
+                audioUrl: file.path,
+                queue: localMusic,
+                offline: true,
+                id: file.path,
+              ),
+              notify: false,
+            );
+            break;
+          }
         }
       }
       localMusic.sort(compare: (item1, item2) {
@@ -60,3 +61,5 @@ Future<void> getLocal() async {
     debugPrint('Couldnt load local: $e');
   }
 }
+
+const audioExtensions = {'m4a', 'mp3'};
